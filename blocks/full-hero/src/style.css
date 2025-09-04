@@ -1,0 +1,90 @@
+.full-hero-block {
+	width: 100vw;
+	min-height: 80vh;
+	background-size: cover;
+	background-position: center;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	position: relative;
+}
+
+/* Add gradient overlay to darken left side */
+.full-hero-block::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+	pointer-events: none;
+	z-index: 1;
+}
+
+.full-hero-placeholder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 10;
+}
+
+.full-hero-upload-btn {
+	font-size: 1.2rem;
+	padding: 1rem 2rem;
+}
+
+.full-hero-content {
+	padding: 40px;
+	text-align: left;
+	z-index: 5;
+	position: relative;
+	max-width: 1200px;
+	margin: 0 auto;
+	width: 100%;
+}
+.full-hero-heading {
+	color: #fff;
+	font-size: 78px;
+	margin: 0;
+	line-height: 90px;
+}
+.full-hero-subheading {
+	color: #fff;
+	font-size: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.btn {
+	font-size: 18px;
+	font-family: var(--body-font);
+	font-weight: 500;
+	border-radius: 27px;
+	padding: 15px 30px;
+	cursor: pointer;
+	width: 100%;
+	max-width: 312px;
+	height: 54px;
+	min-height: auto;
+	text-align: center;
+	white-space: nowrap;
+	transition:
+		transform 0.2s ease,
+		background-color 0.2s ease;
+	display: block;
+	margin: 0;
+	line-height: 22px;
+	text-decoration: none;
+	display: inline-block;
+}
+.btn_global {
+	background-color: var(--cpt360-primary);
+	color: #ffffff;
+	border: 1px solid var(--cpt360-primary);
+}
+.btn_global:hover {
+	background-color: #fff;
+	border: 1px solid #000;
+	color: #000;
+}

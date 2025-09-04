@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/video-two-column",
+	"version": "0.1.0",
+	"title": "Video Two Column Layout",
+	"category": "360-blocks",
+	"icon": "video-alt3",
+	"description": "A full-width two-column layout with video URL on left and content on right.",
+	"attributes": {
+		"videoUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"heading": {
+			"type": "string",
+			"default": ""
+		},
+		"bodyText": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"example": {},
+	"supports": {
+		"html": false,
+		"align": ["full"]
+	},
+	"textdomain": "global360blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

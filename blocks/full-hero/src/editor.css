@@ -1,0 +1,53 @@
+/* Editor-specific styles for Full Page Hero block */
+
+.full-hero-block {
+	outline: 2px dashed #ff9800;
+	/* Override width for editor to prevent horizontal scroll */
+	width: 100% !important;
+	max-width: 100% !important;
+	min-height: 400px !important; /* Smaller height in editor */
+	overflow: hidden;
+	/* Prevent breaking out of editor container */
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	/* Match frontend layout */
+	display: flex !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+}
+
+/* Show gradient overlay in editor too */
+.full-hero-block::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+	pointer-events: none;
+	z-index: 1;
+}
+
+/* Ensure content stays within editor bounds */
+.full-hero-content {
+	max-width: 50%;
+	text-align: left !important;
+}
+
+/* Make placeholder more visible in editor */
+.full-hero-placeholder {
+	background: rgba(255, 255, 255, 0.9);
+	padding: 1rem;
+	border-radius: 0.5rem;
+	border: 2px dashed #ccc;
+}
+
+/* Editor-specific heading sizing */
+.full-hero-heading {
+	font-size: 2rem !important; /* Smaller in editor */
+}
+
+.full-hero-subheading {
+	font-size: 1.2rem !important; /* Smaller in editor */
+}

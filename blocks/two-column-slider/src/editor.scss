@@ -1,0 +1,165 @@
+.two-column-slider-block {
+	.two-column-slider-container {
+		border: 2px dashed #ddd;
+		padding: 20px;
+		background: #f9f9f9;
+
+		.slider-wrapper {
+			position: relative;
+			display: flex;
+			align-items: center;
+		}
+
+		.slider-nav {
+			background: var(--cpt360-primary, #0073aa);
+			color: white;
+			border: none;
+			font-size: 24px;
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+
+			&:hover {
+				background: var(--cpt360-primary-dark, #005a87);
+			}
+
+			&.prev {
+				margin-right: 10px;
+			}
+
+			&.next {
+				margin-left: 10px;
+			}
+		}
+
+		.slide-container {
+			flex: 1;
+			min-height: 300px;
+		}
+
+		.slide {
+			display: flex;
+			align-items: center;
+			gap: 30px;
+			min-height: 300px;
+
+			&.active {
+				display: flex !important;
+			}
+		}
+
+		.slide-content {
+			flex: 1;
+
+			.slide-heading {
+				font-size: 2em;
+				margin-bottom: 15px;
+				color: var(--cpt360-primary, #0073aa);
+
+				&:empty::before {
+					content: 'Enter slide heading...';
+					color: #999;
+					font-style: italic;
+				}
+			}
+
+			.slide-text {
+				font-size: 1.1em;
+				line-height: 1.6;
+				color: #333;
+
+				&:empty::before {
+					content: 'Enter slide text...';
+					color: #999;
+					font-style: italic;
+				}
+			}
+		}
+
+		.slide-image {
+			flex: 1;
+
+			.image-upload-container {
+				width: 100%;
+				height: 250px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border: 2px dashed #ccc;
+				background: white;
+
+				.upload-button {
+					padding: 15px 30px;
+				}
+
+				.image-preview {
+					width: 100%;
+					height: 100%;
+					position: relative;
+
+					img {
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+					}
+
+					.image-actions {
+						position: absolute;
+						top: 10px;
+						right: 10px;
+						display: flex;
+						gap: 5px;
+						opacity: 0;
+						transition: opacity 0.3s;
+					}
+
+					&:hover .image-actions {
+						opacity: 1;
+					}
+				}
+			}
+		}
+
+		.slider-dots {
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			margin-top: 20px;
+
+			.dot {
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				border: none;
+				background: #ccc;
+				cursor: pointer;
+
+				&.active {
+					background: var(--cpt360-primary, #0073aa);
+				}
+
+				&:hover {
+					background: var(--cpt360-primary-light, #4f9aca);
+				}
+			}
+		}
+	}
+}
+
+.slide-settings {
+	margin-bottom: 15px;
+
+	.remove-slide-btn {
+		margin-top: 10px;
+	}
+}
+
+.add-slide-btn {
+	width: 100%;
+	margin-top: 15px;
+}

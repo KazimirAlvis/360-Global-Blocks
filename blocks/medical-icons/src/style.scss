@@ -1,0 +1,56 @@
+/* Medical Icons Block Frontend Styles */
+
+.wp-block-global360blocks-medical-icons {
+	.medical-icon-display {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		&.alignment-left {
+			align-items: flex-start;
+		}
+
+		&.alignment-center {
+			align-items: center;
+			text-align: center;
+		}
+
+		&.alignment-right {
+			align-items: flex-end;
+			text-align: right;
+		}
+
+		svg {
+			transition: transform 0.2s ease;
+		}
+
+		&:hover svg {
+			transform: scale(1.05);
+		}
+
+		.icon-label {
+			font-size: 16px;
+			color: #333;
+			font-weight: 500;
+			line-height: 1.4;
+		}
+	}
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.wp-block-global360blocks-medical-icons {
+		.medical-icon-display {
+			svg {
+				width: auto;
+				height: auto;
+				max-width: 64px;
+				max-height: 64px;
+			}
+
+			.icon-label {
+				font-size: 14px;
+			}
+		}
+	}
+}

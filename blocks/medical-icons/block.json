@@ -1,0 +1,54 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/medical-icons",
+	"version": "0.1.0",
+	"title": "Medical Icons",
+	"category": "widgets",
+	"icon": "superhero-alt",
+	"description": "Display medical and healthcare icons from open source libraries.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": ["wide", "full"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"selectedIcon": {
+			"type": "string",
+			"default": "stethoscope"
+		},
+		"iconStyle": {
+			"type": "string",
+			"default": "outline"
+		},
+		"iconSize": {
+			"type": "number",
+			"default": 48
+		},
+		"iconColor": {
+			"type": "string",
+			"default": "#0073aa"
+		},
+		"showLabel": {
+			"type": "boolean",
+			"default": true
+		},
+		"iconLabel": {
+			"type": "string",
+			"default": "Medical Icon"
+		},
+		"alignment": {
+			"type": "string",
+			"default": "center"
+		}
+	},
+	"textdomain": "global-360-theme",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css"
+}

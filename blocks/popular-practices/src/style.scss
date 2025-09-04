@@ -1,0 +1,87 @@
+.popular-practices-block {
+	margin: 40px 0;
+
+	.popular-practices-title {
+		text-align: center;
+		margin-bottom: 30px;
+		font-size: 2.5rem;
+		font-weight: 600;
+		color: #000000;
+	}
+
+	.practices-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 20px;
+		max-width: 1200px;
+		margin: 0 auto;
+
+		@media (min-width: 768px) {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.practice-card {
+		background: #fff;
+		border-radius: 8px;
+		padding: 20px;
+		text-align: center;
+		border: 1px solid #ddd;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+		border: 1px solid #e0e0e0;
+		display: block;
+		text-decoration: none;
+		color: inherit;
+
+		&:hover {
+			transform: translateY(-5px);
+			text-decoration: none;
+			color: inherit;
+		}
+
+		.practice-logo {
+			margin-bottom: 15px;
+			height: 80px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				max-width: 100%;
+				max-height: 80px;
+				width: auto;
+				height: auto;
+				object-fit: contain;
+			}
+
+			.logo-placeholder {
+				width: 80px;
+				height: 80px;
+				background: #f0f0f0;
+				border-radius: 4px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 12px;
+				color: #666;
+				text-align: center;
+				line-height: 1.2;
+			}
+		}
+
+		.practice-name {
+			font-size: 1.1rem;
+			margin-bottom: 10px;
+			color: #000;
+			min-height: 2.2rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 0px;
+			border-top: 1px solid #ddd;
+			padding-top: 15px;
+		}
+	}
+}

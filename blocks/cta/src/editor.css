@@ -1,0 +1,76 @@
+/* CTA Block Editor Styles */
+.wp-block-global360blocks-cta {
+	margin: 20px 0;
+}
+
+.wp-block-global360blocks-cta .cta-container {
+	position: relative;
+	min-height: 300px;
+	height: 300px;
+	background-color: #f0f0f0;
+	border: 2px dashed #ccc;
+	overflow: hidden;
+}
+
+.wp-block-global360blocks-cta .cta-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 2;
+	text-align: center;
+	width: 90%;
+	max-width: 800px;
+}
+
+.wp-block-global360blocks-cta .cta-heading {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin: 0 0 30px 0;
+	color: white;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.wp-block-global360blocks-cta .cta-heading:focus {
+	color: white;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.wp-block-global360blocks-cta .cta-heading[data-is-placeholder-visible='true'] {
+	color: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.wp-block-global360blocks-cta .cta-button-preview {
+	margin-top: 20px;
+}
+
+.wp-block-global360blocks-cta .cta-button-preview .btn {
+	background-color: var(--cpt360-primary, #007cba);
+	color: white;
+	padding: 15px 30px;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 1.1rem;
+	text-decoration: none;
+	display: inline-block;
+	cursor: default;
+}
+
+.wp-block-global360blocks-cta .cta-controls {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 3;
+}
+
+.wp-block-global360blocks-cta .image-controls {
+	display: flex;
+	gap: 10px;
+	flex-direction: column;
+}
+
+.wp-block-global360blocks-cta .image-controls .button {
+	white-space: nowrap;
+	min-width: 120px;
+}

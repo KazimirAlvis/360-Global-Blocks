@@ -1,0 +1,154 @@
+/* Find Doctor Block Editor Styles */
+.find-doctor-block {
+	width: 100% !important;
+	max-width: 100% !important;
+	overflow: hidden;
+}
+
+.find-doctor-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 400px !important;
+	width: 100%;
+}
+
+.find-doctor-image {
+	position: relative;
+	overflow: hidden;
+	background-color: #f5f5f5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 30px;
+}
+
+.find-doctor-image .image-wrapper {
+	width: 100%;
+	max-width: 350px;
+	position: relative;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.find-doctor-image img {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+	display: block;
+	min-height: 250px;
+}
+
+.find-doctor-placeholder {
+	width: 100%;
+	max-width: 350px;
+	min-height: 250px;
+	background-color: #ffffff;
+	border: 2px dashed #cccccc;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: border-color 0.2s ease;
+}
+
+.find-doctor-placeholder:hover {
+	border-color: #999999;
+}
+
+.find-doctor-upload-button {
+	background-color: #0073aa !important;
+	color: #ffffff !important;
+	border: none !important;
+	padding: 12px 24px !important;
+	border-radius: 4px !important;
+	font-size: 14px !important;
+	cursor: pointer !important;
+}
+
+.find-doctor-upload-button:hover {
+	background-color: #005a87 !important;
+}
+
+.find-doctor-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 40px 50px;
+	background-color: #f5f5f5;
+}
+
+.find-doctor-heading {
+	font-size: 2rem !important;
+	font-weight: bold !important;
+	margin: 0 0 20px 0 !important;
+	line-height: 1.2 !important;
+	color: #333 !important;
+}
+
+.find-doctor-body {
+	font-size: 1rem !important;
+	line-height: 1.6 !important;
+	margin: 0 0 30px 0 !important;
+	color: #666 !important;
+}
+
+.find-doctor-button {
+	align-self: flex-start;
+}
+
+.find-doctor-button .btn {
+	font-size: 16px !important;
+	padding: 12px 24px !important;
+	border-radius: 27px !important;
+	min-height: auto !important;
+	height: auto !important;
+	max-width: 250px !important;
+}
+
+/* Responsive styles for editor */
+@media (max-width: 1200px) {
+	.find-doctor-content {
+		padding: 30px 40px;
+	}
+
+	.find-doctor-heading {
+		font-size: 1.8rem !important;
+	}
+
+	.find-doctor-image {
+		padding: 25px;
+	}
+}
+
+@media (max-width: 782px) {
+	.find-doctor-container {
+		grid-template-columns: 1fr;
+		min-height: auto !important;
+	}
+
+	.find-doctor-image {
+		min-height: auto;
+		order: 1;
+		padding: 25px 20px;
+	}
+
+	.find-doctor-placeholder,
+	.find-doctor-image img {
+		min-height: 200px;
+	}
+
+	.find-doctor-content {
+		padding: 30px 25px;
+		order: 2;
+	}
+
+	.find-doctor-heading {
+		font-size: 1.6rem !important;
+	}
+
+	.find-doctor-body {
+		font-size: 0.9rem !important;
+	}
+}

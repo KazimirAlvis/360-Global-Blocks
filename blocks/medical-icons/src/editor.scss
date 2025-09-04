@@ -1,0 +1,76 @@
+/* Medical Icons Block Editor Styles */
+
+.medical-icons-block {
+	.medical-icon-display {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		&.alignment-left {
+			align-items: flex-start;
+		}
+
+		&.alignment-center {
+			align-items: center;
+		}
+
+		&.alignment-right {
+			align-items: flex-end;
+		}
+
+		.icon-label {
+			font-size: 14px;
+			color: #666;
+			font-weight: 500;
+		}
+	}
+}
+
+/* Inspector Controls Styles */
+.medical-icons-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 8px;
+	margin: 16px 0;
+
+	.icon-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 8px;
+		border: 2px solid #ddd;
+		border-radius: 4px;
+		background: white;
+		cursor: pointer;
+		transition: all 0.2s ease;
+
+		&:hover {
+			border-color: #0073aa;
+			background: #f0f8ff;
+		}
+
+		&.selected {
+			border-color: #0073aa;
+			background: #0073aa;
+
+			svg {
+				stroke: white !important;
+				fill: white !important;
+			}
+		}
+
+		svg {
+			transition: all 0.2s ease;
+		}
+	}
+}
+
+.color-picker-wrapper {
+	margin: 16px 0;
+
+	label {
+		display: block;
+		margin-bottom: 8px;
+		font-weight: 500;
+	}
+}

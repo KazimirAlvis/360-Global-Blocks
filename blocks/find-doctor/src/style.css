@@ -1,0 +1,177 @@
+/* Find Doctor Block Styles */
+.find-doctor-block {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.find-doctor-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 500px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.find-doctor-image {
+	position: relative;
+	overflow: hidden;
+	background-color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	padding: 40px;
+}
+
+.find-doctor-image .image-wrapper {
+	width: 100%;
+	max-width: 450px;
+	position: relative;
+	overflow: hidden;
+}
+
+.find-doctor-image img {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+	display: block;
+	min-height: 300px;
+}
+
+.find-doctor-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 60px 40px;
+	background-color: #fff;
+}
+
+.find-doctor-heading {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin: 0 0 30px 0;
+	line-height: 1.2;
+	color: #333;
+}
+
+.find-doctor-body {
+	font-size: 1.1rem;
+	line-height: 1.6;
+	margin: 0 0 40px 0;
+	color: #666;
+}
+
+.find-doctor-button {
+	align-self: flex-start;
+}
+
+.btn {
+	font-size: 18px;
+	font-family: var(--body-font);
+	font-weight: 500;
+	border-radius: 27px;
+	padding: 15px 30px;
+	cursor: pointer;
+	width: 100%;
+	max-width: 312px;
+	height: 54px;
+	min-height: auto;
+	text-align: center;
+	white-space: nowrap;
+	transition:
+		transform 0.2s ease,
+		background-color 0.2s ease;
+	display: block;
+	margin: 0;
+	line-height: 22px;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.btn_global {
+	background-color: var(--cpt360-primary);
+	color: #ffffff;
+	border: 1px solid var(--cpt360-primary);
+}
+
+.btn_global:hover {
+	background-color: #fff;
+	border: 1px solid #000;
+	color: #000;
+}
+.btn_global:visited {
+	color: #fff;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+	.find-doctor-content {
+		padding: 40px 60px;
+	}
+
+	.find-doctor-heading {
+		font-size: 2.2rem;
+	}
+
+	.find-doctor-image {
+		padding: 30px;
+	}
+}
+
+@media (max-width: 768px) {
+	.find-doctor-container {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	.find-doctor-image {
+		min-height: auto;
+		order: 1;
+		padding: 30px 20px;
+	}
+
+	.find-doctor-image .image-wrapper {
+		max-width: 100%;
+	}
+
+	.find-doctor-image img {
+		min-height: 250px;
+	}
+
+	.find-doctor-content {
+		padding: 40px 30px;
+		order: 2;
+	}
+
+	.find-doctor-heading {
+		font-size: 2rem;
+	}
+
+	.find-doctor-body {
+		font-size: 1rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.find-doctor-image {
+		padding: 20px 15px;
+	}
+
+	.find-doctor-image img {
+		min-height: 200px;
+	}
+
+	.find-doctor-content {
+		padding: 30px 20px;
+	}
+
+	.find-doctor-heading {
+		font-size: 1.8rem;
+		margin-bottom: 20px;
+	}
+
+	.find-doctor-body {
+		margin-bottom: 30px;
+	}
+}

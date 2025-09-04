@@ -1,0 +1,165 @@
+/* Video Two Column Block Editor Styles */
+.wp-block-global360blocks-video-two-column {
+	margin: 20px 0;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 500px;
+	border: 2px dashed #ccc;
+	overflow: hidden;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-video {
+	position: relative;
+	background-color: #f5f5f5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-video .video-wrapper {
+	width: 100%;
+	max-width: 560px;
+	position: relative;
+	background: #000;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-video .youtube-video {
+	width: 100%;
+	height: 315px;
+	border: none;
+	display: block;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-video .column-video {
+	width: 100%;
+	height: 315px;
+	object-fit: cover;
+	display: block;
+}
+
+.wp-block-global360blocks-video-two-column .video-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: #ccc;
+	font-style: italic;
+}
+
+.wp-block-global360blocks-video-two-column .video-controls {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	left: 10px;
+	z-index: 3;
+	background-color: rgba(255, 255, 255, 0.95);
+	padding: 15px;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wp-block-global360blocks-video-two-column .video-controls .components-text-control__input {
+	margin-bottom: 10px;
+}
+
+.wp-block-global360blocks-video-two-column .video-controls .button {
+	white-space: nowrap;
+	min-width: 120px;
+	font-size: 12px;
+	padding: 6px 12px;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 40px;
+	background-color: #f5f5f5;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-heading {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin: 0 0 30px 0;
+	line-height: 1.2;
+	color: #333;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-heading:focus {
+	color: #333;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-heading[data-is-placeholder-visible='true'] {
+	color: #999;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-body {
+	font-size: 1.1rem;
+	line-height: 1.6;
+	margin: 0 0 40px 0;
+	color: #666;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-body:focus {
+	color: #666;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-body[data-is-placeholder-visible='true'] {
+	color: #999;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-button-preview {
+	align-self: flex-start;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-button-preview .btn {
+	background-color: var(--cpt360-primary, #007cba);
+	color: white;
+	padding: 15px 30px;
+	border-radius: 27px;
+	font-weight: 500;
+	font-size: 18px;
+	text-decoration: none;
+	display: inline-block;
+	cursor: default;
+	border: 1px solid var(--cpt360-primary, #007cba);
+}
+
+/* Responsive editor styles */
+@media (max-width: 768px) {
+	.wp-block-global360blocks-video-two-column .video-two-column-container {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	.wp-block-global360blocks-video-two-column .video-two-column-video {
+		min-height: auto;
+		order: 1;
+		padding: 30px 20px;
+	}
+
+	.wp-block-global360blocks-video-two-column .video-two-column-video .video-wrapper {
+		max-width: 100%;
+	}
+
+	.wp-block-global360blocks-video-two-column .video-two-column-video .youtube-video,
+	.wp-block-global360blocks-video-two-column .video-two-column-video .column-video {
+		height: 250px;
+	}
+
+	.wp-block-global360blocks-video-two-column .video-two-column-content {
+		padding: 30px;
+		order: 2;
+	}
+
+	.wp-block-global360blocks-video-two-column .video-two-column-heading {
+		font-size: 2rem;
+	}
+}

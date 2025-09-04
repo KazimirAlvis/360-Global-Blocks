@@ -1,0 +1,50 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/info-cards",
+	"version": "0.1.0",
+	"title": "Info Cards",
+	"category": "360-blocks",
+	"icon": "grid-view",
+	"description": "Display a 3-column layout with icons, titles, and text content.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": ["wide", "full"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"mainTitle": {
+			"type": "string",
+			"default": "Why Choose Us"
+		},
+		"cards": {
+			"type": "array",
+			"default": [
+				{
+					"icon": "stethoscope",
+					"title": "Expert Care",
+					"text": "Our experienced medical professionals provide top-quality healthcare services."
+				},
+				{
+					"icon": "heart",
+					"title": "Compassionate Service",
+					"text": "We care about your wellbeing and provide personalized attention to every patient."
+				},
+				{
+					"icon": "first-aid",
+					"title": "Emergency Ready",
+					"text": "Available 24/7 for emergency situations with rapid response capabilities."
+				}
+			]
+		}
+	},
+	"textdomain": "global-360-theme",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

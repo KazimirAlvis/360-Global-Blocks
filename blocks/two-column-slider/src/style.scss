@@ -1,0 +1,163 @@
+.wp-block-global360blocks-two-column-slider {
+	background-color: #f5f5f5;
+	.two-column-slider-container {
+		position: relative;
+
+		.slider-wrapper {
+			position: relative;
+			display: flex;
+			align-items: center;
+			max-width: 1300px;
+			margin: 0 auto;
+		}
+
+		.slider-nav {
+			color: var(--cpt360-primary);
+			border: none;
+			font-size: 45px;
+			width: auto;
+			height: 0;
+			border-radius: 0%;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+			transition: all 0.3s ease;
+			padding: 0;
+
+			&:hover {
+				background: var(--cpt360-primary-dark, #005a87);
+				transform: scale(1.1);
+			}
+
+			&.prev {
+				margin-right: 15px;
+			}
+
+			&.next {
+				margin-left: 15px;
+			}
+		}
+
+		.slide-container {
+			flex: 1;
+			overflow: hidden;
+		}
+
+		.slide {
+			display: none;
+			align-items: center;
+			gap: 40px;
+			min-height: 400px;
+			padding: 40px 20px;
+
+			&.active {
+				display: flex;
+				animation: slideIn 0.5s ease-in-out;
+			}
+
+			@media (max-width: 768px) {
+				flex-direction: column;
+				text-align: center;
+				gap: 30px;
+				padding: 30px 15px;
+				min-height: auto;
+			}
+		}
+
+		.slide-content {
+			flex: 1;
+
+			.slide-heading {
+				font-size: 2.5em;
+				margin-bottom: 20px;
+				color: var(--cpt360-primary, #0073aa);
+				font-weight: 700;
+				line-height: 1.2;
+
+				@media (max-width: 768px) {
+					font-size: 2em;
+				}
+			}
+
+			.slide-text {
+				font-size: 1.2em;
+				line-height: 1.7;
+				color: #555;
+				margin-bottom: 0;
+
+				@media (max-width: 768px) {
+					font-size: 1.1em;
+				}
+			}
+		}
+
+		.slide-image {
+			flex: 1;
+
+			img {
+				width: 100%;
+				height: 400px;
+				object-fit: cover;
+				border-radius: 8px;
+				box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+				@media (max-width: 768px) {
+					height: 250px;
+				}
+			}
+		}
+
+		.slider-dots {
+			display: flex;
+			justify-content: center;
+			gap: 12px;
+			margin-top: 0px;
+			padding-bottom: 20px;
+
+			.dot {
+				width: 14px;
+				height: 14px;
+				border-radius: 50%;
+				border: none;
+				background: #ccc;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				padding: 0;
+
+				&.active {
+					background: var(--cpt360-primary, #0073aa);
+					transform: scale(1.2);
+				}
+
+				&:hover {
+					background: var(--cpt360-primary-light, #4f9aca);
+				}
+			}
+		}
+	}
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+// Full-width and wide alignment styles
+.alignwide .wp-block-global360blocks-two-column-slider,
+.alignfull .wp-block-global360blocks-two-column-slider {
+	.slide {
+		padding: 60px 40px;
+
+		@media (max-width: 768px) {
+			padding: 40px 20px;
+		}
+	}
+}
