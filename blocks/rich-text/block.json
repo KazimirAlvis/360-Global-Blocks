@@ -1,0 +1,55 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/rich-text",
+	"version": "1.0.0",
+	"title": "Rich Text Editor",
+	"category": "360-blocks",
+	"icon": "editor-paragraph",
+	"description": "A comprehensive rich text editor with headings, lists, formatting, and styling options.",
+	"keywords": ["text", "editor", "rich", "wysiwyg", "content"],
+	"textdomain": "360-global-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"supports": {
+		"html": false,
+		"align": true,
+		"color": {
+			"gradients": true,
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"content": {
+			"type": "string",
+			"default": ""
+		},
+		"textAlign": {
+			"type": "string",
+			"default": "left"
+		},
+		"maxWidth": {
+			"type": "string",
+			"default": "none"
+		},
+		"showDropCap": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"example": {
+		"attributes": {
+			"content": "<h2>Sample Heading</h2><p>This is a <strong>rich text editor</strong> that supports <em>formatting</em>, headings, and lists:</p><ul><li>Bullet point one</li><li>Bullet point two</li></ul><p>Perfect for creating professional content!</p>"
+		}
+	}
+}

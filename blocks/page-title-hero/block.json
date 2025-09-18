@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/page-title-hero",
+	"version": "1.0.0",
+	"title": "Page Title Hero",
+	"category": "360-blocks",
+	"icon": "admin-page",
+	"description": "A small hero section that automatically uses the page title, with optional custom title and background image support.",
+	"keywords": ["hero", "title", "header", "banner"],
+	"textdomain": "global360blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"supports": {
+		"html": false,
+		"align": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"subtitle": {
+			"type": "string",
+			"default": ""
+		},
+		"background_image": {
+			"type": "string",
+			"default": ""
+		},
+		"background_overlay": {
+			"type": "boolean",
+			"default": true
+		},
+		"text_alignment": {
+			"type": "string",
+			"default": "center"
+		}
+	},
+	"example": {
+		"attributes": {
+			"title": "About Our Practice",
+			"subtitle": "Quality healthcare for your family"
+		}
+	}
+}

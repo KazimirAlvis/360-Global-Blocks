@@ -6,6 +6,25 @@ Version: 1.0.0
 Author: Kaz Alvis
 */
 
+// Include the Plugin Update Checker
+require 'vendor/plugin-update-checker/plugin-update-checker.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+	'https://github.com/KazimirAlvis/360-Global-Blocks/',
+	__FILE__,
+	'360-global-blocks'
+);
+
+//Set the branch that contains the stable release.
+$myUpdateChecker->setBranch('main');
+
+//Since the repository is private, set the access token.
+//The token is stored in a constant defined in wp-config.php for security.
+if ( defined('GITHUB_ACCESS_TOKEN') ) {
+  $myUpdateChecker->setAuthentication(GITHUB_ACCESS_TOKEN);
+}
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Helper function to get YouTube embed URL
@@ -994,6 +1013,64 @@ add_filter('block_categories_all', function($categories, $post) {
     );
 }, 10, 2);
 
+// REST API endpoint for Symptoms AI content generation
+add_action('rest_api_init', function() {
+    register_rest_route('360blocks/v1', '/generate-symptoms', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+    
+    // Alternative route for symptoms AI block
+    register_rest_route('global360blocks/v1', '/generate-symptoms-content', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+});
+
+function global360blocks_generate_symptoms_api($request) {
+    $symptom = sanitize_text_field($request->get_param('symptom'));
+    
+    if (empty($symptom)) {
+        return new WP_Error('missing_symptom', 'Symptom parameter is required', array('status' => 400));
+    }
+    
+    // Check cache first
+    $cache_key = 'symptoms_ai_final_clean_' . md5($symptom);
+    $cached_content = get_transient($cache_key);
+    
+    if ($cached_content !== false) {
+        return array(
+            'success' => true,
+            'content' => $cached_content,
+            'source' => 'cache'
+        );
+    }
+    
+    // Generate content using template system
+    $content = global360blocks_generate_symptoms_content($symptom);
+    
+    // Cache for 7 days
+    set_transient($cache_key, $content, 7 * DAY_IN_SECONDS);
+    
+    return array(
+        'success' => true,
+        'content' => $content,
+        'source' => 'generated'
+    );
+}
+
+// Include symptoms AI render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/render.php';
+
+// Include page title hero render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/page-title-hero/render.php';
+
 // Register block
 function global360blocks_register_blocks() {
     // Register Test Hero block
@@ -1040,6 +1117,16 @@ function global360blocks_register_blocks() {
     // Register Two Column Slider block
     register_block_type( __DIR__ . '/blocks/two-column-slider/build', array(
         'render_callback' => 'global360blocks_render_two_column_slider_block',
+    ));
+    
+    // Register Symptoms AI block
+    register_block_type( __DIR__ . '/blocks/symptoms-ai/build', array(
+        'render_callback' => 'global360blocks_render_symptoms_ai_block'
+    ));
+    
+    // Register Page Title Hero block
+    register_block_type( __DIR__ . '/blocks/page-title-hero/build', array(
+        'render_callback' => 'global360blocks_render_page_title_hero_block'
     ));
 }
 
@@ -1262,6 +1349,16 @@ add_action('wp_enqueue_scripts', function() {
         );
     }
     
+    // Symptoms AI block frontend CSS
+    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/symptoms-ai/build/style-index.css' )) {
+        wp_enqueue_style(
+            'global360blocks-symptoms-ai-style-frontend',
+            plugins_url('blocks/symptoms-ai/build/style-index.css', __FILE__),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/build/style-index.css')
+        );
+    }
+    
     // Two Column Slider block frontend JavaScript
     if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/index.js' )) {
         wp_enqueue_script(
@@ -1271,6 +1368,23 @@ add_action('wp_enqueue_scripts', function() {
             filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/index.js'),
             true
         );
+    }
+    
+    // Symptoms AI helper JavaScript for admin
+    if (is_admin() && file_exists( plugin_dir_path( __FILE__ ) . 'blocks/symptoms-ai/ai-helper.js' )) {
+        wp_enqueue_script(
+            'symptoms-ai-helper',
+            plugins_url( 'blocks/symptoms-ai/ai-helper.js', __FILE__ ),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/ai-helper.js'),
+            true
+        );
+        
+        // Localize script with API settings
+        wp_localize_script('symptoms-ai-helper', 'wpApiSettings', array(
+            'root' => esc_url_raw(rest_url()),
+            'nonce' => wp_create_nonce('wp_rest')
+        ));
     }
 });
 

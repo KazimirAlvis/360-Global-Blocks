@@ -4,7 +4,7 @@
 	"name": "global360blocks/full-hero",
 	"title": "Full Page Hero",
 	"category": "360-blocks",
-	"icon": "cover-image",
+	"icon": "admin-page",
 	"description": "A large hero block with image, heading, sub-heading, and assessment button.",
 	"keywords": ["hero", "banner", "full-width"],
 	"textdomain": "global360blocks",

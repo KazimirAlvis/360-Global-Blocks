@@ -7,7 +7,7 @@ import './editor.css';
 
 registerBlockType('global360blocks/full-hero', {
 	title: __('Full Page Hero', 'global360blocks'),
-	icon: 'cover',
+	icon: 'admin-page',
 	category: '360-blocks',
 	supports: {
 		html: false,

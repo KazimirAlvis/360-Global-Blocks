@@ -1,0 +1,152 @@
+// Editor styles for Rich Text block
+.rich-text-block {
+	position: relative;
+
+	.rich-text-content {
+		min-height: 2em;
+		padding: 1rem;
+		border: 2px dashed #ddd;
+		border-radius: 4px;
+		transition: border-color 0.2s ease;
+
+		&:focus,
+		&:hover {
+			border-color: #007cba;
+		}
+
+		&:empty::before {
+			content: attr(placeholder);
+			color: #999;
+			font-style: italic;
+		}
+
+		// Drop cap styles in editor
+		&.has-drop-cap {
+			&::first-letter {
+				float: left;
+				font-size: 3em;
+				line-height: 0.8;
+				margin: 0.1em 0.1em 0 0;
+				font-weight: bold;
+			}
+		}
+	}
+
+	// Text alignment classes
+	&.text-align-left {
+		text-align: left;
+	}
+
+	&.text-align-center {
+		text-align: center;
+	}
+
+	&.text-align-right {
+		text-align: right;
+	}
+
+	&.text-align-justify {
+		text-align: justify;
+	}
+
+	// Rich text formatting in editor
+	h1, h2, h3, h4, h5, h6 {
+		margin: 0.5em 0;
+		line-height: 1.2;
+	}
+
+	h1 { font-size: 2.5em; }
+	h2 { font-size: 2em; }
+	h3 { font-size: 1.5em; }
+	h4 { font-size: 1.25em; }
+	h5 { font-size: 1.1em; }
+	h6 { font-size: 1em; }
+
+	p {
+		margin: 0.5em 0;
+		line-height: 1.6;
+	}
+
+	ul, ol {
+		margin: 0.5em 0;
+		padding-left: 2em;
+
+		li {
+			margin: 0.25em 0;
+		}
+	}
+
+	blockquote {
+		margin: 1em 0;
+		padding: 1em;
+		border-left: 4px solid #007cba;
+		background: #f8f9fa;
+		font-style: italic;
+	}
+
+	code {
+		background: #f1f3f4;
+		padding: 0.2em 0.4em;
+		border-radius: 3px;
+		font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+		font-size: 0.9em;
+	}
+
+	pre {
+		background: #f1f3f4;
+		padding: 1em;
+		border-radius: 4px;
+		overflow-x: auto;
+
+		code {
+			background: transparent;
+			padding: 0;
+		}
+	}
+
+	// Link styles
+	a {
+		color: #007cba;
+		text-decoration: underline;
+
+		&:hover {
+			color: #005a87;
+		}
+	}
+
+	// Format buttons
+	strong, b {
+		font-weight: bold;
+	}
+
+	em, i {
+		font-style: italic;
+	}
+
+	u {
+		text-decoration: underline;
+	}
+
+	del, s {
+		text-decoration: line-through;
+	}
+
+	sub {
+		vertical-align: sub;
+		font-size: 0.8em;
+	}
+
+	sup {
+		vertical-align: super;
+		font-size: 0.8em;
+	}
+}
+
+// Inspector controls styling
+.rich-text-inspector {
+	.components-panel__body {
+		.components-base-control {
+			margin-bottom: 1rem;
+		}
+	}
+}
