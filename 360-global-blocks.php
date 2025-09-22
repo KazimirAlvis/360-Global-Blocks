@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
-Version: 1.1.0
+Version: 1.1.20250922
 Author: Kaz Alvis
 */
 
@@ -24,7 +24,7 @@ class Global_360_Plugin_Updater {
 	
 	function __construct() {
 		$this->plugin_slug = plugin_basename(__FILE__);
-		$this->plugin_version = '1.1.0'; // Match your plugin version
+		$this->plugin_version = '1.1.20250922'; // Match your plugin version
 		$this->plugin_file = __FILE__;
 		$this->github_username = 'KazimirAlvis';
 		$this->github_repo = '360-Global-Blocks';
