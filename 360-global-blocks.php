@@ -20,6 +20,7 @@ class Global_360_Plugin_Updater {
 	private $github_username;
 	private $github_repo;
 	private $plugin_file;
+	private $github_token;
 	
 	function __construct() {
 		$this->plugin_slug = plugin_basename(__FILE__);
@@ -27,7 +28,13 @@ class Global_360_Plugin_Updater {
 		$this->plugin_file = __FILE__;
 		$this->github_username = 'KazimirAlvis';
 		$this->github_repo = '360-Global-Blocks';
-		$this->update_path = 'https://api.github.com/repos/' . $this->github_username . '/' . $this->github_repo . '/releases/latest';
+		
+		// For development: Use direct branch instead of releases
+		// $this->update_path = 'https://api.github.com/repos/' . $this->github_username . '/' . $this->github_repo . '/releases/latest';
+		$this->update_path = 'https://api.github.com/repos/' . $this->github_username . '/' . $this->github_repo . '/commits/main';
+		
+		// GitHub Personal Access Token for private repos (define in wp-config.php)
+		$this->github_token = defined('GITHUB_UPDATER_TOKEN') ? GITHUB_UPDATER_TOKEN : '';
 		
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_update' ) );
 		add_action( 'admin_notices', array( $this, 'update_notice' ) );
@@ -53,14 +60,30 @@ class Global_360_Plugin_Updater {
 	}
 	
 	public function get_remote_version() {
-		$request = wp_remote_get( $this->update_path );
+		$headers = array();
+		
+		// Add authorization header if GitHub token is available
+		if ( !empty( $this->github_token ) ) {
+			$headers['Authorization'] = 'token ' . $this->github_token;
+		}
+		
+		$args = array(
+			'headers' => $headers,
+			'timeout' => 30
+		);
+		
+		$request = wp_remote_get( $this->update_path, $args );
 		
 		if ( ! is_wp_error( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) {
 			$body = wp_remote_retrieve_body( $request );
 			$data = json_decode( $body, true );
 			
-			if ( isset( $data['tag_name'] ) ) {
-				return ltrim( $data['tag_name'], 'v' );
+			// For commit-based updates, we'll use the commit date as version
+			if ( isset( $data['commit']['committer']['date'] ) ) {
+				$commit_date = $data['commit']['committer']['date'];
+				// Convert to version format like 1.1.1 (using timestamp)
+				$timestamp = strtotime( $commit_date );
+				return '1.1.' . date( 'Ymd', $timestamp ); // e.g., 1.1.20250922
 			}
 		}
 		
@@ -86,6 +109,13 @@ new Global_360_Plugin_Updater();
  * Add plugin update menu to admin
  */
 add_action( 'admin_menu', function() {
+	// Debug: Add admin notice to see if this code runs
+	add_action( 'admin_notices', function() {
+		if ( current_user_can( 'manage_options' ) ) {
+			echo '<div class="notice notice-info"><p><strong>360 Plugin Updater:</strong> Admin menu hook is running.</p></div>';
+		}
+	});
+	
 	add_submenu_page(
 		'plugins.php',
 		'Plugin Updates',
@@ -94,6 +124,15 @@ add_action( 'admin_menu', function() {
 		'360-blocks-updates',
 		'global_360_blocks_updates_page'
 	);
+});
+
+/**
+ * Additional debug - check if plugin is active
+ */
+add_action( 'admin_notices', function() {
+	if ( current_user_can( 'manage_options' ) ) {
+		echo '<div class="notice notice-warning"><p><strong>Debug:</strong> 360 Global Blocks plugin is active and running. Version: 1.1.0</p></div>';
+	}
 });
 
 /**
