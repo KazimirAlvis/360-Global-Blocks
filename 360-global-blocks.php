@@ -315,14 +315,55 @@ function global360blocks_render_two_column_slider_block($attributes) {
     }
     
     $output = '<div class="wp-block-global360blocks-two-column-slider">';
-    $output .= '<div class="two-column-slider-container">';
-    $output .= '<div class="slider-wrapper">';
+    $output .= '<div class="two-column-slider-container" style="position: relative;">';
     
     if ($show_arrows) {
-        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide">‹</button>';
+        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide" style="position: absolute; left: 21px; bottom: 9px; z-index: 10; background: rgba(0,0,0,0.5); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">‹</button>';
+        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide" style="position: absolute; right: 21px; bottom: 9px; z-index: 10; background: rgba(0,0,0,0.5); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">›</button>';
     }
     
-    $output .= '<div class="slide-container">';
+    $output .= '<div class="slider-wrapper" style="position: relative; overflow: hidden;">';
+    
+    $output .= '<div class="slide-container" style="position: relative;">';
+    
+    // Add CSS to prevent any sliding and ensure pure fade transitions
+    $output .= '<style>
+        .wp-block-global360blocks-two-column-slider {
+            margin-bottom: 20px;
+        }
+        .two-column-slider-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .two-column-slider-container .slide-container { 
+            display: block !important; 
+            transform: none !important; 
+            transition: none !important; 
+        }
+        .two-column-slider-container .slide { 
+            display: flex !important; 
+            flex: none !important; 
+            transform: none !important;
+            align-items: center;
+            gap: 20px;
+        }
+        .two-column-slider-container .slide .slide-content {
+            flex: 1;
+        }
+        .two-column-slider-container .slide .slide-image {
+            flex: 1;
+        }
+        .two-column-slider-container .slide .slide-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .two-column-slider-container .slide:not(.active) { 
+            opacity: 0 !important; 
+            visibility: hidden !important; 
+            position: absolute !important; 
+        }
+    </style>';
     
     foreach ($slides as $index => $slide) {
         $heading = !empty($slide['heading']) ? esc_html($slide['heading']) : '';
@@ -331,7 +372,17 @@ function global360blocks_render_two_column_slider_block($attributes) {
         
         $active_class = $index === 0 ? 'active' : '';
         
-        $output .= '<div class="slide ' . $active_class . '" data-slide="' . $index . '">';
+        // Add inline styles for immediate positioning
+        $slide_style = 'transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;';
+        if ($index === 0) {
+            // First slide stays in normal flow to establish container height
+            $slide_style .= ' position: relative; opacity: 1; visibility: visible; z-index: 2;';
+        } else {
+            // Other slides are absolutely positioned and hidden
+            $slide_style .= ' position: absolute; top: 0; left: 0; width: 100%; opacity: 0; visibility: hidden; z-index: 1;';
+        }
+        
+        $output .= '<div class="slide ' . $active_class . '" data-slide="' . $index . '" style="' . $slide_style . '">';
         $output .= '<div class="slide-content">';
         if ($heading) {
             $output .= '<h2 class="slide-heading">' . $heading . '</h2>';
@@ -351,10 +402,6 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     $output .= '</div>';
     
-    if ($show_arrows) {
-        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide">›</button>';
-    }
-    
     $output .= '</div>';
     
     if ($show_dots) {
@@ -368,78 +415,165 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     $output .= '</div>';
     
-    // Add slider JavaScript
+    // Add slider JavaScript with improved sliding animation
     $output .= '<script>
-        function nextSlide(button) {
-            const container = button.closest(".two-column-slider-container");
+        function initializeSlider(container) {
+            const slideContainer = container.querySelector(".slide-container");
             const slides = container.querySelectorAll(".slide");
             const dots = container.querySelectorAll(".dot");
-            let current = 0;
+            let currentSlide = 0;
             
+            // Prevent multiple initializations
+            if (slideContainer.hasAttribute("data-initialized")) {
+                return;
+            }
+            slideContainer.setAttribute("data-initialized", "true");
+            
+            // Prevent flicker by immediately hiding non-active slides
             slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
+                if (index !== 0) {
+                    slide.style.opacity = "0";
+                    slide.style.visibility = "hidden";
                 }
             });
             
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
+            // Set up slide container for fade transitions only
+            slideContainer.style.position = "relative";
+            slideContainer.style.width = "100%";
+            slideContainer.style.height = "auto";
+            slideContainer.style.display = "block"; // Ensure no flex layout
+            slideContainer.style.transform = "none"; // Remove any transforms
+            slideContainer.style.transition = "none"; // Remove any sliding transitions
             
-            current = (current + 1) % slides.length;
+            // Position all slides absolutely and find the tallest one
+            let maxHeight = 0;
+            slides.forEach((slide, index) => {
+                // Temporarily position as static to measure true height
+                slide.style.position = "static";
+                slide.style.opacity = "1";
+                slide.style.visibility = "visible";
+                
+                const height = slide.offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
             
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            // Set container to the maximum height
+            slideContainer.style.height = maxHeight + "px";
+            
+            // Now position all slides absolutely for pure fade transitions
+            slides.forEach((slide, index) => {
+                // Allow flex layout for the two-column content within each slide
+                slide.style.display = "flex";
+                slide.style.alignItems = "center";
+                slide.style.gap = "20px";
+                slide.style.transform = "none";
+                
+                // Set up for fade transitions only
+                slide.style.position = "absolute";
+                slide.style.top = "0";
+                slide.style.left = "0";
+                slide.style.width = "100%";
+                slide.style.transition = "opacity 0.6s ease-in-out, visibility 0.6s ease-in-out";
+                
+                if (index === 0) {
+                    slide.style.opacity = "1";
+                    slide.style.visibility = "visible";
+                    slide.style.zIndex = "2";
+                    slide.classList.add("active");
+                } else {
+                    slide.style.opacity = "0";
+                    slide.style.visibility = "hidden";
+                    slide.style.zIndex = "1";
+                    slide.classList.remove("active");
+                }
+            });
+            
+            function updateSlider() {
+                // Simple fade transitions between slides
+                slides.forEach((slide, index) => {
+                    if (index === currentSlide) {
+                        // Show active slide
+                        slide.style.opacity = "1";
+                        slide.style.visibility = "visible";
+                        slide.style.zIndex = "2";
+                        slide.classList.add("active");
+                    } else {
+                        // Hide inactive slides
+                        slide.style.opacity = "0";
+                        slide.style.visibility = "hidden";
+                        slide.style.zIndex = "1";
+                        slide.classList.remove("active");
+                    }
+                });
+                
+                // Update navigation dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle("active", index === currentSlide);
+                });
+            }
+            
+            container.nextSlide = function() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                updateSlider();
+            };
+            
+            container.previousSlide = function() {
+                currentSlide = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+                updateSlider();
+            };
+            
+            container.goToSlide = function(index) {
+                currentSlide = index;
+                updateSlider();
+            };
+        }
+        
+        function nextSlide(button) {
+            const container = button.closest(".two-column-slider-container");
+            if (container.nextSlide) {
+                container.nextSlide();
+            }
         }
         
         function previousSlide(button) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            let current = 0;
-            
-            slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
-                }
-            });
-            
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
-            
-            current = current === 0 ? slides.length - 1 : current - 1;
-            
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            if (container.previousSlide) {
+                container.previousSlide();
+            }
         }
         
         function goToSlide(button, index) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            
-            slides.forEach(slide => slide.classList.remove("active"));
-            dots.forEach(dot => dot.classList.remove("active"));
-            
-            slides[index].classList.add("active");
-            dots[index].classList.add("active");
+            if (container.goToSlide) {
+                container.goToSlide(index);
+            }
         }
         
-        // Auto-play functionality
-        ' . ($autoplay ? '
+        // Initialize sliders when DOM is loaded
         document.addEventListener("DOMContentLoaded", function() {
-            const containers = document.querySelectorAll(".two-column-slider-container");
-            containers.forEach(container => {
-                if (container.querySelector(".slide")) {
-                    setInterval(() => {
-                        const nextButton = container.querySelector(".slider-nav.next");
-                        if (nextButton) {
-                            nextSlide(nextButton);
-                        }
-                    }, ' . $autoplay_speed . ');
-                }
-            });
+            // Wait longer for all styles and layout to load
+            setTimeout(() => {
+                const containers = document.querySelectorAll(".two-column-slider-container");
+                containers.forEach(container => {
+                    const slides = container.querySelectorAll(".slide");
+                    
+                    initializeSlider(container);
+                    
+                    // Auto-play functionality
+                    ' . ($autoplay ? '
+                    if (container.querySelector(".slide")) {
+                        setInterval(() => {
+                            if (container.nextSlide) {
+                                container.nextSlide();
+                            }
+                        }, ' . $autoplay_speed . ');
+                    }
+                    ' : '') . '
+                });
+            }, 500); // Increased delay
         });
-        ' : '') . '
     </script>';
     
     $output .= '</div>';
