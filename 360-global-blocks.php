@@ -6,26 +6,154 @@ Version: 1.1.0
 Author: Kaz Alvis
 */
 
-// Include the Plugin Update Checker
-require 'vendor/plugin-update-checker/plugin-update-checker.php';
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-$myUpdateChecker = PucFactory::buildUpdateChecker(
-	'https://github.com/KazimirAlvis/360-Global-Blocks/',
-	__FILE__,
-	'360-global-blocks'
-);
-
-//Set the branch that contains the stable release.
-$myUpdateChecker->setBranch('main');
-
-//Since the repository is private, set the access token.
-//The token is stored in a constant defined in wp-config.php for security.
-if ( defined('GITHUB_ACCESS_TOKEN') ) {
-  $myUpdateChecker->setAuthentication(GITHUB_ACCESS_TOKEN);
+/**
+ * Plugin Update Checker
+ * Based on the Global 360 Theme updater system
+ */
+class Global_360_Plugin_Updater {
+	
+	private $plugin_slug;
+	private $plugin_version;
+	private $update_path;
+	private $github_username;
+	private $github_repo;
+	private $plugin_file;
+	
+	function __construct() {
+		$this->plugin_slug = plugin_basename(__FILE__);
+		$this->plugin_version = '1.1.0'; // Match your plugin version
+		$this->plugin_file = __FILE__;
+		$this->github_username = 'KazimirAlvis';
+		$this->github_repo = '360-Global-Blocks';
+		$this->update_path = 'https://api.github.com/repos/' . $this->github_username . '/' . $this->github_repo . '/releases/latest';
+		
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_update' ) );
+		add_action( 'admin_notices', array( $this, 'update_notice' ) );
+	}
+	
+	public function check_for_update( $transient ) {
+		if ( empty( $transient->checked ) ) {
+			return $transient;
+		}
+		
+		$remote_version = $this->get_remote_version();
+		
+		if ( $remote_version && version_compare( $this->plugin_version, $remote_version, '<' ) ) {
+			$transient->response[ $this->plugin_slug ] = (object) array(
+				'slug' => dirname( $this->plugin_slug ),
+				'new_version' => $remote_version,
+				'url' => 'https://github.com/' . $this->github_username . '/' . $this->github_repo,
+				'package' => 'https://github.com/' . $this->github_username . '/' . $this->github_repo . '/archive/refs/heads/main.zip'
+			);
+		}
+		
+		return $transient;
+	}
+	
+	public function get_remote_version() {
+		$request = wp_remote_get( $this->update_path );
+		
+		if ( ! is_wp_error( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) {
+			$body = wp_remote_retrieve_body( $request );
+			$data = json_decode( $body, true );
+			
+			if ( isset( $data['tag_name'] ) ) {
+				return ltrim( $data['tag_name'], 'v' );
+			}
+		}
+		
+		return false;
+	}
+	
+	public function update_notice() {
+		$remote_version = $this->get_remote_version();
+		
+		if ( $remote_version && version_compare( $this->plugin_version, $remote_version, '<' ) ) {
+			echo '<div class="notice notice-warning">';
+			echo '<p><strong>360 Global Blocks Plugin Update Available!</strong> Version ' . esc_html( $remote_version ) . ' is now available. You are currently using version ' . esc_html( $this->plugin_version ) . '.</p>';
+			echo '<p><a href="' . admin_url( 'plugins.php' ) . '" class="button button-primary">Update Plugin</a></p>';
+			echo '</div>';
+		}
+	}
 }
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Initialize the plugin updater
+new Global_360_Plugin_Updater();
+
+/**
+ * Add plugin update menu to admin
+ */
+add_action( 'admin_menu', function() {
+	add_submenu_page(
+		'plugins.php',
+		'Plugin Updates',
+		'Plugin Updates',
+		'manage_options',
+		'360-blocks-updates',
+		'global_360_blocks_updates_page'
+	);
+});
+
+/**
+ * Plugin updates admin page
+ */
+function global_360_blocks_updates_page() {
+	
+	$updater = new Global_360_Plugin_Updater();
+	$remote_version = $updater->get_remote_version();
+	
+	echo '<div class="wrap">';
+	echo '<h1>360 Global Blocks Plugin Updates</h1>';
+	
+	if ( $remote_version ) {
+		if ( version_compare( '1.1.0', $remote_version, '<' ) ) {
+			echo '<div class="notice notice-warning">';
+			echo '<p><strong>Update Available!</strong> Version ' . esc_html( $remote_version ) . ' is available. You are currently using version 1.1.0.</p>';
+			echo '</div>';
+			
+			echo '<h2>New Version Available</h2>';
+			echo '<p>Version <strong>' . esc_html( $remote_version ) . '</strong> is now available.</p>';
+			echo '<p>Current Version: <strong>1.1.0</strong></p>';
+			echo '<p>Remote Version: <strong>' . esc_html( $remote_version ) . '</strong></p>';
+			
+			echo '<h3>Update Now</h3>';
+			echo '<p>You can update this plugin from the main Plugins page.</p>';
+			echo '<a href="' . admin_url( 'plugins.php' ) . '" class="button button-primary">Go to Plugins Page to Update</a>';
+		} else {
+			echo '<div class="notice notice-success">';
+			echo '<p><strong>Plugin is up to date!</strong> You are running the latest version (' . esc_html( $remote_version ) . ').</p>';
+			echo '</div>';
+			
+			echo '<h2>Current Status</h2>';
+			echo '<p>Your plugin is up to date with the latest version from GitHub.</p>';
+			echo '<p>Current Version: <strong>1.1.0</strong></p>';
+			echo '<p>Latest Available: <strong>' . esc_html( $remote_version ) . '</strong></p>';
+		}
+	} else {
+		echo '<div class="notice notice-error">';
+		echo '<p><strong>Unable to check for updates.</strong> Please check your internet connection and try again.</p>';
+		echo '</div>';
+	}
+	
+	echo '<h3>Manual Update Check</h3>';
+	echo '<p>Click the button below to manually check for plugin updates.</p>';
+	
+	if ( isset( $_GET['check_update'] ) ) {
+		delete_transient( 'update_plugins' );
+		echo '<div class="notice notice-info"><p><strong>Update check completed!</strong> Refresh this page to see the latest status.</p></div>';
+	}
+	
+	echo '<a href="' . add_query_arg( 'check_update', '1' ) . '" class="button">Check for Updates Now</a>';
+	
+	echo '<h3>Update Settings</h3>';
+	echo '<p><strong>Repository:</strong> https://github.com/KazimirAlvis/360-Global-Blocks</p>';
+	echo '<p><strong>Update Method:</strong> GitHub Releases API</p>';
+	echo '<p><strong>Automatic Updates:</strong> Enabled - WordPress will automatically check for and install plugin updates.</p>';
+	
+	echo '</div>';
+}
 
 // Helper function to get YouTube embed URL
 if (!function_exists('global360blocks_get_youtube_embed_url')) {
