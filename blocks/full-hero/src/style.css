@@ -90,9 +90,9 @@
 }
 
 /* PR360 Questionnaire Button Styling - Full Hero Block */
-.wp-block-global360blocks-full-hero pr360-questionnaire::part(button-begin) {
+.full-hero-block pr360-questionnaire::part(begin-button) {
     font-size: 18px !important;
-    font-family: var(--wp--preset--font-family--body-font) !important;
+    font-family: var(--body-font, Arial, sans-serif) !important;
     font-weight: 500 !important;
     border-radius: 27px !important;
     padding: 15px 30px !important;
@@ -109,12 +109,12 @@
     line-height: 22px !important;
     text-decoration: none !important;
     box-sizing: border-box !important;
-    background-color: var(--cpt360-primary) !important;
+    background-color: var(--cpt360-primary, #007cba) !important;
     color: #ffffff !important;
-    border: 1px solid var(--cpt360-primary) !important;
+    border: 1px solid var(--cpt360-primary, #007cba) !important;
 }
 
-.wp-block-global360blocks-full-hero pr360-questionnaire::part(button-begin):hover {
+.full-hero-block pr360-questionnaire::part(begin-button):hover {
     background-color: #fff !important;
     border: 1px solid #000 !important;
     color: #000 !important;

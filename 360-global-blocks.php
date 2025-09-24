@@ -994,6 +994,64 @@ add_filter('block_categories_all', function($categories, $post) {
     );
 }, 10, 2);
 
+// REST API endpoint for Symptoms AI content generation
+add_action('rest_api_init', function() {
+    register_rest_route('360blocks/v1', '/generate-symptoms', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+    
+    // Alternative route for symptoms AI block
+    register_rest_route('global360blocks/v1', '/generate-symptoms-content', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+});
+
+function global360blocks_generate_symptoms_api($request) {
+    $symptom = sanitize_text_field($request->get_param('symptom'));
+    
+    if (empty($symptom)) {
+        return new WP_Error('missing_symptom', 'Symptom parameter is required', array('status' => 400));
+    }
+    
+    // Check cache first
+    $cache_key = 'symptoms_ai_final_clean_' . md5($symptom);
+    $cached_content = get_transient($cache_key);
+    
+    if ($cached_content !== false) {
+        return array(
+            'success' => true,
+            'content' => $cached_content,
+            'source' => 'cache'
+        );
+    }
+    
+    // Generate content using template system
+    $content = global360blocks_generate_symptoms_content($symptom);
+    
+    // Cache for 7 days
+    set_transient($cache_key, $content, 7 * DAY_IN_SECONDS);
+    
+    return array(
+        'success' => true,
+        'content' => $content,
+        'source' => 'generated'
+    );
+}
+
+// Include symptoms AI render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/render.php';
+
+// Include page title hero render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/page-title-hero/render.php';
+
 // Register block
 function global360blocks_register_blocks() {
     // Register Test Hero block
@@ -1040,6 +1098,16 @@ function global360blocks_register_blocks() {
     // Register Two Column Slider block
     register_block_type( __DIR__ . '/blocks/two-column-slider/build', array(
         'render_callback' => 'global360blocks_render_two_column_slider_block',
+    ));
+    
+    // Register Symptoms AI block
+    register_block_type( __DIR__ . '/blocks/symptoms-ai/build', array(
+        'render_callback' => 'global360blocks_render_symptoms_ai_block'
+    ));
+    
+    // Register Page Title Hero block
+    register_block_type( __DIR__ . '/blocks/page-title-hero/build', array(
+        'render_callback' => 'global360blocks_render_page_title_hero_block'
     ));
 }
 
