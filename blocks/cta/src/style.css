@@ -96,10 +96,10 @@
 
 /* PR360 Questionnaire Button Styling - Plugin Blocks Only */
 /* Scope to plugin blocks to avoid conflicts with theme styling */
-.wp-block-global360blocks-cta pr360-questionnaire::part(begin-button),
-.wp-block-global360blocks-two-column pr360-questionnaire::part(begin-button),
-.wp-block-global360blocks-video-two-column pr360-questionnaire::part(begin-button),
-.wp-block-global360blocks-full-hero pr360-questionnaire::part(begin-button) {
+.wp-block-global360blocks-cta pr360-questionnaire::part(button-begin),
+.wp-block-global360blocks-two-column pr360-questionnaire::part(button-begin),
+.wp-block-global360blocks-video-two-column pr360-questionnaire::part(button-begin),
+.wp-block-global360blocks-full-hero pr360-questionnaire::part(button-begin) {
     font-size: 18px !important;
     font-family: var(--wp--preset--font-family--body-font) !important;
     font-weight: 500 !important;
@@ -124,10 +124,10 @@
 }
 
 /* Hover state for plugin block buttons */
-.wp-block-global360blocks-cta pr360-questionnaire::part(begin-button):hover,
-.wp-block-global360blocks-two-column pr360-questionnaire::part(begin-button):hover,
-.wp-block-global360blocks-video-two-column pr360-questionnaire::part(begin-button):hover,
-.wp-block-global360blocks-full-hero pr360-questionnaire::part(begin-button):hover {
+.wp-block-global360blocks-cta pr360-questionnaire::part(button-begin):hover,
+.wp-block-global360blocks-two-column pr360-questionnaire::part(button-begin):hover,
+.wp-block-global360blocks-video-two-column pr360-questionnaire::part(button-begin):hover,
+.wp-block-global360blocks-full-hero pr360-questionnaire::part(button-begin):hover {
     background-color: #fff !important;
     border: 1px solid #000 !important;
     color: #000 !important;
