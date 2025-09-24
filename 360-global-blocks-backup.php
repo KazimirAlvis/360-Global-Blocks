@@ -7,6 +7,150 @@ Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+				'slug' => dirname( $this->plugin_slug ),
+				'new_version' => $remote_version,
+				'url' => 'https://github.com/' . $this->github_username . '/' . $this->github_repo,
+				'package' => 'https://github.com/' . $this->github_username . '/' . $this->github_repo . '/archive/refs/heads/main.zip'
+			);
+		}
+		
+		return $transient;
+	}
+	
+	public function get_remote_version() {
+		$headers = array();
+		
+		// Add authorization header if GitHub token is available
+		if ( !empty( $this->github_token ) ) {
+			$headers['Authorization'] = 'token ' . $this->github_token;
+		}
+		
+		$args = array(
+			'headers' => $headers,
+			'timeout' => 30
+		);
+		
+		$request = wp_remote_get( $this->update_path, $args );
+		
+		if ( ! is_wp_error( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) {
+			$body = wp_remote_retrieve_body( $request );
+			$data = json_decode( $body, true );
+			
+			// For commit-based updates, we'll use the commit date as version
+			if ( isset( $data['commit']['committer']['date'] ) ) {
+				$commit_date = $data['commit']['committer']['date'];
+				// Convert to version format like 1.1.1 (using timestamp)
+				$timestamp = strtotime( $commit_date );
+				return '1.1.' . date( 'Ymd', $timestamp ); // e.g., 1.1.20250922
+			}
+		}
+		
+		return false;
+	}
+	
+	public function update_notice() {
+		$remote_version = $this->get_remote_version();
+		
+		if ( $remote_version && version_compare( $this->plugin_version, $remote_version, '<' ) ) {
+			echo '<div class="notice notice-warning">';
+			echo '<p><strong>360 Global Blocks Plugin Update Available!</strong> Version ' . esc_html( $remote_version ) . ' is now available. You are currently using version ' . esc_html( $this->plugin_version ) . '.</p>';
+			echo '<p><a href="' . admin_url( 'plugins.php' ) . '" class="button button-primary">Update Plugin</a></p>';
+			echo '</div>';
+		}
+	}
+}
+
+// Initialize the plugin updater
+new Global_360_Plugin_Updater();
+
+/**
+ * Add plugin update menu to admin
+ */
+add_action( 'admin_menu', function() {
+	// Debug: Add admin notice to see if this code runs
+	add_action( 'admin_notices', function() {
+		if ( current_user_can( 'manage_options' ) ) {
+			echo '<div class="notice notice-info"><p><strong>360 Plugin Updater:</strong> Admin menu hook is running.</p></div>';
+		}
+	});
+	
+	add_submenu_page(
+		'plugins.php',
+		'Plugin Updates',
+		'Plugin Updates',
+		'manage_options',
+		'360-blocks-updates',
+		'global_360_blocks_updates_page'
+	);
+});
+
+/**
+ * Additional debug - check if plugin is active
+ */
+add_action( 'admin_notices', function() {
+	if ( current_user_can( 'manage_options' ) ) {
+		echo '<div class="notice notice-warning"><p><strong>Debug:</strong> 360 Global Blocks plugin is active and running. Version: 1.1.0</p></div>';
+	}
+});
+
+/**
+ * Plugin updates admin page
+ */
+function global_360_blocks_updates_page() {
+	
+	$updater = new Global_360_Plugin_Updater();
+	$remote_version = $updater->get_remote_version();
+	
+	echo '<div class="wrap">';
+	echo '<h1>360 Global Blocks Plugin Updates</h1>';
+	
+	if ( $remote_version ) {
+		if ( version_compare( '1.1.0', $remote_version, '<' ) ) {
+			echo '<div class="notice notice-warning">';
+			echo '<p><strong>Update Available!</strong> Version ' . esc_html( $remote_version ) . ' is available. You are currently using version 1.1.0.</p>';
+			echo '</div>';
+			
+			echo '<h2>New Version Available</h2>';
+			echo '<p>Version <strong>' . esc_html( $remote_version ) . '</strong> is now available.</p>';
+			echo '<p>Current Version: <strong>1.1.0</strong></p>';
+			echo '<p>Remote Version: <strong>' . esc_html( $remote_version ) . '</strong></p>';
+			
+			echo '<h3>Update Now</h3>';
+			echo '<p>You can update this plugin from the main Plugins page.</p>';
+			echo '<a href="' . admin_url( 'plugins.php' ) . '" class="button button-primary">Go to Plugins Page to Update</a>';
+		} else {
+			echo '<div class="notice notice-success">';
+			echo '<p><strong>Plugin is up to date!</strong> You are running the latest version (' . esc_html( $remote_version ) . ').</p>';
+			echo '</div>';
+			
+			echo '<h2>Current Status</h2>';
+			echo '<p>Your plugin is up to date with the latest version from GitHub.</p>';
+			echo '<p>Current Version: <strong>1.1.0</strong></p>';
+			echo '<p>Latest Available: <strong>' . esc_html( $remote_version ) . '</strong></p>';
+		}
+	} else {
+		echo '<div class="notice notice-error">';
+		echo '<p><strong>Unable to check for updates.</strong> Please check your internet connection and try again.</p>';
+		echo '</div>';
+	}
+	
+	echo '<h3>Manual Update Check</h3>';
+	echo '<p>Click the button below to manually check for plugin updates.</p>';
+	
+	if ( isset( $_GET['check_update'] ) ) {
+		delete_transient( 'update_plugins' );
+		echo '<div class="notice notice-info"><p><strong>Update check completed!</strong> Refresh this page to see the latest status.</p></div>';
+	}
+	
+	echo '<a href="' . add_query_arg( 'check_update', '1' ) . '" class="button">Check for Updates Now</a>';
+	
+	echo '<h3>Update Settings</h3>';
+	echo '<p><strong>Repository:</strong> https://github.com/KazimirAlvis/360-Global-Blocks</p>';
+	echo '<p><strong>Update Method:</strong> GitHub Releases API</p>';
+	echo '<p><strong>Automatic Updates:</strong> Enabled - WordPress will automatically check for and install plugin updates.</p>';
+	
+	echo '</div>';
+}
 
 // Helper function to get YouTube embed URL
 if (!function_exists('global360blocks_get_youtube_embed_url')) {
@@ -129,14 +273,55 @@ function global360blocks_render_two_column_slider_block($attributes) {
     }
     
     $output = '<div class="wp-block-global360blocks-two-column-slider">';
-    $output .= '<div class="two-column-slider-container">';
-    $output .= '<div class="slider-wrapper">';
+    $output .= '<div class="two-column-slider-container" style="position: relative;">';
     
     if ($show_arrows) {
-        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide">‹</button>';
+        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide" style="position: absolute; left: 21px; bottom: 9px; z-index: 10; background: rgba(0,0,0,0.5); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">‹</button>';
+        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide" style="position: absolute; right: 21px; bottom: 9px; z-index: 10; background: rgba(0,0,0,0.5); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px;">›</button>';
     }
     
-    $output .= '<div class="slide-container">';
+    $output .= '<div class="slider-wrapper" style="position: relative; overflow: hidden;">';
+    
+    $output .= '<div class="slide-container" style="position: relative;">';
+    
+    // Add CSS to prevent any sliding and ensure pure fade transitions
+    $output .= '<style>
+        .wp-block-global360blocks-two-column-slider {
+            margin-bottom: 20px;
+        }
+        .two-column-slider-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .two-column-slider-container .slide-container { 
+            display: block !important; 
+            transform: none !important; 
+            transition: none !important; 
+        }
+        .two-column-slider-container .slide { 
+            display: flex !important; 
+            flex: none !important; 
+            transform: none !important;
+            align-items: center;
+            gap: 20px;
+        }
+        .two-column-slider-container .slide .slide-content {
+            flex: 1;
+        }
+        .two-column-slider-container .slide .slide-image {
+            flex: 1;
+        }
+        .two-column-slider-container .slide .slide-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .two-column-slider-container .slide:not(.active) { 
+            opacity: 0 !important; 
+            visibility: hidden !important; 
+            position: absolute !important; 
+        }
+    </style>';
     
     foreach ($slides as $index => $slide) {
         $heading = !empty($slide['heading']) ? esc_html($slide['heading']) : '';
@@ -145,7 +330,17 @@ function global360blocks_render_two_column_slider_block($attributes) {
         
         $active_class = $index === 0 ? 'active' : '';
         
-        $output .= '<div class="slide ' . $active_class . '" data-slide="' . $index . '">';
+        // Add inline styles for immediate positioning
+        $slide_style = 'transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;';
+        if ($index === 0) {
+            // First slide stays in normal flow to establish container height
+            $slide_style .= ' position: relative; opacity: 1; visibility: visible; z-index: 2;';
+        } else {
+            // Other slides are absolutely positioned and hidden
+            $slide_style .= ' position: absolute; top: 0; left: 0; width: 100%; opacity: 0; visibility: hidden; z-index: 1;';
+        }
+        
+        $output .= '<div class="slide ' . $active_class . '" data-slide="' . $index . '" style="' . $slide_style . '">';
         $output .= '<div class="slide-content">';
         if ($heading) {
             $output .= '<h2 class="slide-heading">' . $heading . '</h2>';
@@ -165,10 +360,6 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     $output .= '</div>';
     
-    if ($show_arrows) {
-        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide">›</button>';
-    }
-    
     $output .= '</div>';
     
     if ($show_dots) {
@@ -182,78 +373,165 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     $output .= '</div>';
     
-    // Add slider JavaScript
+    // Add slider JavaScript with improved sliding animation
     $output .= '<script>
-        function nextSlide(button) {
-            const container = button.closest(".two-column-slider-container");
+        function initializeSlider(container) {
+            const slideContainer = container.querySelector(".slide-container");
             const slides = container.querySelectorAll(".slide");
             const dots = container.querySelectorAll(".dot");
-            let current = 0;
+            let currentSlide = 0;
             
+            // Prevent multiple initializations
+            if (slideContainer.hasAttribute("data-initialized")) {
+                return;
+            }
+            slideContainer.setAttribute("data-initialized", "true");
+            
+            // Prevent flicker by immediately hiding non-active slides
             slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
+                if (index !== 0) {
+                    slide.style.opacity = "0";
+                    slide.style.visibility = "hidden";
                 }
             });
             
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
+            // Set up slide container for fade transitions only
+            slideContainer.style.position = "relative";
+            slideContainer.style.width = "100%";
+            slideContainer.style.height = "auto";
+            slideContainer.style.display = "block"; // Ensure no flex layout
+            slideContainer.style.transform = "none"; // Remove any transforms
+            slideContainer.style.transition = "none"; // Remove any sliding transitions
             
-            current = (current + 1) % slides.length;
+            // Position all slides absolutely and find the tallest one
+            let maxHeight = 0;
+            slides.forEach((slide, index) => {
+                // Temporarily position as static to measure true height
+                slide.style.position = "static";
+                slide.style.opacity = "1";
+                slide.style.visibility = "visible";
+                
+                const height = slide.offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
             
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            // Set container to the maximum height
+            slideContainer.style.height = maxHeight + "px";
+            
+            // Now position all slides absolutely for pure fade transitions
+            slides.forEach((slide, index) => {
+                // Allow flex layout for the two-column content within each slide
+                slide.style.display = "flex";
+                slide.style.alignItems = "center";
+                slide.style.gap = "20px";
+                slide.style.transform = "none";
+                
+                // Set up for fade transitions only
+                slide.style.position = "absolute";
+                slide.style.top = "0";
+                slide.style.left = "0";
+                slide.style.width = "100%";
+                slide.style.transition = "opacity 0.6s ease-in-out, visibility 0.6s ease-in-out";
+                
+                if (index === 0) {
+                    slide.style.opacity = "1";
+                    slide.style.visibility = "visible";
+                    slide.style.zIndex = "2";
+                    slide.classList.add("active");
+                } else {
+                    slide.style.opacity = "0";
+                    slide.style.visibility = "hidden";
+                    slide.style.zIndex = "1";
+                    slide.classList.remove("active");
+                }
+            });
+            
+            function updateSlider() {
+                // Simple fade transitions between slides
+                slides.forEach((slide, index) => {
+                    if (index === currentSlide) {
+                        // Show active slide
+                        slide.style.opacity = "1";
+                        slide.style.visibility = "visible";
+                        slide.style.zIndex = "2";
+                        slide.classList.add("active");
+                    } else {
+                        // Hide inactive slides
+                        slide.style.opacity = "0";
+                        slide.style.visibility = "hidden";
+                        slide.style.zIndex = "1";
+                        slide.classList.remove("active");
+                    }
+                });
+                
+                // Update navigation dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle("active", index === currentSlide);
+                });
+            }
+            
+            container.nextSlide = function() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                updateSlider();
+            };
+            
+            container.previousSlide = function() {
+                currentSlide = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+                updateSlider();
+            };
+            
+            container.goToSlide = function(index) {
+                currentSlide = index;
+                updateSlider();
+            };
+        }
+        
+        function nextSlide(button) {
+            const container = button.closest(".two-column-slider-container");
+            if (container.nextSlide) {
+                container.nextSlide();
+            }
         }
         
         function previousSlide(button) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            let current = 0;
-            
-            slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
-                }
-            });
-            
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
-            
-            current = current === 0 ? slides.length - 1 : current - 1;
-            
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            if (container.previousSlide) {
+                container.previousSlide();
+            }
         }
         
         function goToSlide(button, index) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            
-            slides.forEach(slide => slide.classList.remove("active"));
-            dots.forEach(dot => dot.classList.remove("active"));
-            
-            slides[index].classList.add("active");
-            dots[index].classList.add("active");
+            if (container.goToSlide) {
+                container.goToSlide(index);
+            }
         }
         
-        // Auto-play functionality
-        ' . ($autoplay ? '
+        // Initialize sliders when DOM is loaded
         document.addEventListener("DOMContentLoaded", function() {
-            const containers = document.querySelectorAll(".two-column-slider-container");
-            containers.forEach(container => {
-                if (container.querySelector(".slide")) {
-                    setInterval(() => {
-                        const nextButton = container.querySelector(".slider-nav.next");
-                        if (nextButton) {
-                            nextSlide(nextButton);
-                        }
-                    }, ' . $autoplay_speed . ');
-                }
-            });
+            // Wait longer for all styles and layout to load
+            setTimeout(() => {
+                const containers = document.querySelectorAll(".two-column-slider-container");
+                containers.forEach(container => {
+                    const slides = container.querySelectorAll(".slide");
+                    
+                    initializeSlider(container);
+                    
+                    // Auto-play functionality
+                    ' . ($autoplay ? '
+                    if (container.querySelector(".slide")) {
+                        setInterval(() => {
+                            if (container.nextSlide) {
+                                container.nextSlide();
+                            }
+                        }, ' . $autoplay_speed . ');
+                    }
+                    ' : '') . '
+                });
+            }, 500); // Increased delay
         });
-        ' : '') . '
     </script>';
     
     $output .= '</div>';
@@ -994,6 +1272,64 @@ add_filter('block_categories_all', function($categories, $post) {
     );
 }, 10, 2);
 
+// REST API endpoint for Symptoms AI content generation
+add_action('rest_api_init', function() {
+    register_rest_route('360blocks/v1', '/generate-symptoms', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+    
+    // Alternative route for symptoms AI block
+    register_rest_route('global360blocks/v1', '/generate-symptoms-content', array(
+        'methods' => 'POST',
+        'callback' => 'global360blocks_generate_symptoms_api',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+});
+
+function global360blocks_generate_symptoms_api($request) {
+    $symptom = sanitize_text_field($request->get_param('symptom'));
+    
+    if (empty($symptom)) {
+        return new WP_Error('missing_symptom', 'Symptom parameter is required', array('status' => 400));
+    }
+    
+    // Check cache first
+    $cache_key = 'symptoms_ai_final_clean_' . md5($symptom);
+    $cached_content = get_transient($cache_key);
+    
+    if ($cached_content !== false) {
+        return array(
+            'success' => true,
+            'content' => $cached_content,
+            'source' => 'cache'
+        );
+    }
+    
+    // Generate content using template system
+    $content = global360blocks_generate_symptoms_content($symptom);
+    
+    // Cache for 7 days
+    set_transient($cache_key, $content, 7 * DAY_IN_SECONDS);
+    
+    return array(
+        'success' => true,
+        'content' => $content,
+        'source' => 'generated'
+    );
+}
+
+// Include symptoms AI render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/render.php';
+
+// Include page title hero render functions
+require_once plugin_dir_path(__FILE__) . 'blocks/page-title-hero/render.php';
+
 // Register block
 function global360blocks_register_blocks() {
     // Register Test Hero block
@@ -1040,6 +1376,16 @@ function global360blocks_register_blocks() {
     // Register Two Column Slider block
     register_block_type( __DIR__ . '/blocks/two-column-slider/build', array(
         'render_callback' => 'global360blocks_render_two_column_slider_block',
+    ));
+    
+    // Register Symptoms AI block
+    register_block_type( __DIR__ . '/blocks/symptoms-ai/build', array(
+        'render_callback' => 'global360blocks_render_symptoms_ai_block'
+    ));
+    
+    // Register Page Title Hero block
+    register_block_type( __DIR__ . '/blocks/page-title-hero/build', array(
+        'render_callback' => 'global360blocks_render_page_title_hero_block'
     ));
 }
 
@@ -1262,6 +1608,16 @@ add_action('wp_enqueue_scripts', function() {
         );
     }
     
+    // Symptoms AI block frontend CSS
+    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/symptoms-ai/build/style-index.css' )) {
+        wp_enqueue_style(
+            'global360blocks-symptoms-ai-style-frontend',
+            plugins_url('blocks/symptoms-ai/build/style-index.css', __FILE__),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/build/style-index.css')
+        );
+    }
+    
     // Two Column Slider block frontend JavaScript
     if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/index.js' )) {
         wp_enqueue_script(
@@ -1271,6 +1627,23 @@ add_action('wp_enqueue_scripts', function() {
             filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/index.js'),
             true
         );
+    }
+    
+    // Symptoms AI helper JavaScript for admin
+    if (is_admin() && file_exists( plugin_dir_path( __FILE__ ) . 'blocks/symptoms-ai/ai-helper.js' )) {
+        wp_enqueue_script(
+            'symptoms-ai-helper',
+            plugins_url( 'blocks/symptoms-ai/ai-helper.js', __FILE__ ),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/ai-helper.js'),
+            true
+        );
+        
+        // Localize script with API settings
+        wp_localize_script('symptoms-ai-helper', 'wpApiSettings', array(
+            'root' => esc_url_raw(rest_url()),
+            'nonce' => wp_create_nonce('wp_rest')
+        ));
     }
 });
 
