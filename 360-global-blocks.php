@@ -719,7 +719,7 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     // Assessment button
     if (!empty($assess_id)) {
         $output .= '<div class="video-two-column-button">';
-        $output .= '<pr360-questionnaire class="btn btn_global" url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+        $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
         $output .= '</div>';
     }
     
@@ -1447,7 +1447,7 @@ function global360blocks_render_cta_block( $attributes, $content ) {
         $output .= '<h2 class="cta-heading">' . $heading . '</h2>';
     }
     $output .= '<div class="cta-button">';
-    $output .= '<pr360-questionnaire class="btn btn_global" url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
     $output .= '</div>';
     $output .= '</div></div></div>';
     return $output;
@@ -1482,7 +1482,7 @@ function global360blocks_render_two_column_block( $attributes, $content ) {
         $output .= '<div class="two-column-body">' . $body_text . '</div>';
     }
     $output .= '<div class="two-column-button">';
-    $output .= '<pr360-questionnaire class="btn btn_global" url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
     $output .= '</div>';
     $output .= '</div>';
     
@@ -1507,7 +1507,7 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
     if ($subheading) {
         $output .= '<p class="full-hero-subheading">' . $subheading . '</p>';
     }
-    $output .= '<pr360-questionnaire class="btn btn_global" url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
     $output .= '</div></div>';
     return $output;
 }
