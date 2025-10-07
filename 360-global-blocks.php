@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.14
+ * Version: 1.2.15
 Author: Kaz Alvis
 */
 
@@ -45,7 +45,7 @@ function force_plugin_update_check() {
                 'plugin' => $plugin_slug,
                 'new_version' => $github_version,
                 'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
             );
             
             // Set the transient
@@ -69,7 +69,7 @@ function show_update_debug_info() {
             echo '<div class="notice notice-warning"><p>';
             echo '<strong>🔄 360 Global Blocks Update Available!</strong><br>';
             echo "Current version: <strong>$current_version</strong> | Latest version: <strong>$github_version</strong><br>";
-            echo '<a href="https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip" class="button button-primary" style="margin-top: 10px;">Download Update v' . $github_version . '</a> ';
+            echo '<a href="https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip" class="button button-primary" style="margin-top: 10px;">Download Update v' . $github_version . '</a> ';
             echo '<em>Download, extract, and replace plugin files via FTP</em>';
             echo '</p></div>';
         } else {
@@ -109,7 +109,7 @@ function check_for_plugin_update_from_github($transient) {
             'plugin' => $plugin_slug,
             'new_version' => $github_version,
             'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-            'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+            'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
         );
     }
     
@@ -178,7 +178,7 @@ function plugin_info_from_github($result, $action, $args) {
         'author' => $plugin_data['Author'],
         'homepage' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
         'short_description' => $plugin_data['Description'],
-        'download_link' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+        'download_link' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
     );
 }
 
