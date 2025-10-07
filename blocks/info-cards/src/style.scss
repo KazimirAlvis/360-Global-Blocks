@@ -42,14 +42,16 @@
 			display: flex;
 			justify-content: center;
 
-			.info-card-icon {
+			svg, .info-card-icon {
+				width: 64px;
+				height: 64px;
 				fill: var(--cpt360-primary, #0073aa);
 				stroke: var(--cpt360-primary, #0073aa);
 				transition: transform 0.3s ease;
 			}
 		}
 
-		&:hover .info-card-icon {
+		&:hover .info-card-icon, &:hover svg {
 			transform: scale(1.1);
 		}
 

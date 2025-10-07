@@ -43,11 +43,27 @@
 			display: flex;
 			justify-content: center;
 
+			.info-card-icon-preview {
+				width: 64px;
+				height: 64px;
+				background-color: #e1f5fe;
+				margin: 0 auto;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 12px;
+				font-weight: bold;
+				color: #0277bd;
+				border-radius: 8px;
+				transition: transform 0.2s ease;
+			}
+
 			.info-card-icon {
 				transition: transform 0.2s ease;
 			}
 
-			&:hover .info-card-icon {
+			&:hover .info-card-icon,
+			&:hover .info-card-icon-preview {
 				transform: scale(1.1);
 			}
 		}
