@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.5
+ * Version: 1.2.6
 Author: Kaz Alvis
 */
 
@@ -85,19 +85,30 @@ function get_latest_github_version() {
         return $cached_version;
     }
     
-    // Get the main plugin file from GitHub to read version
-    $github_url = 'https://raw.githubusercontent.com/KazimirAlvis/360-Global-Blocks/main/360-global-blocks.php';
-    $response = wp_remote_get($github_url, array('timeout' => 10));
+    // Use GitHub API to avoid CDN caching issues
+    $github_api_url = 'https://api.github.com/repos/KazimirAlvis/360-Global-Blocks/contents/360-global-blocks.php';
+    $response = wp_remote_get($github_api_url, array(
+        'timeout' => 10,
+        'headers' => array(
+            'User-Agent' => 'WordPress-360-Global-Blocks'
+        )
+    ));
     
     if (!is_wp_error($response)) {
         $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
         
-        // Extract version from plugin header
-        if (preg_match('/^\s*\*\s*Version:\s*(.+)$/m', $body, $matches)) {
-            $version = trim($matches[1]);
-            // Cache for 1 hour
-            set_transient($transient_key, $version, HOUR_IN_SECONDS);
-            return $version;
+        if (isset($data['content'])) {
+            // Decode base64 content
+            $file_content = base64_decode($data['content']);
+            
+            // Extract version from plugin header
+            if (preg_match('/^\s*\*\s*Version:\s*(.+)$/m', $file_content, $matches)) {
+                $version = trim($matches[1]);
+                // Cache for 1 hour
+                set_transient($transient_key, $version, HOUR_IN_SECONDS);
+                return $version;
+            }
         }
     }
     
