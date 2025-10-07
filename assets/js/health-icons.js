@@ -76,16 +76,70 @@ window.HealthIcons = window.HealthIcons || {
             return healthIconsAjax.all_icons;
         }
         
-        // Fallback icons
+        // Comprehensive Health Icons collection
         return {
-            'body/heart': { name: 'Heart', category: 'Body Parts & Anatomy' },
-            'devices/stethoscope': { name: 'Stethoscope', category: 'Medical Devices' },
-            'devices/thermometer_digital': { name: 'Thermometer', category: 'Medical Devices' },
+            // Body Parts & Anatomy
+            'body/heart_organ': { name: 'Heart', category: 'Body Parts & Anatomy' },
             'body/lungs': { name: 'Lungs', category: 'Body Parts & Anatomy' },
             'body/brain': { name: 'Brain', category: 'Body Parts & Anatomy' },
+            'body/eye': { name: 'Eye', category: 'Body Parts & Anatomy' },
+            'body/ear': { name: 'Ear', category: 'Body Parts & Anatomy' },
+            'body/tooth': { name: 'Tooth', category: 'Body Parts & Anatomy' },
+            'body/kidneys': { name: 'Kidneys', category: 'Body Parts & Anatomy' },
+            'body/liver': { name: 'Liver', category: 'Body Parts & Anatomy' },
+            'body/stomach': { name: 'Stomach', category: 'Body Parts & Anatomy' },
+            'body/spine': { name: 'Spine', category: 'Body Parts & Anatomy' },
+            
+            // Medical Conditions
+            'conditions/allergies': { name: 'Allergies', category: 'Medical Conditions' },
+            'conditions/headache': { name: 'Headache', category: 'Medical Conditions' },
+            'conditions/fever': { name: 'Fever', category: 'Medical Conditions' },
+            'conditions/coughing': { name: 'Coughing', category: 'Medical Conditions' },
+            'conditions/diarrhea': { name: 'Diarrhea', category: 'Medical Conditions' },
+            'conditions/nausea': { name: 'Nausea', category: 'Medical Conditions' },
+            'conditions/back_pain': { name: 'Back Pain', category: 'Medical Conditions' },
+            'conditions/diabetes': { name: 'Diabetes', category: 'Medical Conditions' },
+            'conditions/overweight': { name: 'Overweight', category: 'Medical Conditions' },
+            'conditions/underweight': { name: 'Underweight', category: 'Medical Conditions' },
+            'conditions/pneumonia': { name: 'Pneumonia', category: 'Medical Conditions' },
+            'conditions/tb': { name: 'Tuberculosis', category: 'Medical Conditions' },
+            
+            // Medical Devices
+            'devices/stethoscope': { name: 'Stethoscope', category: 'Medical Devices' },
             'devices/syringe': { name: 'Syringe', category: 'Medical Devices' },
+            'devices/thermometer_digital': { name: 'Digital Thermometer', category: 'Medical Devices' },
+            'devices/blood_pressure': { name: 'Blood Pressure Monitor', category: 'Medical Devices' },
+            'devices/microscope': { name: 'Microscope', category: 'Medical Devices' },
+            'devices/wheelchair': { name: 'Wheelchair', category: 'Medical Devices' },
+            'devices/xray': { name: 'X-Ray', category: 'Medical Devices' },
+            'devices/ultrasound': { name: 'Ultrasound Scanner', category: 'Medical Devices' },
+            'devices/defibrillator': { name: 'Defibrillator', category: 'Medical Devices' },
+            'devices/cpap_machine': { name: 'CPAP Machine', category: 'Medical Devices' },
+            'devices/medicines': { name: 'Medicines', category: 'Medical Devices' },
+            
+            // Healthcare People
             'people/doctor': { name: 'Doctor', category: 'Healthcare People' },
-            'specialties/cardiology': { name: 'Cardiology', category: 'Medical Specialties' }
+            'people/nurse': { name: 'Nurse', category: 'Healthcare People' },
+            'people/doctor_female': { name: 'Female Doctor', category: 'Healthcare People' },
+            'people/doctor_male': { name: 'Male Doctor', category: 'Healthcare People' },
+            'people/elderly': { name: 'Elderly Person', category: 'Healthcare People' },
+            'people/pregnant': { name: 'Pregnant Woman', category: 'Healthcare People' },
+            'people/baby': { name: 'Baby', category: 'Healthcare People' },
+            'people/community_health_worker': { name: 'Community Health Worker', category: 'Healthcare People' },
+            'people/emergency_worker': { name: 'Emergency Worker', category: 'Healthcare People' },
+            'people/person': { name: 'Person', category: 'Healthcare People' },
+            
+            // Medical Specialties
+            'specialties/cardiology': { name: 'Cardiology', category: 'Medical Specialties' },
+            'specialties/neurology': { name: 'Neurology', category: 'Medical Specialties' },
+            'specialties/pediatrics': { name: 'Pediatrics', category: 'Medical Specialties' },
+            'specialties/orthopedics': { name: 'Orthopedics', category: 'Medical Specialties' },
+            'specialties/radiology': { name: 'Radiology', category: 'Medical Specialties' },
+            'specialties/pharmacy': { name: 'Pharmacy', category: 'Medical Specialties' },
+            'specialties/psychology': { name: 'Psychology', category: 'Medical Specialties' },
+            'specialties/physical_therapy': { name: 'Physical Therapy', category: 'Medical Specialties' },
+            'specialties/emergency_department': { name: 'Emergency Department', category: 'Medical Specialties' },
+            'specialties/intensive_care': { name: 'Intensive Care', category: 'Medical Specialties' }
         };
     },
     

@@ -8,6 +8,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Get Health Icons loader
+if (!class_exists('HealthIconsLoader')) {
+    return '<div class="wp-block-global360blocks-info-cards"><p>Error: HealthIconsLoader not available</p></div>';
+}
+
 $health_icons_loader = HealthIconsLoader::getInstance();
 
 // Get block attributes

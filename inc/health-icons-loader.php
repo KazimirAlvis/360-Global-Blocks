@@ -27,86 +27,341 @@ class HealthIconsLoader {
     }
 
     /**
-     * Get all available Health Icons - returns curated list
+     * Get all available Health Icons - returns comprehensive list
      */
     public function getAllIcons() {
         if ($this->icons_cache !== null) {
             return $this->icons_cache;
         }
 
-        // Return curated list of popular medical icons
+        // Comprehensive Health Icons collection organized by categories
         $this->icons_cache = array(
+            // Body Parts & Anatomy
             'body/heart_organ' => array(
                 'name' => 'Heart',
                 'category' => 'Body & Anatomy',
                 'id' => 'heart_organ',
-                'tags' => array()
+                'tags' => array('organ', 'cardiovascular', 'cardiology')
             ),
             'body/lungs' => array(
                 'name' => 'Lungs',
                 'category' => 'Body & Anatomy',
                 'id' => 'lungs',
-                'tags' => array()
+                'tags' => array('organ', 'respiratory', 'breathing')
             ),
-            'body/neurology' => array(
+            'body/brain' => array(
                 'name' => 'Brain',
                 'category' => 'Body & Anatomy',
-                'id' => 'neurology',
-                'tags' => array()
+                'id' => 'brain',
+                'tags' => array('organ', 'neurology', 'mental')
             ),
+            'body/eye' => array(
+                'name' => 'Eye',
+                'category' => 'Body & Anatomy',
+                'id' => 'eye',
+                'tags' => array('vision', 'sight', 'ophthalmology')
+            ),
+            'body/ear' => array(
+                'name' => 'Ear',
+                'category' => 'Body & Anatomy',
+                'id' => 'ear',
+                'tags' => array('hearing', 'audiology', 'ENT')
+            ),
+            'body/tooth' => array(
+                'name' => 'Tooth',
+                'category' => 'Body & Anatomy',
+                'id' => 'tooth',
+                'tags' => array('dental', 'oral', 'dentistry')
+            ),
+            'body/kidneys' => array(
+                'name' => 'Kidneys',
+                'category' => 'Body & Anatomy',
+                'id' => 'kidneys',
+                'tags' => array('organ', 'nephrology', 'urology')
+            ),
+            'body/liver' => array(
+                'name' => 'Liver',
+                'category' => 'Body & Anatomy',
+                'id' => 'liver',
+                'tags' => array('organ', 'hepatology', 'digestive')
+            ),
+            'body/stomach' => array(
+                'name' => 'Stomach',
+                'category' => 'Body & Anatomy',
+                'id' => 'stomach',
+                'tags' => array('organ', 'digestive', 'gastroenterology')
+            ),
+            'body/spine' => array(
+                'name' => 'Spine',
+                'category' => 'Body & Anatomy',
+                'id' => 'spine',
+                'tags' => array('bone', 'orthopedics', 'back')
+            ),
+            
+            // Medical Conditions
+            'conditions/allergies' => array(
+                'name' => 'Allergies',
+                'category' => 'Medical Conditions',
+                'id' => 'allergies',
+                'tags' => array('allergy', 'reaction', 'immune')
+            ),
+            'conditions/headache' => array(
+                'name' => 'Headache',
+                'category' => 'Medical Conditions',
+                'id' => 'headache',
+                'tags' => array('pain', 'migraine', 'head')
+            ),
+            'conditions/fever' => array(
+                'name' => 'Fever',
+                'category' => 'Medical Conditions',
+                'id' => 'fever',
+                'tags' => array('temperature', 'illness', 'infection')
+            ),
+            'conditions/coughing' => array(
+                'name' => 'Coughing',
+                'category' => 'Medical Conditions',
+                'id' => 'coughing',
+                'tags' => array('respiratory', 'symptom', 'throat')
+            ),
+            'conditions/diarrhea' => array(
+                'name' => 'Diarrhea',
+                'category' => 'Medical Conditions',
+                'id' => 'diarrhea',
+                'tags' => array('digestive', 'symptom', 'gastro')
+            ),
+            'conditions/nausea' => array(
+                'name' => 'Nausea',
+                'category' => 'Medical Conditions',
+                'id' => 'nausea',
+                'tags' => array('stomach', 'symptom', 'digestive')
+            ),
+            'conditions/back_pain' => array(
+                'name' => 'Back Pain',
+                'category' => 'Medical Conditions',
+                'id' => 'back_pain',
+                'tags' => array('pain', 'spine', 'orthopedic')
+            ),
+            'conditions/diabetes' => array(
+                'name' => 'Diabetes',
+                'category' => 'Medical Conditions',
+                'id' => 'diabetes',
+                'tags' => array('blood sugar', 'endocrine', 'chronic')
+            ),
+            'conditions/overweight' => array(
+                'name' => 'Overweight',
+                'category' => 'Medical Conditions',
+                'id' => 'overweight',
+                'tags' => array('weight', 'obesity', 'nutrition')
+            ),
+            'conditions/underweight' => array(
+                'name' => 'Underweight',
+                'category' => 'Medical Conditions',
+                'id' => 'underweight',
+                'tags' => array('weight', 'malnutrition', 'nutrition')
+            ),
+            'conditions/pneumonia' => array(
+                'name' => 'Pneumonia',
+                'category' => 'Medical Conditions',
+                'id' => 'pneumonia',
+                'tags' => array('respiratory', 'infection', 'lungs')
+            ),
+            'conditions/tb' => array(
+                'name' => 'Tuberculosis',
+                'category' => 'Medical Conditions',
+                'id' => 'tb',
+                'tags' => array('infectious', 'respiratory', 'TB')
+            ),
+            
+            // Medical Devices
             'devices/stethoscope' => array(
                 'name' => 'Stethoscope',
                 'category' => 'Medical Devices',
                 'id' => 'stethoscope',
-                'tags' => array()
+                'tags' => array('diagnostic', 'examination', 'cardiology')
             ),
             'devices/syringe' => array(
                 'name' => 'Syringe',
                 'category' => 'Medical Devices',
                 'id' => 'syringe',
-                'tags' => array()
+                'tags' => array('injection', 'vaccination', 'medication')
             ),
             'devices/thermometer_digital' => array(
                 'name' => 'Digital Thermometer',
                 'category' => 'Medical Devices',
                 'id' => 'thermometer_digital',
-                'tags' => array()
+                'tags' => array('temperature', 'fever', 'diagnostic')
             ),
             'devices/blood_pressure' => array(
                 'name' => 'Blood Pressure Monitor',
                 'category' => 'Medical Devices',
                 'id' => 'blood_pressure',
-                'tags' => array()
+                'tags' => array('cardiovascular', 'monitoring', 'hypertension')
             ),
+            'devices/microscope' => array(
+                'name' => 'Microscope',
+                'category' => 'Medical Devices',
+                'id' => 'microscope',
+                'tags' => array('laboratory', 'diagnostic', 'research')
+            ),
+            'devices/wheelchair' => array(
+                'name' => 'Wheelchair',
+                'category' => 'Medical Devices',
+                'id' => 'wheelchair',
+                'tags' => array('mobility', 'disability', 'accessibility')
+            ),
+            'devices/xray' => array(
+                'name' => 'X-Ray',
+                'category' => 'Medical Devices',
+                'id' => 'xray',
+                'tags' => array('imaging', 'radiology', 'diagnostic')
+            ),
+            'devices/ultrasound' => array(
+                'name' => 'Ultrasound Scanner',
+                'category' => 'Medical Devices',
+                'id' => 'ultrasound',
+                'tags' => array('imaging', 'diagnostic', 'obstetrics')
+            ),
+            'devices/defibrillator' => array(
+                'name' => 'Defibrillator',
+                'category' => 'Medical Devices',
+                'id' => 'defibrillator',
+                'tags' => array('emergency', 'cardiology', 'resuscitation')
+            ),
+            'devices/cpap_machine' => array(
+                'name' => 'CPAP Machine',
+                'category' => 'Medical Devices',
+                'id' => 'cpap_machine',
+                'tags' => array('respiratory', 'sleep', 'breathing')
+            ),
+            'devices/medicines' => array(
+                'name' => 'Medicines',
+                'category' => 'Medical Devices',
+                'id' => 'medicines',
+                'tags' => array('medication', 'pharmacy', 'treatment')
+            ),
+            
+            // Healthcare People
             'people/doctor' => array(
                 'name' => 'Doctor',
                 'category' => 'Healthcare People',
                 'id' => 'doctor',
-                'tags' => array()
+                'tags' => array('physician', 'medical professional', 'healthcare')
             ),
             'people/nurse' => array(
                 'name' => 'Nurse',
                 'category' => 'Healthcare People',
                 'id' => 'nurse',
-                'tags' => array()
+                'tags' => array('nursing', 'healthcare', 'medical professional')
             ),
-            'conditions/tb' => array(
-                'name' => 'Tuberculosis',
-                'category' => 'Health Conditions',
-                'id' => 'tb',
-                'tags' => array()
+            'people/doctor_female' => array(
+                'name' => 'Female Doctor',
+                'category' => 'Healthcare People',
+                'id' => 'doctor_female',
+                'tags' => array('physician', 'woman', 'medical professional')
             ),
-            'conditions/pneumonia' => array(
-                'name' => 'Pneumonia',
-                'category' => 'Health Conditions',
-                'id' => 'pneumonia',
-                'tags' => array()
+            'people/doctor_male' => array(
+                'name' => 'Male Doctor',
+                'category' => 'Healthcare People',
+                'id' => 'doctor_male',
+                'tags' => array('physician', 'man', 'medical professional')
             ),
-            'medications/medicines' => array(
-                'name' => 'Medicines',
-                'category' => 'Medications',
-                'id' => 'medicines',
-                'tags' => array()
+            'people/elderly' => array(
+                'name' => 'Elderly Person',
+                'category' => 'Healthcare People',
+                'id' => 'elderly',
+                'tags' => array('senior', 'geriatric', 'aging')
+            ),
+            'people/pregnant' => array(
+                'name' => 'Pregnant Woman',
+                'category' => 'Healthcare People',
+                'id' => 'pregnant',
+                'tags' => array('pregnancy', 'maternity', 'obstetrics')
+            ),
+            'people/baby' => array(
+                'name' => 'Baby',
+                'category' => 'Healthcare People',
+                'id' => 'baby',
+                'tags' => array('infant', 'pediatric', 'child')
+            ),
+            'people/community_health_worker' => array(
+                'name' => 'Community Health Worker',
+                'category' => 'Healthcare People',
+                'id' => 'community_health_worker',
+                'tags' => array('community', 'outreach', 'public health')
+            ),
+            'people/emergency_worker' => array(
+                'name' => 'Emergency Worker',
+                'category' => 'Healthcare People',
+                'id' => 'emergency_worker',
+                'tags' => array('emergency', 'first responder', 'paramedic')
+            ),
+            'people/person' => array(
+                'name' => 'Person',
+                'category' => 'Healthcare People',
+                'id' => 'person',
+                'tags' => array('patient', 'individual', 'human')
+            ),
+            
+            // Medical Specialties
+            'specialties/cardiology' => array(
+                'name' => 'Cardiology',
+                'category' => 'Medical Specialties',
+                'id' => 'cardiology',
+                'tags' => array('heart', 'cardiovascular', 'cardiac')
+            ),
+            'specialties/neurology' => array(
+                'name' => 'Neurology',
+                'category' => 'Medical Specialties',
+                'id' => 'neurology',
+                'tags' => array('brain', 'nervous system', 'neurological')
+            ),
+            'specialties/pediatrics' => array(
+                'name' => 'Pediatrics',
+                'category' => 'Medical Specialties',
+                'id' => 'pediatrics',
+                'tags' => array('children', 'child health', 'pediatric')
+            ),
+            'specialties/orthopedics' => array(
+                'name' => 'Orthopedics',
+                'category' => 'Medical Specialties',
+                'id' => 'orthopedics',
+                'tags' => array('bones', 'joints', 'musculoskeletal')
+            ),
+            'specialties/radiology' => array(
+                'name' => 'Radiology',
+                'category' => 'Medical Specialties',
+                'id' => 'radiology',
+                'tags' => array('imaging', 'x-ray', 'diagnostic')
+            ),
+            'specialties/pharmacy' => array(
+                'name' => 'Pharmacy',
+                'category' => 'Medical Specialties',
+                'id' => 'pharmacy',
+                'tags' => array('medication', 'drugs', 'pharmaceutical')
+            ),
+            'specialties/psychology' => array(
+                'name' => 'Psychology',
+                'category' => 'Medical Specialties',
+                'id' => 'psychology',
+                'tags' => array('mental health', 'behavioral', 'therapy')
+            ),
+            'specialties/physical_therapy' => array(
+                'name' => 'Physical Therapy',
+                'category' => 'Medical Specialties',
+                'id' => 'physical_therapy',
+                'tags' => array('rehabilitation', 'movement', 'physiotherapy')
+            ),
+            'specialties/emergency_department' => array(
+                'name' => 'Emergency Department',
+                'category' => 'Medical Specialties',
+                'id' => 'emergency_department',
+                'tags' => array('emergency', 'urgent care', 'trauma')
+            ),
+            'specialties/intensive_care' => array(
+                'name' => 'Intensive Care',
+                'category' => 'Medical Specialties',
+                'id' => 'intensive_care',
+                'tags' => array('ICU', 'critical care', 'intensive')
             )
         );
 
