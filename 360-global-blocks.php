@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.6
+ * Version: 1.2.7
 Author: Kaz Alvis
 */
 
@@ -31,6 +31,9 @@ function show_update_debug_info() {
     if ($screen && $screen->id === 'plugins') {
         $plugin_data = get_plugin_data(__FILE__);
         $current_version = $plugin_data['Version'];
+        
+        // Clear cache for fresh fetch
+        delete_transient('360_global_blocks_github_version');
         $github_version = get_latest_github_version();
         
         echo '<div class="notice notice-info"><p>';
@@ -102,10 +105,15 @@ function get_latest_github_version() {
             // Decode base64 content
             $file_content = base64_decode($data['content']);
             
-            // Extract version from plugin header
-            if (preg_match('/^\s*\*\s*Version:\s*(.+)$/m', $file_content, $matches)) {
+            // Extract version from plugin header - try multiple patterns
+            if (preg_match('/\*\s*Version:\s*([^\r\n]+)/i', $file_content, $matches)) {
                 $version = trim($matches[1]);
                 // Cache for 1 hour
+                set_transient($transient_key, $version, HOUR_IN_SECONDS);
+                return $version;
+            } elseif (preg_match('/Version:\s*([^\r\n]+)/i', $file_content, $matches)) {
+                $version = trim($matches[1]);
+                // Cache for 1 hour  
                 set_transient($transient_key, $version, HOUR_IN_SECONDS);
                 return $version;
             }
