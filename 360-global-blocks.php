@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.10
+ * Version: 1.2.11
 Author: Kaz Alvis
 */
 
@@ -24,23 +24,33 @@ function force_plugin_update_check() {
         delete_site_transient('update_plugins');
         delete_transient('360_global_blocks_github_version');
         
-        // Manually trigger update check
-        $current_transient = get_site_transient('update_plugins');
-        if (!$current_transient) {
-            $current_transient = new stdClass();
-            $current_transient->checked = array();
-        }
-        
-        // Add our plugin to checked array to trigger our filter
+        // Create fresh transient with our plugin data
         $plugin_slug = plugin_basename(__FILE__);
         $plugin_data = get_plugin_data(__FILE__);
-        $current_transient->checked[$plugin_slug] = $plugin_data['Version'];
+        $current_version = $plugin_data['Version'];
+        $github_version = get_latest_github_version();
         
-        // This will trigger our update check filter
-        $updated_transient = check_for_plugin_update_from_github($current_transient);
-        
-        // Save the updated transient
-        set_site_transient('update_plugins', $updated_transient);
+        // If we have an update available, manually add it to the transient
+        if ($github_version && version_compare($current_version, $github_version, '<')) {
+            $update_transient = get_site_transient('update_plugins');
+            if (!$update_transient) {
+                $update_transient = new stdClass();
+                $update_transient->checked = array();
+                $update_transient->response = array();
+            }
+            
+            // Add our plugin to the response array
+            $update_transient->response[$plugin_slug] = (object) array(
+                'slug' => dirname($plugin_slug),
+                'plugin' => $plugin_slug,
+                'new_version' => $github_version,
+                'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
+                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+            );
+            
+            // Set the transient
+            set_site_transient('update_plugins', $update_transient);
+        }
     }
 }
 
