@@ -2,11 +2,14 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
-Version: 1.2.0
+ * Version: 1.2.1
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+// Simple update notification system
+// WordPress will detect version changes and prompt for manual updates
 
 // Include Health Icons Loader
 require_once plugin_dir_path(__FILE__) . 'inc/health-icons-loader.php';
