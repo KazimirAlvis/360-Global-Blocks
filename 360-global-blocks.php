@@ -2,184 +2,189 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.15
+ * Version: 1.3.0
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// GitHub-based update checker
-add_filter('pre_set_site_transient_update_plugins', 'check_for_plugin_update_from_github');
-add_filter('plugins_api', 'plugin_info_from_github', 20, 3);
+// WordPress Plugin Update Checker - Proper Implementation
+if( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
+    class SB_Global_Blocks_Update_Checker {
+        public $plugin_slug;
+        public $plugin_file;
+        public $version;
+        public $cache_key;
+        public $cache_allowed;
+        public $github_username;
+        public $github_repo;
 
-// Force update check when plugin loads (for testing)
-add_action('admin_init', 'force_plugin_update_check');
-add_action('admin_notices', 'show_update_debug_info');
+        public function __construct() {
+            $this->plugin_slug = plugin_basename( __DIR__ );
+            $this->plugin_file = plugin_basename( __FILE__ );
+            $this->version = '1.3.0';
+            $this->cache_key = 'sb_global_blocks_update_checker';
+            $this->cache_allowed = true;
+            $this->github_username = 'Superkore-Media';
+            $this->github_repo = '360-Global-Blocks';
 
-function force_plugin_update_check() {
-    // Only run on plugins page
-    $screen = get_current_screen();
-    if ($screen && $screen->id === 'plugins') {
-        // Delete the update transient to force a fresh check
-        delete_site_transient('update_plugins');
-        delete_transient('360_global_blocks_github_version');
-        
-        // Create fresh transient with our plugin data
-        $plugin_slug = plugin_basename(__FILE__);
-        $plugin_data = get_plugin_data(__FILE__);
-        $current_version = $plugin_data['Version'];
-        $github_version = get_latest_github_version();
-        
-        // If we have an update available, manually add it to the transient
-        if ($github_version && version_compare($current_version, $github_version, '<')) {
-            $update_transient = get_site_transient('update_plugins');
-            if (!$update_transient) {
-                $update_transient = new stdClass();
-                $update_transient->checked = array();
-                $update_transient->response = array();
+            add_filter( 'plugins_api', array( $this, 'info' ), 20, 3 );
+            add_filter( 'site_transient_update_plugins', array( $this, 'update' ) );
+            add_action( 'upgrader_process_complete', array( $this, 'purge' ), 10, 2 );
+        }
+
+        public function request() {
+            $remote = get_transient( $this->cache_key );
+
+            if( false === $remote || ! $this->cache_allowed ) {
+                // Get plugin info from GitHub
+                $api_url = "https://api.github.com/repos/{$this->github_username}/{$this->github_repo}/contents/360-global-blocks.php";
+                
+                $response = wp_remote_get($api_url, array(
+                    'headers' => array(
+                        'User-Agent' => 'WordPress/' . get_bloginfo('version') . '; ' . home_url(),
+                        'Accept' => 'application/vnd.github.v3+json'
+                    ),
+                    'timeout' => 15
+                ));
+
+                if( 
+                    is_wp_error( $response )
+                    || 200 !== wp_remote_retrieve_response_code( $response )
+                    || empty( wp_remote_retrieve_body( $response ) )
+                ) {
+                    return false;
+                }
+
+                $body = wp_remote_retrieve_body( $response );
+                $data = json_decode( $body, true );
+                
+                if( ! isset( $data['content'] ) ) {
+                    return false;
+                }
+                
+                // Decode the plugin file content
+                $content = base64_decode( $data['content'] );
+                
+                // Extract version from plugin header
+                $github_version = '1.3.0'; // fallback
+                if( preg_match( '/Version:\s*(.+)/', $content, $matches ) ) {
+                    $github_version = trim( $matches[1] );
+                }
+                
+                // Extract description
+                $description = 'Custom Gutenberg blocks for the 360 network.';
+                if( preg_match( '/Description:\s*(.+)/', $content, $matches ) ) {
+                    $description = trim( $matches[1] );
+                }
+
+                // Create update info object
+                $remote = (object) array(
+                    'name' => '360 Global Blocks',
+                    'slug' => $this->plugin_slug,
+                    'author' => '<a href="https://360.health">360 Health</a>',
+                    'author_profile' => 'https://360.health',
+                    'version' => $github_version,
+                    'download_url' => "https://github.com/{$this->github_username}/{$this->github_repo}/archive/refs/heads/main.zip",
+                    'requires' => '6.0',
+                    'tested' => get_bloginfo('version'),
+                    'requires_php' => '7.4',
+                    'last_updated' => date('Y-m-d H:i:s'),
+                    'sections' => array(
+                        'description' => $description,
+                        'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-global-blocks` directory, or install the plugin through the WordPress plugins screen directly.',
+                        'changelog' => '<h4>1.3.0</h4><ul><li>Implemented proper WordPress plugin update system</li><li>Added comprehensive Health Icons collection</li><li>Fixed plugin update notifications</li></ul>'
+                    ),
+                    'banners' => array(
+                        'low' => '',
+                        'high' => ''
+                    )
+                );
+
+                if( $this->cache_allowed ) {
+                    set_transient( $this->cache_key, $remote, DAY_IN_SECONDS );
+                }
             }
-            
-            // Add our plugin to the response array
-            $update_transient->response[$plugin_slug] = (object) array(
-                'slug' => dirname($plugin_slug),
-                'plugin' => $plugin_slug,
-                'new_version' => $github_version,
-                'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
-            );
-            
-            // Set the transient
-            set_site_transient('update_plugins', $update_transient);
+
+            return $remote;
         }
-    }
-}
 
-function show_update_debug_info() {
-    $screen = get_current_screen();
-    if ($screen && $screen->id === 'plugins') {
-        $plugin_data = get_plugin_data(__FILE__);
-        $current_version = $plugin_data['Version'];
-        
-        // Clear cache for fresh fetch
-        delete_transient('360_global_blocks_github_version');
-        $github_version = get_latest_github_version();
-        
-        if ($github_version && version_compare($current_version, $github_version, '<')) {
-            // Show prominent update notice with download link
-            echo '<div class="notice notice-warning"><p>';
-            echo '<strong>🔄 360 Global Blocks Update Available!</strong><br>';
-            echo "Current version: <strong>$current_version</strong> | Latest version: <strong>$github_version</strong><br>";
-            echo '<a href="https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip" class="button button-primary" style="margin-top: 10px;">Download Update v' . $github_version . '</a> ';
-            echo '<em>Download, extract, and replace plugin files via FTP</em>';
-            echo '</p></div>';
-        } else {
-            // Show simple status when up to date
-            echo '<div class="notice notice-success"><p>';
-            echo '<strong>✅ 360 Global Blocks:</strong> ';
-            echo "Version $current_version is up to date!";
-            echo '</p></div>';
+        public function info( $res, $action, $args ) {
+            // do nothing if this is not about getting plugin information
+            if( 'plugin_information' !== $action ) {
+                return $res;
+            }
+
+            // do nothing if it is not our plugin
+            if( $this->plugin_slug !== $args->slug ) {
+                return $res;
+            }
+
+            // get updates
+            $remote = $this->request();
+
+            if( ! $remote ) {
+                return $res;
+            }
+
+            $res = new stdClass();
+            $res->name = $remote->name;
+            $res->slug = $remote->slug;
+            $res->author = $remote->author;
+            $res->author_profile = $remote->author_profile;
+            $res->version = $remote->version;
+            $res->tested = $remote->tested;
+            $res->requires = $remote->requires;
+            $res->requires_php = $remote->requires_php;
+            $res->download_link = $remote->download_url;
+            $res->trunk = $remote->download_url;
+            $res->last_updated = $remote->last_updated;
+            $res->sections = $remote->sections;
+            $res->banners = $remote->banners;
+
+            return $res;
         }
-    }
-}
 
-function check_for_plugin_update_from_github($transient) {
-    if (empty($transient->checked)) {
-        return $transient;
-    }
+        public function update( $transient ) {
+            if ( empty($transient->checked ) ) {
+                return $transient;
+            }
 
-    $plugin_slug = plugin_basename(__FILE__);
-    $plugin_data = get_plugin_data(__FILE__);
-    $current_version = $plugin_data['Version'];
-    
-    // Check GitHub for latest version by comparing with main branch
-    $github_version = get_latest_github_version();
-    
-    // Debug logging (will show in debug.log if WP_DEBUG is enabled)
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log("360 Global Blocks Update Check - Current: $current_version, GitHub: $github_version");
-    }
-    
-    if ($github_version && version_compare($current_version, $github_version, '<')) {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log("360 Global Blocks - Update available! Adding to transient.");
+            // get update info
+            $remote = $this->request();
+
+            if( 
+                $remote
+                && version_compare( $this->version, $remote->version, '<' )
+                && version_compare( $remote->requires, get_bloginfo( 'version' ), '<=' )
+                && version_compare( $remote->requires_php, PHP_VERSION, '<=' )
+            ) {
+                $res = new stdClass();
+                $res->slug = $remote->slug;
+                $res->plugin = $this->plugin_file;
+                $res->new_version = $remote->version;
+                $res->tested = $remote->tested;
+                $res->package = $remote->download_url;
+                
+                $transient->response[ $res->plugin ] = $res;
+            }
+
+            return $transient;
         }
-        
-        $transient->response[$plugin_slug] = (object) array(
-            'slug' => dirname($plugin_slug),
-            'plugin' => $plugin_slug,
-            'new_version' => $github_version,
-            'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-            'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
-        );
-    }
-    
-    return $transient;
-}
 
-function get_latest_github_version() {
-    $transient_key = '360_global_blocks_github_version';
-    $cached_version = get_transient($transient_key);
-    
-    if ($cached_version !== false) {
-        return $cached_version;
-    }
-    
-    // Use GitHub API to avoid CDN caching issues
-    $github_api_url = 'https://api.github.com/repos/KazimirAlvis/360-Global-Blocks/contents/360-global-blocks.php';
-    $response = wp_remote_get($github_api_url, array(
-        'timeout' => 10,
-        'headers' => array(
-            'User-Agent' => 'WordPress-360-Global-Blocks'
-        )
-    ));
-    
-    if (!is_wp_error($response)) {
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-        
-        if (isset($data['content'])) {
-            // Decode base64 content
-            $file_content = base64_decode($data['content']);
-            
-            // Extract version from plugin header - try multiple patterns
-            if (preg_match('/\*\s*Version:\s*([^\r\n]+)/i', $file_content, $matches)) {
-                $version = trim($matches[1]);
-                // Cache for 1 hour
-                set_transient($transient_key, $version, HOUR_IN_SECONDS);
-                return $version;
-            } elseif (preg_match('/Version:\s*([^\r\n]+)/i', $file_content, $matches)) {
-                $version = trim($matches[1]);
-                // Cache for 1 hour  
-                set_transient($transient_key, $version, HOUR_IN_SECONDS);
-                return $version;
+        public function purge( $upgrader, $options ){
+            if (
+                $this->cache_allowed
+                && 'update' === $options['action']
+                && 'plugin' === $options[ 'type' ]
+            ) {
+                // clean the cache when new plugin version is installed
+                delete_transient( $this->cache_key );
             }
         }
     }
-    
-    return false;
-}
 
-function plugin_info_from_github($result, $action, $args) {
-    if ($action !== 'plugin_information') {
-        return $result;
-    }
-    
-    if (!isset($args->slug) || $args->slug !== dirname(plugin_basename(__FILE__))) {
-        return $result;
-    }
-    
-    $plugin_data = get_plugin_data(__FILE__);
-    
-    return (object) array(
-        'slug' => dirname(plugin_basename(__FILE__)),
-        'plugin' => plugin_basename(__FILE__),
-        'name' => $plugin_data['Name'],
-        'version' => get_latest_github_version(),
-        'author' => $plugin_data['Author'],
-        'homepage' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-        'short_description' => $plugin_data['Description'],
-        'download_link' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/main.zip'
-    );
+    new SB_Global_Blocks_Update_Checker();
 }
 
 // Include Health Icons Loader
