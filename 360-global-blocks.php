@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.1
+ * Version: 1.2.2
 Author: Kaz Alvis
 */
 
