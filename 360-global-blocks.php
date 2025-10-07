@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.13
+ * Version: 1.2.14
 Author: Kaz Alvis
 */
 
@@ -64,44 +64,21 @@ function show_update_debug_info() {
         delete_transient('360_global_blocks_github_version');
         $github_version = get_latest_github_version();
         
-        // Check if update is in transient
-        $update_transient = get_site_transient('update_plugins');
-        $plugin_slug = plugin_basename(__FILE__);
-        $has_update_transient = isset($update_transient->response[$plugin_slug]);
-        
-        echo '<div class="notice notice-info"><p>';
-        echo '<strong>360 Global Blocks Debug:</strong> ';
-        echo "Current: $current_version | GitHub: " . ($github_version ?: 'Failed to fetch');
         if ($github_version && version_compare($current_version, $github_version, '<')) {
-            echo ' | <strong>Update Available!</strong>';
-            
-            // Force add to transient right here
-            $update_transient = get_site_transient('update_plugins');
-            if (!$update_transient) {
-                $update_transient = new stdClass();
-                $update_transient->checked = array();
-                $update_transient->response = array();
-            }
-            if (!isset($update_transient->response)) {
-                $update_transient->response = array();
-            }
-            
-            $update_transient->response[$plugin_slug] = (object) array(
-                'slug' => dirname($plugin_slug),
-                'plugin' => $plugin_slug,
-                'new_version' => $github_version,
-                'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
-                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
-            );
-            
-            set_site_transient('update_plugins', $update_transient);
-            
-            // Re-check if it's now in transient
-            $update_transient_check = get_site_transient('update_plugins');
-            $has_update_transient = isset($update_transient_check->response[$plugin_slug]);
+            // Show prominent update notice with download link
+            echo '<div class="notice notice-warning"><p>';
+            echo '<strong>🔄 360 Global Blocks Update Available!</strong><br>';
+            echo "Current version: <strong>$current_version</strong> | Latest version: <strong>$github_version</strong><br>";
+            echo '<a href="https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip" class="button button-primary" style="margin-top: 10px;">Download Update v' . $github_version . '</a> ';
+            echo '<em>Download, extract, and replace plugin files via FTP</em>';
+            echo '</p></div>';
+        } else {
+            // Show simple status when up to date
+            echo '<div class="notice notice-success"><p>';
+            echo '<strong>✅ 360 Global Blocks:</strong> ';
+            echo "Version $current_version is up to date!";
+            echo '</p></div>';
         }
-        echo " | Update in transient: " . ($has_update_transient ? 'YES' : 'NO');
-        echo '</p></div>';
     }
 }
 
