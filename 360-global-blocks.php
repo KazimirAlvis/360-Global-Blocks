@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.4
+ * Version: 1.2.5
 Author: Kaz Alvis
 */
 
@@ -11,6 +11,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // GitHub-based update checker
 add_filter('pre_set_site_transient_update_plugins', 'check_for_plugin_update_from_github');
 add_filter('plugins_api', 'plugin_info_from_github', 20, 3);
+
+// Force update check when plugin loads (for testing)
+add_action('admin_init', 'force_plugin_update_check');
+add_action('admin_notices', 'show_update_debug_info');
+
+function force_plugin_update_check() {
+    // Only run on plugins page
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'plugins') {
+        // Delete the update transient to force a fresh check
+        delete_site_transient('update_plugins');
+        delete_transient('360_global_blocks_github_version');
+    }
+}
+
+function show_update_debug_info() {
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'plugins') {
+        $plugin_data = get_plugin_data(__FILE__);
+        $current_version = $plugin_data['Version'];
+        $github_version = get_latest_github_version();
+        
+        echo '<div class="notice notice-info"><p>';
+        echo '<strong>360 Global Blocks Debug:</strong> ';
+        echo "Current: $current_version | GitHub: " . ($github_version ?: 'Failed to fetch');
+        if ($github_version && version_compare($current_version, $github_version, '<')) {
+            echo ' | <strong>Update Available!</strong>';
+        }
+        echo '</p></div>';
+    }
+}
 
 function check_for_plugin_update_from_github($transient) {
     if (empty($transient->checked)) {
@@ -24,7 +55,16 @@ function check_for_plugin_update_from_github($transient) {
     // Check GitHub for latest version by comparing with main branch
     $github_version = get_latest_github_version();
     
+    // Debug logging (will show in debug.log if WP_DEBUG is enabled)
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log("360 Global Blocks Update Check - Current: $current_version, GitHub: $github_version");
+    }
+    
     if ($github_version && version_compare($current_version, $github_version, '<')) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log("360 Global Blocks - Update available! Adding to transient.");
+        }
+        
         $transient->response[$plugin_slug] = (object) array(
             'slug' => dirname($plugin_slug),
             'plugin' => $plugin_slug,
