@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.0
+ * Version: 1.3.1
 Author: Kaz Alvis
 */
 
@@ -22,7 +22,7 @@ if( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
         public function __construct() {
             $this->plugin_slug = plugin_basename( __DIR__ );
             $this->plugin_file = plugin_basename( __FILE__ );
-            $this->version = '1.3.0';
+            $this->version = '1.3.1';
             $this->cache_key = 'sb_global_blocks_update_checker';
             $this->cache_allowed = true;
             $this->github_username = 'Superkore-Media';
@@ -67,7 +67,7 @@ if( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 $content = base64_decode( $data['content'] );
                 
                 // Extract version from plugin header
-                $github_version = '1.3.0'; // fallback
+                $github_version = '1.3.1'; // fallback
                 if( preg_match( '/Version:\s*(.+)/', $content, $matches ) ) {
                     $github_version = trim( $matches[1] );
                 }
@@ -93,7 +93,7 @@ if( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                     'sections' => array(
                         'description' => $description,
                         'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-global-blocks` directory, or install the plugin through the WordPress plugins screen directly.',
-                        'changelog' => '<h4>1.3.0</h4><ul><li>Implemented proper WordPress plugin update system</li><li>Added comprehensive Health Icons collection</li><li>Fixed plugin update notifications</li></ul>'
+                        'changelog' => '<h4>1.3.1</h4><ul><li>Testing automatic WordPress plugin updates</li><li>Improved update system reliability</li></ul><h4>1.3.0</h4><ul><li>Implemented proper WordPress plugin update system</li><li>Added comprehensive Health Icons collection</li><li>Fixed plugin update notifications</li></ul>'
                     ),
                     'banners' => array(
                         'low' => '',
