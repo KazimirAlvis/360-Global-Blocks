@@ -2,14 +2,90 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.2
+ * Version: 1.2.3
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Simple update notification system
-// WordPress will detect version changes and prompt for manual updates
+// GitHub-based update checker
+add_filter('pre_set_site_transient_update_plugins', 'check_for_plugin_update_from_github');
+add_filter('plugins_api', 'plugin_info_from_github', 20, 3);
+
+function check_for_plugin_update_from_github($transient) {
+    if (empty($transient->checked)) {
+        return $transient;
+    }
+
+    $plugin_slug = plugin_basename(__FILE__);
+    $plugin_data = get_plugin_data(__FILE__);
+    $current_version = $plugin_data['Version'];
+    
+    // Check GitHub for latest version by comparing with main branch
+    $github_version = get_latest_github_version();
+    
+    if ($github_version && version_compare($current_version, $github_version, '<')) {
+        $transient->response[$plugin_slug] = (object) array(
+            'slug' => dirname($plugin_slug),
+            'plugin' => $plugin_slug,
+            'new_version' => $github_version,
+            'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
+            'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+        );
+    }
+    
+    return $transient;
+}
+
+function get_latest_github_version() {
+    $transient_key = '360_global_blocks_github_version';
+    $cached_version = get_transient($transient_key);
+    
+    if ($cached_version !== false) {
+        return $cached_version;
+    }
+    
+    // Get the main plugin file from GitHub to read version
+    $github_url = 'https://raw.githubusercontent.com/KazimirAlvis/360-Global-Blocks/main/360-global-blocks.php';
+    $response = wp_remote_get($github_url, array('timeout' => 10));
+    
+    if (!is_wp_error($response)) {
+        $body = wp_remote_retrieve_body($response);
+        
+        // Extract version from plugin header
+        if (preg_match('/^\s*\*\s*Version:\s*(.+)$/m', $body, $matches)) {
+            $version = trim($matches[1]);
+            // Cache for 1 hour
+            set_transient($transient_key, $version, HOUR_IN_SECONDS);
+            return $version;
+        }
+    }
+    
+    return false;
+}
+
+function plugin_info_from_github($result, $action, $args) {
+    if ($action !== 'plugin_information') {
+        return $result;
+    }
+    
+    if (!isset($args->slug) || $args->slug !== dirname(plugin_basename(__FILE__))) {
+        return $result;
+    }
+    
+    $plugin_data = get_plugin_data(__FILE__);
+    
+    return (object) array(
+        'slug' => dirname(plugin_basename(__FILE__)),
+        'plugin' => plugin_basename(__FILE__),
+        'name' => $plugin_data['Name'],
+        'version' => get_latest_github_version(),
+        'author' => $plugin_data['Author'],
+        'homepage' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
+        'short_description' => $plugin_data['Description'],
+        'download_link' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+    );
+}
 
 // Include Health Icons Loader
 require_once plugin_dir_path(__FILE__) . 'inc/health-icons-loader.php';
