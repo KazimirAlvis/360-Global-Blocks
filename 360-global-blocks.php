@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.2.12
+ * Version: 1.2.13
 Author: Kaz Alvis
 */
 
@@ -74,6 +74,31 @@ function show_update_debug_info() {
         echo "Current: $current_version | GitHub: " . ($github_version ?: 'Failed to fetch');
         if ($github_version && version_compare($current_version, $github_version, '<')) {
             echo ' | <strong>Update Available!</strong>';
+            
+            // Force add to transient right here
+            $update_transient = get_site_transient('update_plugins');
+            if (!$update_transient) {
+                $update_transient = new stdClass();
+                $update_transient->checked = array();
+                $update_transient->response = array();
+            }
+            if (!isset($update_transient->response)) {
+                $update_transient->response = array();
+            }
+            
+            $update_transient->response[$plugin_slug] = (object) array(
+                'slug' => dirname($plugin_slug),
+                'plugin' => $plugin_slug,
+                'new_version' => $github_version,
+                'url' => 'https://github.com/KazimirAlvis/360-Global-Blocks',
+                'package' => 'https://github.com/KazimirAlvis/360-Global-Blocks/archive/refs/heads/main.zip'
+            );
+            
+            set_site_transient('update_plugins', $update_transient);
+            
+            // Re-check if it's now in transient
+            $update_transient_check = get_site_transient('update_plugins');
+            $has_update_transient = isset($update_transient_check->response[$plugin_slug]);
         }
         echo " | Update in transient: " . ($has_update_transient ? 'YES' : 'NO');
         echo '</p></div>';
