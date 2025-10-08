@@ -106,7 +106,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
 
             $meta = (object) array(
                 'name'          => '360 Global Blocks',
-                'slug'          => $this->normalized_slug,
+                'slug'          => $this->plugin_slug,
                 'version'       => $remote_version,
                 'download_url'  => sprintf(
                     'https://github.com/%s/%s/archive/refs/heads/%s.zip',
@@ -179,7 +179,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             }
 
             $update = new stdClass();
-            $update->slug        = $this->normalized_slug;
+            $update->slug        = $this->plugin_slug;
             $update->plugin      = $this->plugin_basename;
             $update->new_version = $remote->version;
             $update->package     = $remote->download_url;
