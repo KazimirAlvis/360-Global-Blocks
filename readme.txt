@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,12 +22,21 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 3. In any WordPress install, visit Tools → 360 Blocks Updates and click "Force Update Check Now" to confirm the site sees the new version.
 4. From the Plugins screen (or Dashboard → Updates) click "Update now" to install the branch build.
 
+== Updater Notes ==
+* Since version 1.3.7 the plugin auto-updater delivers the `main` branch archive from GitHub (`plugin-manifest.json` → `download_url`).
+* The function `sb_global_blocks_rename_github_package()` (in `360-global-blocks.php`) renames GitHub's extracted folder to `360-global-blocks/` via the `upgrader_source_selection` filter so WordPress recognizes the plugin after extraction.
+* The manifest and this README were updated in commit `0a71d3f` to document the workflow—keep a record of that commit if the updater ever needs to be restored.
+* Diagnostics remain available under Tools → 360 Blocks Updates for checking detected versions, manifest URL, and errors.
+
 == Frequently Asked Questions ==
 
 = Does this plugin require a GitHub access token? =
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.8 =
+* Confirmed the branch-archive updater path works end-to-end and documented the helper filter for future reference.
 
 = 1.3.7 =
 * Pulled the most recent FTP edits back into Git and lined up the 1.3.7 release package.
