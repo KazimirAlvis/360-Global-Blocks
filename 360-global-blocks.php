@@ -15,7 +15,6 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
     private $plugin_basename;
     private $plugin_folder;
     private $plugin_slug;
-    private $normalized_slug;
         private $version;
         private $cache_key;
         private $github_username;
@@ -26,8 +25,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             $this->plugin_file     = __FILE__;
             $this->plugin_basename = plugin_basename( $this->plugin_file );
             $this->plugin_folder   = dirname( $this->plugin_basename );
-            $this->plugin_slug     = ( '.' === $this->plugin_folder ) ? basename( $this->plugin_basename, '.php' ) : $this->plugin_folder;
-            $this->normalized_slug = sanitize_title( $this->plugin_slug );
+            $this->plugin_slug     = $this->plugin_basename;
             $this->version         = $this->get_local_version();
             $this->cache_key       = 'sb_global_blocks_update_meta';
             $this->github_username = 'Superkore-Media';
@@ -49,8 +47,8 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             return ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '0.0.0';
         }
 
-        private function get_remote_meta() {
-            $force = isset( $_GET['force-check'] ) && '1' === $_GET['force-check'];
+        private function get_remote_meta( $force = false ) {
+            $force = $force || ( isset( $_GET['force-check'] ) && '1' === $_GET['force-check'] );
 
             if ( $force ) {
                 delete_transient( $this->cache_key );
@@ -132,12 +130,31 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             return $meta;
         }
 
+        public function get_debug_data() {
+            $remote = $this->get_remote_meta( true );
+
+            return array(
+                'local_version'   => $this->version,
+                'remote_version'  => $remote ? $remote->version : 'n/a',
+                'remote_download' => $remote ? $remote->download_url : 'n/a',
+                'plugin_basename' => $this->plugin_basename,
+                'plugin_folder'   => $this->plugin_folder,
+                'slug_sent'       => $this->plugin_slug,
+                'transient_key'   => $this->cache_key,
+            );
+        }
+
         public function plugins_api( $res, $action, $args ) {
             if ( 'plugin_information' !== $action ) {
                 return $res;
             }
 
-            $accepted_slugs = array( $this->plugin_slug, $this->normalized_slug, $this->plugin_basename );
+            $accepted_slugs = array(
+                $this->plugin_slug,
+                $this->plugin_basename,
+                dirname( $this->plugin_basename ),
+                basename( $this->plugin_basename, '.php' )
+            );
             if ( empty( $args->slug ) || ! in_array( $args->slug, $accepted_slugs, true ) ) {
                 return $res;
             }
@@ -216,8 +233,36 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
         }
     }
 
-    new SB_Global_Blocks_Update_Checker();
+    $GLOBALS['sb_global_blocks_updater'] = new SB_Global_Blocks_Update_Checker();
 }
+
+function sb_global_blocks_update_debug_notice() {
+    if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+        return;
+    }
+
+    if ( ! isset( $_GET['sb-update-debug'] ) ) {
+        return;
+    }
+
+    if ( empty( $GLOBALS['sb_global_blocks_updater'] ) || ! $GLOBALS['sb_global_blocks_updater'] instanceof SB_Global_Blocks_Update_Checker ) {
+        return;
+    }
+
+    $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+    if ( ! $screen || ! in_array( $screen->id, array( 'plugins', 'update-core' ), true ) ) {
+        return;
+    }
+
+    $data = $GLOBALS['sb_global_blocks_updater']->get_debug_data();
+
+    echo '<div class="notice notice-info"><p><strong>360 Global Blocks Update Debug</strong></p><ul style="margin-left:20px;">';
+    foreach ( $data as $label => $value ) {
+        echo '<li><strong>' . esc_html( ucwords( str_replace( '_', ' ', $label ) ) ) . ':</strong> ' . esc_html( is_scalar( $value ) ? $value : wp_json_encode( $value ) ) . '</li>';
+    }
+    echo '</ul></div>';
+}
+add_action( 'admin_notices', 'sb_global_blocks_update_debug_notice' );
 
 // Include Health Icons Loader
 require_once plugin_dir_path(__FILE__) . 'inc/health-icons-loader.php';
