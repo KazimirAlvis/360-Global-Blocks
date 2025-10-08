@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.1
+ * Version: 1.3.2
 Author: Kaz Alvis
 */
 
@@ -25,7 +25,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             $this->plugin_file     = __FILE__;
             $this->plugin_basename = plugin_basename( $this->plugin_file );
             $this->plugin_folder   = dirname( $this->plugin_basename );
-            $this->plugin_slug     = $this->plugin_basename;
+            $this->plugin_slug     = dirname( $this->plugin_basename );
             $this->version         = $this->get_local_version();
             $this->cache_key       = 'sb_global_blocks_update_meta';
             $this->github_username = 'Superkore-Media';
@@ -121,7 +121,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 'sections'      => array(
                     'description'  => esc_html( $description ),
                     'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-Global-Blocks/` directory, or install the plugin through the WordPress plugins screen directly.',
-                    'changelog'    => '<p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
+                    'changelog'    => '<h4>1.3.2</h4><ul><li>Added update diagnostics page and slug fixes</li></ul><h4>1.3.1</h4><ul><li>Initial GitHub-based auto-update rollout</li></ul><p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
                 ),
                 'banners'       => array(),
             );
@@ -263,6 +263,76 @@ function sb_global_blocks_update_debug_notice() {
     echo '</ul></div>';
 }
 add_action( 'admin_notices', 'sb_global_blocks_update_debug_notice' );
+
+function sb_global_blocks_add_update_tools_page() {
+    add_management_page(
+        __( '360 Blocks Updates', '360-global-blocks' ),
+        __( '360 Blocks Updates', '360-global-blocks' ),
+        'manage_options',
+        '360-blocks-updates',
+        'sb_global_blocks_render_update_tools_page'
+    );
+}
+add_action( 'admin_menu', 'sb_global_blocks_add_update_tools_page' );
+
+function sb_global_blocks_render_update_tools_page() {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', '360-global-blocks' ) );
+    }
+
+    echo '<div class="wrap"><h1>' . esc_html__( '360 Global Blocks - Update Diagnostics', '360-global-blocks' ) . '</h1>';
+
+    if ( empty( $GLOBALS['sb_global_blocks_updater'] ) || ! $GLOBALS['sb_global_blocks_updater'] instanceof SB_Global_Blocks_Update_Checker ) {
+        echo '<p>' . esc_html__( 'Update checker class is not initialised.', '360-global-blocks' ) . '</p></div>';
+        return;
+    }
+
+    $updater    = $GLOBALS['sb_global_blocks_updater'];
+    $debug_data = $updater->get_debug_data();
+    $transient  = get_site_transient( 'update_plugins' );
+    $plugin_key = isset( $debug_data['plugin_basename'] ) ? $debug_data['plugin_basename'] : '';
+    $update_row = ( $transient && isset( $transient->response[ $plugin_key ] ) ) ? $transient->response[ $plugin_key ] : null;
+
+    echo '<table class="widefat striped" style="max-width:680px">';
+    foreach ( $debug_data as $label => $value ) {
+        echo '<tr><th scope="row">' . esc_html( ucwords( str_replace( '_', ' ', $label ) ) ) . '</th><td>' . esc_html( is_scalar( $value ) ? $value : wp_json_encode( $value ) ) . '</td></tr>';
+    }
+
+    if ( $update_row ) {
+        echo '<tr><th scope="row">' . esc_html__( 'Update detected', '360-global-blocks' ) . '</th><td>' . esc_html( $update_row->new_version ) . '</td></tr>';
+    } else {
+        echo '<tr><th scope="row">' . esc_html__( 'Update detected', '360-global-blocks' ) . '</th><td>' . esc_html__( 'No update entry present in update_plugins transient.', '360-global-blocks' ) . '</td></tr>';
+    }
+    echo '</table>';
+
+    echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="margin-top:20px;">';
+    wp_nonce_field( 'sb_global_blocks_force_check' );
+    echo '<input type="hidden" name="action" value="sb_global_blocks_force_check" />';
+    echo '<input type="submit" class="button button-primary" value="' . esc_attr__( 'Force Update Check Now', '360-global-blocks' ) . '" />';
+    echo '</form>';
+
+    echo '<p style="margin-top:15px;">' . esc_html__( 'Tip: after forcing a check, revisit the Plugins screen to see if the update notice appears. You can also click the “Check again” button on Dashboard → Updates.', '360-global-blocks' ) . '</p>';
+
+    echo '</div>';
+}
+
+function sb_global_blocks_handle_force_check() {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'Sorry, you are not allowed to perform this action.', '360-global-blocks' ) );
+    }
+
+    check_admin_referer( 'sb_global_blocks_force_check' );
+
+    delete_site_transient( 'update_plugins' );
+
+    if ( ! empty( $GLOBALS['sb_global_blocks_updater'] ) && $GLOBALS['sb_global_blocks_updater'] instanceof SB_Global_Blocks_Update_Checker ) {
+        $GLOBALS['sb_global_blocks_updater']->get_debug_data();
+    }
+
+    wp_safe_redirect( add_query_arg( array( 'page' => '360-blocks-updates', 'status' => 'forced' ), admin_url( 'tools.php' ) ) );
+    exit;
+}
+add_action( 'admin_post_sb_global_blocks_force_check', 'sb_global_blocks_handle_force_check' );
 
 // Include Health Icons Loader
 require_once plugin_dir_path(__FILE__) . 'inc/health-icons-loader.php';
