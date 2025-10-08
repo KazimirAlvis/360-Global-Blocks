@@ -18,10 +18,9 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 
 == Release Workflow ==
 1. Update `360-global-blocks.php`, `readme.txt`, and `plugin-manifest.json` with the new version, changelog, and compatibility data.
-2. Build a ZIP whose root folder is `360-global-blocks` (matching the plugin slug).
-3. Publish a tagged GitHub release (e.g. `v1.3.6`) and attach the ZIP as `360-global-blocks.zip`.
-4. Point `plugin-manifest.json`'s `download_url` at the release asset and push the manifest to the `main` branch.
-5. In any WordPress install, visit Tools → 360 Blocks Updates and click "Force Update Check Now" to confirm the site sees the new version.
+2. Commit and push to `main`—the manifest points to the `main` branch zip, so no manual release or asset upload is required.
+3. In any WordPress install, visit Tools → 360 Blocks Updates and click "Force Update Check Now" to confirm the site sees the new version.
+4. From the Plugins screen (or Dashboard → Updates) click "Update now" to install the branch build.
 
 == Frequently Asked Questions ==
 

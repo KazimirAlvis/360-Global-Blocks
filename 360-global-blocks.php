@@ -32,6 +32,26 @@ function sb_global_blocks_bootstrap_updater() {
 }
 add_action( 'plugins_loaded', 'sb_global_blocks_bootstrap_updater', 5 );
 
+function sb_global_blocks_rename_github_package( $source, $remote_source, $upgrader, $hook_extra ) {
+    if ( empty( $hook_extra['plugin'] ) || '360-global-blocks/360-global-blocks.php' !== $hook_extra['plugin'] ) {
+        return $source;
+    }
+
+    $source_path  = untrailingslashit( $source );
+    $desired_path = trailingslashit( dirname( $source_path ) ) . '360-global-blocks';
+
+    if ( $source_path === untrailingslashit( $desired_path ) ) {
+        return $source;
+    }
+
+    if ( @rename( $source_path, $desired_path ) ) {
+        return trailingslashit( $desired_path );
+    }
+
+    return $source;
+}
+add_filter( 'upgrader_source_selection', 'sb_global_blocks_rename_github_package', 10, 4 );
+
 function sb_global_blocks_get_update_debug_data() {
     $updater = isset( $GLOBALS['sb_global_blocks_updater'] ) ? $GLOBALS['sb_global_blocks_updater'] : null;
 
