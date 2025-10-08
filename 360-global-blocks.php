@@ -8,179 +8,211 @@ Author: Kaz Alvis
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// WordPress Plugin Update Checker - Proper Implementation
-if( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
+// WordPress Plugin Update Checker - GitHub main branch (no releases required)
+if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
     class SB_Global_Blocks_Update_Checker {
-        public $plugin_slug;
-        public $plugin_file;
-        public $version;
-        public $cache_key;
-        public $cache_allowed;
-        public $github_username;
-        public $github_repo;
+    private $plugin_file;
+    private $plugin_basename;
+    private $plugin_folder;
+    private $plugin_slug;
+    private $normalized_slug;
+        private $version;
+        private $cache_key;
+        private $github_username;
+        private $github_repo;
+        private $branch;
 
         public function __construct() {
-            $this->plugin_slug = plugin_basename( __DIR__ );
-            $this->plugin_file = plugin_basename( __FILE__ );
-            $this->version = '1.3.1';
-            $this->cache_key = 'sb_global_blocks_update_checker';
-            $this->cache_allowed = true;
+            $this->plugin_file     = __FILE__;
+            $this->plugin_basename = plugin_basename( $this->plugin_file );
+            $this->plugin_folder   = dirname( $this->plugin_basename );
+            $this->plugin_slug     = ( '.' === $this->plugin_folder ) ? basename( $this->plugin_basename, '.php' ) : $this->plugin_folder;
+            $this->normalized_slug = sanitize_title( $this->plugin_slug );
+            $this->version         = $this->get_local_version();
+            $this->cache_key       = 'sb_global_blocks_update_meta';
             $this->github_username = 'Superkore-Media';
-            $this->github_repo = '360-Global-Blocks';
+            $this->github_repo     = '360-Global-Blocks';
+            $this->branch          = 'main';
 
-            add_filter( 'plugins_api', array( $this, 'info' ), 20, 3 );
-            add_filter( 'site_transient_update_plugins', array( $this, 'update' ) );
-            add_action( 'upgrader_process_complete', array( $this, 'purge' ), 10, 2 );
+            add_filter( 'plugins_api', array( $this, 'plugins_api' ), 20, 3 );
+            add_filter( 'site_transient_update_plugins', array( $this, 'inject_update' ) );
+            add_action( 'upgrader_process_complete', array( $this, 'purge_cache' ), 10, 2 );
+            add_filter( 'upgrader_source_selection', array( $this, 'fix_package_folder' ), 10, 3 );
         }
 
-        public function request() {
-            $remote = get_transient( $this->cache_key );
+        private function get_local_version() {
+            if ( ! function_exists( 'get_file_data' ) ) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
 
-            if( false === $remote || ! $this->cache_allowed ) {
-                // Get plugin info from GitHub
-                $api_url = "https://api.github.com/repos/{$this->github_username}/{$this->github_repo}/contents/360-global-blocks.php";
-                
-                $response = wp_remote_get($api_url, array(
+            $plugin_data = get_file_data( $this->plugin_file, array( 'Version' => 'Version' ) );
+            return ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '0.0.0';
+        }
+
+        private function get_remote_meta() {
+            $force = isset( $_GET['force-check'] ) && '1' === $_GET['force-check'];
+
+            if ( $force ) {
+                delete_transient( $this->cache_key );
+            }
+
+            $cached = get_transient( $this->cache_key );
+            if ( ! $force && false !== $cached ) {
+                return $cached;
+            }
+
+            $raw_file_url = sprintf(
+                'https://raw.githubusercontent.com/%s/%s/%s/360-global-blocks.php',
+                $this->github_username,
+                $this->github_repo,
+                $this->branch
+            );
+
+            $response = wp_remote_get(
+                $raw_file_url,
+                array(
+                    'timeout' => 15,
                     'headers' => array(
-                        'User-Agent' => 'WordPress/' . get_bloginfo('version') . '; ' . home_url(),
-                        'Accept' => 'application/vnd.github.v3+json'
+                        'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
                     ),
-                    'timeout' => 15
-                ));
+                )
+            );
 
-                if( 
-                    is_wp_error( $response )
-                    || 200 !== wp_remote_retrieve_response_code( $response )
-                    || empty( wp_remote_retrieve_body( $response ) )
-                ) {
-                    return false;
-                }
-
-                $body = wp_remote_retrieve_body( $response );
-                $data = json_decode( $body, true );
-                
-                if( ! isset( $data['content'] ) ) {
-                    return false;
-                }
-                
-                // Decode the plugin file content
-                $content = base64_decode( $data['content'] );
-                
-                // Extract version from plugin header
-                $github_version = '1.3.1'; // fallback
-                if( preg_match( '/Version:\s*(.+)/', $content, $matches ) ) {
-                    $github_version = trim( $matches[1] );
-                }
-                
-                // Extract description
-                $description = 'Custom Gutenberg blocks for the 360 network.';
-                if( preg_match( '/Description:\s*(.+)/', $content, $matches ) ) {
-                    $description = trim( $matches[1] );
-                }
-
-                // Create update info object
-                $remote = (object) array(
-                    'name' => '360 Global Blocks',
-                    'slug' => $this->plugin_slug,
-                    'author' => '<a href="https://360.health">360 Health</a>',
-                    'author_profile' => 'https://360.health',
-                    'version' => $github_version,
-                    'download_url' => "https://github.com/{$this->github_username}/{$this->github_repo}/archive/refs/heads/main.zip",
-                    'requires' => '6.0',
-                    'tested' => get_bloginfo('version'),
-                    'requires_php' => '7.4',
-                    'last_updated' => date('Y-m-d H:i:s'),
-                    'sections' => array(
-                        'description' => $description,
-                        'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-global-blocks` directory, or install the plugin through the WordPress plugins screen directly.',
-                        'changelog' => '<h4>1.3.1</h4><ul><li>Testing automatic WordPress plugin updates</li><li>Improved update system reliability</li></ul><h4>1.3.0</h4><ul><li>Implemented proper WordPress plugin update system</li><li>Added comprehensive Health Icons collection</li><li>Fixed plugin update notifications</li></ul>'
-                    ),
-                    'banners' => array(
-                        'low' => '',
-                        'high' => ''
-                    )
-                );
-
-                if( $this->cache_allowed ) {
-                    set_transient( $this->cache_key, $remote, DAY_IN_SECONDS );
-                }
+            if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+                return false;
             }
 
-            return $remote;
+            $body = wp_remote_retrieve_body( $response );
+            if ( empty( $body ) ) {
+                return false;
+            }
+
+            $remote_version = $this->version;
+            if ( preg_match( '/^\s*\*\s*Version:\s*(.+)$/mi', $body, $matches ) ) {
+                $remote_version = trim( $matches[1] );
+            }
+
+            $description = 'Custom Gutenberg blocks for the 360 network.';
+            if ( preg_match( '/^\s*\*\s*Description:\s*(.+)$/mi', $body, $matches ) ) {
+                $description = trim( $matches[1] );
+            }
+
+            $changelog_url = sprintf(
+                'https://github.com/%s/%s/commits/%s',
+                rawurlencode( $this->github_username ),
+                rawurlencode( $this->github_repo ),
+                rawurlencode( $this->branch )
+            );
+
+            $meta = (object) array(
+                'name'          => '360 Global Blocks',
+                'slug'          => $this->normalized_slug,
+                'version'       => $remote_version,
+                'download_url'  => sprintf(
+                    'https://github.com/%s/%s/archive/refs/heads/%s.zip',
+                    $this->github_username,
+                    $this->github_repo,
+                    $this->branch
+                ),
+                'requires'      => '6.0',
+                'tested'        => get_bloginfo( 'version' ),
+                'requires_php'  => '7.4',
+                'last_updated'  => gmdate( 'Y-m-d H:i:s' ),
+                'author'        => '<a href="https://360.health">360 Health</a>',
+                'author_profile'=> 'https://360.health',
+                'sections'      => array(
+                    'description'  => esc_html( $description ),
+                    'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-Global-Blocks/` directory, or install the plugin through the WordPress plugins screen directly.',
+                    'changelog'    => '<p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
+                ),
+                'banners'       => array(),
+            );
+
+            set_transient( $this->cache_key, $meta, HOUR_IN_SECONDS );
+            return $meta;
         }
 
-        public function info( $res, $action, $args ) {
-            // do nothing if this is not about getting plugin information
-            if( 'plugin_information' !== $action ) {
+        public function plugins_api( $res, $action, $args ) {
+            if ( 'plugin_information' !== $action ) {
                 return $res;
             }
 
-            // do nothing if it is not our plugin
-            if( $this->plugin_slug !== $args->slug ) {
+            $accepted_slugs = array( $this->plugin_slug, $this->normalized_slug, $this->plugin_basename );
+            if ( empty( $args->slug ) || ! in_array( $args->slug, $accepted_slugs, true ) ) {
                 return $res;
             }
 
-            // get updates
-            $remote = $this->request();
-
-            if( ! $remote ) {
+            $remote = $this->get_remote_meta();
+            if ( false === $remote ) {
                 return $res;
             }
 
-            $res = new stdClass();
-            $res->name = $remote->name;
-            $res->slug = $remote->slug;
-            $res->author = $remote->author;
-            $res->author_profile = $remote->author_profile;
-            $res->version = $remote->version;
-            $res->tested = $remote->tested;
-            $res->requires = $remote->requires;
-            $res->requires_php = $remote->requires_php;
-            $res->download_link = $remote->download_url;
-            $res->trunk = $remote->download_url;
-            $res->last_updated = $remote->last_updated;
-            $res->sections = $remote->sections;
-            $res->banners = $remote->banners;
+            $info = new stdClass();
+            $info->name           = $remote->name;
+            $info->slug           = $remote->slug;
+            $info->version        = $remote->version;
+            $info->author         = $remote->author;
+            $info->author_profile = $remote->author_profile;
+            $info->last_updated   = $remote->last_updated;
+            $info->download_link  = $remote->download_url;
+            $info->requires       = $remote->requires;
+            $info->tested         = $remote->tested;
+            $info->requires_php   = $remote->requires_php;
+            $info->sections       = $remote->sections;
+            $info->banners        = $remote->banners;
 
-            return $res;
+            return $info;
         }
 
-        public function update( $transient ) {
-            if ( empty($transient->checked ) ) {
+        public function inject_update( $transient ) {
+            if ( empty( $transient->checked ) ) {
                 return $transient;
             }
 
-            // get update info
-            $remote = $this->request();
-
-            if( 
-                $remote
-                && version_compare( $this->version, $remote->version, '<' )
-                && version_compare( $remote->requires, get_bloginfo( 'version' ), '<=' )
-                && version_compare( $remote->requires_php, PHP_VERSION, '<=' )
-            ) {
-                $res = new stdClass();
-                $res->slug = $remote->slug;
-                $res->plugin = $this->plugin_file;
-                $res->new_version = $remote->version;
-                $res->tested = $remote->tested;
-                $res->package = $remote->download_url;
-                
-                $transient->response[ $res->plugin ] = $res;
+            $remote = $this->get_remote_meta();
+            if ( false === $remote ) {
+                return $transient;
             }
 
+            if ( version_compare( $this->version, $remote->version, '>=' ) ) {
+                return $transient;
+            }
+
+            $update = new stdClass();
+            $update->slug        = $this->normalized_slug;
+            $update->plugin      = $this->plugin_basename;
+            $update->new_version = $remote->version;
+            $update->package     = $remote->download_url;
+            $update->tested      = $remote->tested;
+            $update->requires    = $remote->requires;
+            $update->requires_php= $remote->requires_php;
+
+            $transient->response[ $this->plugin_basename ] = $update;
             return $transient;
         }
 
-        public function purge( $upgrader, $options ){
-            if (
-                $this->cache_allowed
-                && 'update' === $options['action']
-                && 'plugin' === $options[ 'type' ]
-            ) {
-                // clean the cache when new plugin version is installed
+        public function purge_cache( $upgrader, $options ) {
+            if ( 'update' === $options['action'] && 'plugin' === $options['type'] ) {
                 delete_transient( $this->cache_key );
             }
+        }
+
+        public function fix_package_folder( $source, $remote_source, $upgrader ) {
+            if ( empty( $this->plugin_folder ) || '.' === $this->plugin_folder ) {
+                return $source;
+            }
+
+            $expected = $this->github_repo;
+            if ( false === strpos( strtolower( $source ), strtolower( $expected ) ) ) {
+                return $source;
+            }
+
+            $proper_folder = trailingslashit( dirname( $source ) ) . $this->plugin_folder;
+            if ( ! is_dir( $proper_folder ) && @rename( $source, $proper_folder ) ) {
+                return $proper_folder;
+            }
+
+            return $source;
         }
     }
 
