@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.2
+ * Version: 1.3.3
 Author: Kaz Alvis
 */
 
@@ -121,7 +121,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 'sections'      => array(
                     'description'  => esc_html( $description ),
                     'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-Global-Blocks/` directory, or install the plugin through the WordPress plugins screen directly.',
-                    'changelog'    => '<h4>1.3.2</h4><ul><li>Added update diagnostics page and slug fixes</li></ul><h4>1.3.1</h4><ul><li>Initial GitHub-based auto-update rollout</li></ul><p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
+                    'changelog'    => '<h4>1.3.3</h4><ul><li>Version bump for live updater smoke test</li><li>Confirmed diagnostics tooling</li></ul><h4>1.3.2</h4><ul><li>Added update diagnostics page and slug fixes</li></ul><h4>1.3.1</h4><ul><li>Initial GitHub-based auto-update rollout</li></ul><p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
                 ),
                 'banners'       => array(),
             );
