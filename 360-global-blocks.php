@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.8
+ * Version: 1.3.9
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.8' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.9' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -33,18 +33,58 @@ function sb_global_blocks_bootstrap_updater() {
 add_action( 'plugins_loaded', 'sb_global_blocks_bootstrap_updater', 5 );
 
 function sb_global_blocks_rename_github_package( $source, $remote_source, $upgrader, $hook_extra ) {
-    if ( empty( $hook_extra['plugin'] ) || '360-global-blocks/360-global-blocks.php' !== $hook_extra['plugin'] ) {
-        return $source;
-    }
-
     $source_path  = untrailingslashit( $source );
-    $desired_path = trailingslashit( dirname( $source_path ) ) . '360-global-blocks';
+    $source_dir   = basename( $source_path );
+    $expected_dir = '360-global-blocks';
 
-    if ( $source_path === untrailingslashit( $desired_path ) ) {
+    $is_target = false;
+
+    if ( isset( $hook_extra['plugin'] ) && '360-global-blocks/360-global-blocks.php' === $hook_extra['plugin'] ) {
+        $is_target = true;
+    }
+
+    if ( isset( $hook_extra['slug'] ) && '360-global-blocks' === $hook_extra['slug'] ) {
+        $is_target = true;
+    }
+
+    if ( ! $is_target && false !== stripos( $source_dir, '360-global-blocks' ) ) {
+        $is_target = true;
+    }
+
+    if ( ! $is_target ) {
         return $source;
     }
 
-    if ( @rename( $source_path, $desired_path ) ) {
+    $desired_path = trailingslashit( dirname( $source_path ) ) . $expected_dir;
+
+    if ( strtolower( $source_dir ) === $expected_dir ) {
+        return trailingslashit( $source_path );
+    }
+
+    global $wp_filesystem;
+
+    if ( ! $wp_filesystem && defined( 'ABSPATH' ) ) {
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+        WP_Filesystem();
+    }
+
+    if ( $wp_filesystem && $wp_filesystem->exists( $desired_path ) ) {
+        $wp_filesystem->delete( $desired_path, true );
+    }
+
+    $moved = false;
+
+    if ( $wp_filesystem && $wp_filesystem->move( trailingslashit( $source_path ), trailingslashit( $desired_path ), true ) ) {
+        $moved = true;
+    }
+
+    if ( ! $moved && @rename( $source_path, $desired_path ) ) {
+        $moved = true;
+    }
+
+    if ( $moved ) {
         return trailingslashit( $desired_path );
     }
 
