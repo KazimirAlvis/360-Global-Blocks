@@ -144,6 +144,11 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.4
+
+- Synced production FTP adjustments back into the repo
+- Bumped version to trigger GitHub-powered auto-update
+
 ### 1.0.0
 
 -   Initial release

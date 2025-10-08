@@ -2,7 +2,7 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.3
+ * Version: 1.3.4
 Author: Kaz Alvis
 */
 
@@ -15,6 +15,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
     private $plugin_basename;
     private $plugin_folder;
     private $plugin_slug;
+    private $normalized_slug;
         private $version;
         private $cache_key;
         private $github_username;
@@ -26,6 +27,10 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             $this->plugin_basename = plugin_basename( $this->plugin_file );
             $this->plugin_folder   = dirname( $this->plugin_basename );
             $this->plugin_slug     = dirname( $this->plugin_basename );
+            if ( '.' === $this->plugin_slug || '' === $this->plugin_slug ) {
+                $this->plugin_slug = basename( $this->plugin_basename, '.php' );
+            }
+            $this->normalized_slug = sanitize_title( $this->plugin_slug );
             $this->version         = $this->get_local_version();
             $this->cache_key       = 'sb_global_blocks_update_meta';
             $this->github_username = 'Superkore-Media';
@@ -77,11 +82,13 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             );
 
             if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+                $this->log( 'Remote meta request failed: ' . ( is_wp_error( $response ) ? $response->get_error_message() : wp_remote_retrieve_response_code( $response ) ) );
                 return false;
             }
 
             $body = wp_remote_retrieve_body( $response );
             if ( empty( $body ) ) {
+                $this->log( 'Remote meta response empty.' );
                 return false;
             }
 
@@ -104,7 +111,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
 
             $meta = (object) array(
                 'name'          => '360 Global Blocks',
-                'slug'          => $this->plugin_slug,
+                'slug'          => $this->normalized_slug,
                 'version'       => $remote_version,
                 'download_url'  => sprintf(
                     'https://github.com/%s/%s/archive/refs/heads/%s.zip',
@@ -121,12 +128,13 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 'sections'      => array(
                     'description'  => esc_html( $description ),
                     'installation' => 'Upload the plugin files to the `/wp-content/plugins/360-Global-Blocks/` directory, or install the plugin through the WordPress plugins screen directly.',
-                    'changelog'    => '<h4>1.3.3</h4><ul><li>Version bump for live updater smoke test</li><li>Confirmed diagnostics tooling</li></ul><h4>1.3.2</h4><ul><li>Added update diagnostics page and slug fixes</li></ul><h4>1.3.1</h4><ul><li>Initial GitHub-based auto-update rollout</li></ul><p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
+                    'changelog'    => '<h4>1.3.4</h4><ul><li>Sync Git-based build with live FTP changes</li><li>Housekeeping for update metadata</li></ul><h4>1.3.3</h4><ul><li>Version bump for live updater smoke test</li><li>Confirmed diagnostics tooling</li></ul><h4>1.3.2</h4><ul><li>Added update diagnostics page and slug fixes</li></ul><h4>1.3.1</h4><ul><li>Initial GitHub-based auto-update rollout</li></ul><p>See <a href="' . esc_url( $changelog_url ) . '" target="_blank" rel="noopener">latest commits on GitHub</a>.</p>',
                 ),
                 'banners'       => array(),
             );
 
             set_transient( $this->cache_key, $meta, HOUR_IN_SECONDS );
+            $this->log( 'Remote meta fetched. Version: ' . $meta->version );
             return $meta;
         }
 
@@ -140,6 +148,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 'plugin_basename' => $this->plugin_basename,
                 'plugin_folder'   => $this->plugin_folder,
                 'slug_sent'       => $this->plugin_slug,
+                'normalized_slug' => $this->normalized_slug,
                 'transient_key'   => $this->cache_key,
             );
         }
@@ -151,6 +160,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
 
             $accepted_slugs = array(
                 $this->plugin_slug,
+                $this->normalized_slug,
                 $this->plugin_basename,
                 dirname( $this->plugin_basename ),
                 basename( $this->plugin_basename, '.php' )
@@ -192,11 +202,12 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             }
 
             if ( version_compare( $this->version, $remote->version, '>=' ) ) {
+                $this->log( 'No update available. Local: ' . $this->version . ' Remote: ' . $remote->version );
                 return $transient;
             }
 
             $update = new stdClass();
-            $update->slug        = $this->plugin_slug;
+            $update->slug        = $this->normalized_slug;
             $update->plugin      = $this->plugin_basename;
             $update->new_version = $remote->version;
             $update->package     = $remote->download_url;
@@ -205,6 +216,7 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
             $update->requires_php= $remote->requires_php;
 
             $transient->response[ $this->plugin_basename ] = $update;
+            $this->log( 'Update injected. Local: ' . $this->version . ' Remote: ' . $remote->version );
             return $transient;
         }
 
@@ -224,12 +236,23 @@ if ( ! class_exists( 'SB_Global_Blocks_Update_Checker' ) ) {
                 return $source;
             }
 
-            $proper_folder = trailingslashit( dirname( $source ) ) . $this->plugin_folder;
+            $target_folder = $this->plugin_folder;
+            if ( '.' === $target_folder || '' === $target_folder ) {
+                $target_folder = $this->plugin_slug;
+            }
+
+            $proper_folder = trailingslashit( dirname( $source ) ) . $target_folder;
             if ( ! is_dir( $proper_folder ) && @rename( $source, $proper_folder ) ) {
                 return $proper_folder;
             }
 
             return $source;
+        }
+
+        private function log( $message ) {
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log( '[360 Global Blocks] ' . $message );
+            }
         }
     }
 
