@@ -7,8 +7,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Debug: Check if we're in the render file
+error_log('Info Cards render.php: Starting render');
+
 // Get Health Icons loader
 if (!class_exists('HealthIconsLoader')) {
+    error_log('Info Cards render.php: HealthIconsLoader class not found');
     return '<div class="wp-block-global360blocks-info-cards"><p>Error: HealthIconsLoader not available</p></div>';
 }
 
