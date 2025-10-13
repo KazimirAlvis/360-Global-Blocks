@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.3.10
+Stable tag: 1.3.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,10 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.11 =
+* Widened the full hero, info cards, and video two-column block containers to match the latest site layout direction.
+* Smoothed out padding and alignment, including a fully responsive video wrapper for the hero’s embedded media.
 
 = 1.3.10 =
 * Routine validation bump to confirm the branch-archive updater keeps working.
