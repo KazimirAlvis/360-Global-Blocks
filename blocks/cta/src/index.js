@@ -43,7 +43,7 @@ const Edit = ({ attributes, setAttributes }) => {
 					/>
 
 					<div className="cta-button-preview">
-						<span className="btn btn_global">Take Assessment</span>
+						<span className="btn btn_global">Take Risk Assessment Now</span>
 					</div>
 				</div>
 

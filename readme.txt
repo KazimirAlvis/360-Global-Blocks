@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.3.11
+Stable tag: 1.3.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,10 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.12 =
+* Aligned patient questionnaire buttons with the "Take Risk Assessment Now" copy across CTA, video two-column, two-column, and Find Doctor blocks, including hover styling fixes.
+* Trimmed top margins on info cards and popular practices headings for tighter hero-to-content spacing.
 
 = 1.3.11 =
 * Widened the full hero, info cards, and video two-column block containers to match the latest site layout direction.

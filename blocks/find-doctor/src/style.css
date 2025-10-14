@@ -104,6 +104,11 @@
 	color: #fff;
 }
 
+.find-doctor-button .btn_global:hover,
+.find-doctor-button .btn_global:visited:hover {
+	color: #000 !important;
+}
+
 /* Responsive styles */
 @media (max-width: 1024px) {
 	.find-doctor-content {

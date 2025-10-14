@@ -105,7 +105,7 @@
     white-space: nowrap !important;
     transition: transform 0.2s ease, background-color 0.2s ease !important;
     display: inline-block !important;
-    margin: 0 0 30px 0 !important;
+	margin: 0 !important;
     line-height: 22px !important;
     text-decoration: none !important;
     box-sizing: border-box !important;

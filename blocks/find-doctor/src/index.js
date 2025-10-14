@@ -132,7 +132,7 @@ registerBlockType('global360blocks/find-doctor', {
 									className="btn btn_global"
 									disabled
 								>
-									{__('Find a Doctor', 'global360blocks')}
+									{__('Find a Doctor Now', 'global360blocks')}
 								</Button>
 							</div>
 						</div>

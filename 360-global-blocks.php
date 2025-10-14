@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.11
+ * Version: 1.3.12
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.11' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.12' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -629,8 +629,8 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     
     // Assessment button
     if (!empty($assess_id)) {
-        $output .= '<div class="video-two-column-button">';
-        $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+    $output .= '<div class="video-two-column-button">';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
         $output .= '</div>';
     }
     
@@ -670,7 +670,7 @@ function global360blocks_render_find_doctor_block($attributes) {
         $output .= '<p class="find-doctor-body">' . wp_kses_post($body_text) . '</p>';
     }
     $output .= '<div class="find-doctor-button">';
-    $output .= '<a href="/find-a-doctor/" class="btn btn_global">Find a Doctor</a>';
+    $output .= '<a href="/find-a-doctor/" class="btn btn_global">Find a Doctor Now</a>';
     $output .= '</div>';
     $output .= '</div>';
     
@@ -1126,7 +1126,7 @@ function global360blocks_render_cta_block( $attributes, $content ) {
         $output .= '<h2 class="cta-heading">' . $heading . '</h2>';
     }
     $output .= '<div class="cta-button">';
-    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
     $output .= '</div>';
     $output .= '</div></div></div>';
     return $output;
@@ -1161,7 +1161,7 @@ function global360blocks_render_two_column_block( $attributes, $content ) {
         $output .= '<div class="two-column-body">' . $body_text . '</div>';
     }
     $output .= '<div class="two-column-button">';
-    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Assessment</pr360-questionnaire>';
+    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
     $output .= '</div>';
     $output .= '</div>';
     
