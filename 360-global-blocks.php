@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.12
+ * Version: 1.3.13
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.12' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.13' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -364,20 +364,24 @@ function global360blocks_render_two_column_slider_block($attributes) {
     $output .= '<div class="slider-wrapper">';
     
     if ($show_arrows) {
-        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide">‹</button>';
+        $output .= '<button class="slider-nav prev" onclick="previousSlide(this)" aria-label="Previous slide"><span class="screen-reader-text">Previous slide</span></button>';
     }
     
-    $output .= '<div class="slide-container">';
-    
+    $output .= '<div class="slide-container" data-current-slide="0" data-autoplay="' . ($autoplay ? 'true' : 'false') . '">';
+    $output .= '<div class="slide-track">';
+
     foreach ($slides as $index => $slide) {
-        $heading = !empty($slide['heading']) ? esc_html($slide['heading']) : '';
-        $text = !empty($slide['text']) ? esc_html($slide['text']) : '';
-        $image_url = !empty($slide['imageUrl']) ? esc_url($slide['imageUrl']) : '';
-        
-        $active_class = $index === 0 ? 'active' : '';
-        
-        $output .= '<div class="slide ' . $active_class . '" data-slide="' . $index . '">';
+        $heading       = !empty($slide['heading']) ? wp_kses_post($slide['heading']) : '';
+        $text          = !empty($slide['text']) ? wp_kses_post($slide['text']) : '';
+        $image_url     = !empty($slide['imageUrl']) ? esc_url($slide['imageUrl']) : '';
+        $heading_attr  = !empty($slide['heading']) ? esc_attr( wp_strip_all_tags( $slide['heading'] ) ) : '';
+		
+        $active_class      = $index === 0 ? 'active' : '';
+        $image_state_class = $image_url ? 'has-image' : 'no-image';
+
+        $output .= '<div class="slide ' . $active_class . ' ' . $image_state_class . '" data-slide="' . $index . '">';
         $output .= '<div class="slide-content">';
+        $output .= '<span class="slide-index">' . ($index + 1) . '</span>';
         if ($heading) {
             $output .= '<h2 class="slide-heading">' . $heading . '</h2>';
         }
@@ -388,16 +392,17 @@ function global360blocks_render_two_column_slider_block($attributes) {
         
         if ($image_url) {
             $output .= '<div class="slide-image">';
-            $output .= '<img src="' . $image_url . '" alt="' . esc_attr($heading) . '" />';
+            $output .= '<img src="' . $image_url . '" alt="' . $heading_attr . '" />';
             $output .= '</div>';
         }
         $output .= '</div>';
     }
-    
+
+    $output .= '</div>';
     $output .= '</div>';
     
     if ($show_arrows) {
-        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide">›</button>';
+        $output .= '<button class="slider-nav next" onclick="nextSlide(this)" aria-label="Next slide"><span class="screen-reader-text">Next slide</span></button>';
     }
     
     $output .= '</div>';
@@ -415,76 +420,84 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     // Add slider JavaScript
     $output .= '<script>
+        function updateTwoColumnSlider(container, targetIndex) {
+            if (!container) {
+                return;
+            }
+            const track = container.querySelector(".slide-track");
+            if (!track) {
+                return;
+            }
+            const slides = Array.from(track.children);
+            const dots = container.querySelectorAll(".dot");
+            const total = slides.length;
+            if (!total) {
+                return;
+            }
+            let newIndex = typeof targetIndex === "number" ? targetIndex : parseInt(container.dataset.currentSlide || "0", 10);
+            if (isNaN(newIndex)) {
+                newIndex = 0;
+            }
+            newIndex = (newIndex % total + total) % total;
+            container.dataset.currentSlide = newIndex;
+            track.style.transform = "translateX(-" + (newIndex * 100) + "%)";
+            slides.forEach(function(slide, idx) {
+                slide.classList.toggle("active", idx === newIndex);
+            });
+            dots.forEach(function(dot, idx) {
+                dot.classList.toggle("active", idx === newIndex);
+            });
+        }
+
         function nextSlide(button) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            let current = 0;
-            
-            slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
-                }
-            });
-            
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
-            
-            current = (current + 1) % slides.length;
-            
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            if (!container) {
+                return;
+            }
+            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
+            updateTwoColumnSlider(container, current + 1);
         }
-        
+
         function previousSlide(button) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            let current = 0;
-            
-            slides.forEach((slide, index) => {
-                if (slide.classList.contains("active")) {
-                    current = index;
-                }
-            });
-            
-            slides[current].classList.remove("active");
-            if (dots[current]) dots[current].classList.remove("active");
-            
-            current = current === 0 ? slides.length - 1 : current - 1;
-            
-            slides[current].classList.add("active");
-            if (dots[current]) dots[current].classList.add("active");
+            if (!container) {
+                return;
+            }
+            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
+            updateTwoColumnSlider(container, current - 1);
         }
-        
+
         function goToSlide(button, index) {
             const container = button.closest(".two-column-slider-container");
-            const slides = container.querySelectorAll(".slide");
-            const dots = container.querySelectorAll(".dot");
-            
-            slides.forEach(slide => slide.classList.remove("active"));
-            dots.forEach(dot => dot.classList.remove("active"));
-            
-            slides[index].classList.add("active");
-            dots[index].classList.add("active");
+            if (!container) {
+                return;
+            }
+            updateTwoColumnSlider(container, index);
         }
-        
-        // Auto-play functionality
-        ' . ($autoplay ? '
+
         document.addEventListener("DOMContentLoaded", function() {
             const containers = document.querySelectorAll(".two-column-slider-container");
-            containers.forEach(container => {
-                if (container.querySelector(".slide")) {
-                    setInterval(() => {
+            containers.forEach(function(container) {
+                updateTwoColumnSlider(container, parseInt(container.dataset.currentSlide || "0", 10) || 0);
+            ' . ($autoplay ? '
+                if (container.dataset.autoplayInitialized === "true") {
+                    return;
+                }
+                container.dataset.autoplayInitialized = "true";
+                if (container.dataset.autoplay === "true" && container.querySelectorAll(".slide").length > 1) {
+                    setInterval(function() {
                         const nextButton = container.querySelector(".slider-nav.next");
                         if (nextButton) {
                             nextSlide(nextButton);
+                        } else {
+                            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
+                            updateTwoColumnSlider(container, current + 1);
                         }
                     }, ' . $autoplay_speed . ');
                 }
+            ' : '') . '
             });
         });
-        ' : '') . '
     </script>';
     
     $output .= '</div>';

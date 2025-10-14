@@ -144,8 +144,8 @@ registerBlockType('global360blocks/two-column-slider', {
 					</PanelBody>
 				</InspectorControls>
 
-				<div {...blockProps}>
-					<div className="two-column-slider-container">
+					<div {...blockProps}>
+						<div className="two-column-slider-container">
 						<div className="slider-wrapper">
 							{showArrows && (
 								<button
@@ -153,80 +153,89 @@ registerBlockType('global360blocks/two-column-slider', {
 									onClick={prevSlide}
 									aria-label="Previous slide"
 								>
-									‹
+									<span className="screen-reader-text">Previous slide</span>
 								</button>
 							)}
 
-							<div className="slide-container">
-								{slides.map((slide, index) => (
-									<div
-										key={index}
-										className={`slide ${index === currentSlide ? 'active' : ''}`}
-										style={{ display: index === currentSlide ? 'flex' : 'none' }}
-									>
-										<div className="slide-content">
-											<RichText
-												tagName="h2"
-												className="slide-heading"
-												value={slide.heading}
-												onChange={(value) => updateSlide(index, 'heading', value)}
-												placeholder="Enter slide heading..."
-											/>
-											<RichText
-												tagName="p"
-												className="slide-text"
-												value={slide.text}
-												onChange={(value) => updateSlide(index, 'text', value)}
-												placeholder="Enter slide text..."
-											/>
-										</div>
+							<div
+								className="slide-container"
+								data-current-slide={currentSlide}
+								data-autoplay={autoplay}
+							>
+								<div
+									className="slide-track"
+									style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+								>
+									{slides.map((slide, index) => (
+										<div
+											key={index}
+											className={`slide ${index === currentSlide ? 'active' : ''} ${slide.imageUrl ? 'has-image' : 'no-image'}`}
+										>
+											<div className="slide-content">
+												<span className="slide-index">{index + 1}</span>
+												<RichText
+													tagName="h2"
+													className="slide-heading"
+													value={slide.heading}
+													onChange={(value) => updateSlide(index, 'heading', value)}
+													placeholder="Enter slide heading..."
+												/>
+												<RichText
+													tagName="p"
+													className="slide-text"
+													value={slide.text}
+													onChange={(value) => updateSlide(index, 'text', value)}
+													placeholder="Enter slide text..."
+												/>
+											</div>
 
-										<div className="slide-image">
-											<MediaUploadCheck>
-												<MediaUpload
-													onSelect={(media) => onSelectImage(media, index)}
-													allowedTypes={['image']}
-													value={slide.imageId}
-													render={({ open }) => (
-														<div className="image-upload-container">
-															{slide.imageUrl ? (
-																<div className="image-preview">
-																	<img
-																		src={slide.imageUrl}
-																		alt={slide.heading || 'Slide image'}
-																	/>
-																	<div className="image-actions">
-																		<Button
-																			variant="secondary"
-																			onClick={open}
-																		>
-																			Change Image
-																		</Button>
-																		<Button
-																			variant="secondary"
-																			isDestructive
-																			onClick={() => onRemoveImage(index)}
-																		>
-																			Remove
-																		</Button>
+											<div className="slide-image">
+												<MediaUploadCheck>
+													<MediaUpload
+														onSelect={(media) => onSelectImage(media, index)}
+														allowedTypes={['image']}
+														value={slide.imageId}
+														render={({ open }) => (
+															<div className="image-upload-container">
+																{slide.imageUrl ? (
+																	<div className="image-preview">
+																		<img
+																			src={slide.imageUrl}
+																			alt={slide.heading || 'Slide image'}
+																		/>
+																		<div className="image-actions">
+																			<Button
+																				variant="secondary"
+																				onClick={open}
+																			>
+																				Change Image
+																			</Button>
+																			<Button
+																				variant="secondary"
+																				isDestructive
+																				onClick={() => onRemoveImage(index)}
+																			>
+																				Remove
+																			</Button>
+																		</div>
 																	</div>
-																</div>
-															) : (
-																<Button
-																	variant="primary"
-																	onClick={open}
-																	className="upload-button"
-																>
-																	Add Image
-																</Button>
-															)}
+																) : (
+																	<Button
+																		variant="primary"
+																		onClick={open}
+																		className="upload-button"
+																	>
+																		Add Image
+																	</Button>
+																)}
 														</div>
 													)}
 												/>
-											</MediaUploadCheck>
+												</MediaUploadCheck>
+											</div>
 										</div>
-									</div>
-								))}
+									))}
+								</div>
 							</div>
 
 							{showArrows && (
@@ -235,7 +244,7 @@ registerBlockType('global360blocks/two-column-slider', {
 									onClick={nextSlide}
 									aria-label="Next slide"
 								>
-									›
+									<span className="screen-reader-text">Next slide</span>
 								</button>
 							)}
 						</div>
