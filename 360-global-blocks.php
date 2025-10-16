@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.14
+ * Version: 1.3.15
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.14' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.15' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -91,6 +91,102 @@ function sb_global_blocks_rename_github_package( $source, $remote_source, $upgra
     return $source;
 }
 add_filter( 'upgrader_source_selection', 'sb_global_blocks_rename_github_package', 10, 4 );
+
+function sb_global_blocks_ensure_install_location( $response, $hook_extra, $result ) {
+    $expected_dir = '360-global-blocks';
+    $is_target    = false;
+
+    if ( isset( $hook_extra['plugin'] ) && '360-global-blocks/360-global-blocks.php' === $hook_extra['plugin'] ) {
+        $is_target = true;
+    }
+
+    if ( isset( $hook_extra['slug'] ) && '360-global-blocks' === $hook_extra['slug'] ) {
+        $is_target = true;
+    }
+
+    if ( ! $is_target ) {
+        return $response;
+    }
+
+    $destination = isset( $result['destination'] ) ? $result['destination'] : '';
+    if ( ! $destination ) {
+        return $response;
+    }
+
+    $destination_dir = trailingslashit( $destination );
+    $expected_path   = trailingslashit( WP_PLUGIN_DIR ) . $expected_dir . '/';
+
+    if ( strtolower( $destination_dir ) === strtolower( $expected_path ) ) {
+        return $response;
+    }
+
+    global $wp_filesystem;
+
+    if ( ! $wp_filesystem && defined( 'ABSPATH' ) ) {
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+        WP_Filesystem();
+    }
+
+    $moved = false;
+
+    if ( $wp_filesystem && $wp_filesystem->exists( $destination_dir ) ) {
+        if ( $wp_filesystem->exists( $expected_path ) ) {
+            $wp_filesystem->delete( $expected_path, true );
+        }
+
+        if ( $wp_filesystem->move( $destination_dir, $expected_path, true ) ) {
+            $moved = true;
+        }
+    }
+
+    if ( ! $moved && is_dir( $destination_dir ) ) {
+        if ( is_dir( $expected_path ) ) {
+            sb_global_blocks_rrmdir( $expected_path );
+        }
+
+        if ( @rename( untrailingslashit( $destination_dir ), untrailingslashit( $expected_path ) ) ) {
+            $moved = true;
+        }
+    }
+
+    if ( $moved ) {
+        $result['destination'] = $expected_path;
+        return $result;
+    }
+
+    return $response;
+}
+add_filter( 'upgrader_post_install', 'sb_global_blocks_ensure_install_location', 10, 3 );
+
+if ( ! function_exists( 'sb_global_blocks_rrmdir' ) ) {
+    function sb_global_blocks_rrmdir( $dir ) {
+        if ( ! is_dir( $dir ) ) {
+            return;
+        }
+
+        $items = scandir( $dir );
+        if ( ! $items ) {
+            return;
+        }
+
+        foreach ( $items as $item ) {
+            if ( '.' === $item || '..' === $item ) {
+                continue;
+            }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            if ( is_dir( $path ) ) {
+                sb_global_blocks_rrmdir( $path );
+            } else {
+                @unlink( $path );
+            }
+        }
+
+        @rmdir( $dir );
+    }
+}
 
 function sb_global_blocks_get_update_debug_data() {
     $updater = isset( $GLOBALS['sb_global_blocks_updater'] ) ? $GLOBALS['sb_global_blocks_updater'] : null;

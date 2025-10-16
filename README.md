@@ -153,6 +153,11 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.15
+
+- Hardened the GitHub updater so branch archives are always renamed to `360-global-blocks`, preventing block registration warnings after updates
+- Added a safe recursive cleanup helper that removes stray `-main` folders before moving files into place
+
 ### 1.3.14
 
 - Adopted core InnerBlocks for the two-column block body, enabling rich text, lists, and other native blocks without custom fields
