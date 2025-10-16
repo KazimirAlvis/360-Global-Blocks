@@ -55,6 +55,15 @@ Video content display with:
 -   Assessment integration
 -   Responsive design
 
+### ✏️ Two Column Content Block
+
+Streamlined editorial experience powered by native Gutenberg features:
+
+-   Uses core InnerBlocks for the body area, so editors can add paragraphs, lists, quotes, and headings without custom tooling
+-   Auto-migrates legacy body fields into the new InnerBlocks layout the next time a page is updated
+-   Sanitizes leftover placeholder HTML (duplicate images, headings, CTA text) to keep both editor and front end clean
+-   Server-side render callback ensures the InnerBlocks markup displays on the front end while preserving legacy fallbacks
+
 ## Medical Focus
 
 Built specifically for healthcare websites with features like:
@@ -143,6 +152,12 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
+
+### 1.3.14
+
+- Adopted core InnerBlocks for the two-column block body, enabling rich text, lists, and other native blocks without custom fields
+- Added migration and sanitization logic that moves legacy `bodyText` content into InnerBlocks while stripping duplicate placeholders
+- Tightened server and client rendering so the editor preview matches the front end, including refreshed padding and typography
 
 ### 1.3.4
 
