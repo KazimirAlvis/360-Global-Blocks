@@ -27,11 +27,11 @@
 	},
 	"example": {},
 	"supports": {
-		"html": false,
-		"align": ["full"]
+		"html": false
 	},
 	"textdomain": "global360blocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css"
+	"render": "global360blocks_render_two_column_block",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css"
 }

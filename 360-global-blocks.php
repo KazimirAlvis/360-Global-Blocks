@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.13
+ * Version: 1.3.14
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.13' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.14' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -607,7 +607,7 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     
     $video_url = !empty($attributes['videoUrl']) ? esc_url($attributes['videoUrl']) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
-    $body_text = !empty($attributes['bodyText']) ? wp_kses_post($attributes['bodyText']) : '';
+    $legacy_body_text = !empty($attributes['bodyText']) ? wp_kses_post($attributes['bodyText']) : '';
     
     $output = '<div class="video-two-column-block">';
     $output .= '<div class="video-two-column-container">';
@@ -636,8 +636,16 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     if ($heading) {
         $output .= '<h2 class="video-two-column-heading">' . $heading . '</h2>';
     }
-    if ($body_text) {
-        $output .= '<div class="video-two-column-body">' . $body_text . '</div>';
+
+    $body_html = '';
+    if (!empty($content)) {
+        $body_html = $content;
+    } elseif (!empty($legacy_body_text)) {
+        $body_html = $legacy_body_text;
+    }
+
+    if ($body_html) {
+        $output .= '<div class="video-two-column-body">' . $body_html . '</div>';
     }
     
     // Assessment button
@@ -1077,7 +1085,7 @@ function global360blocks_register_blocks() {
         'render_callback' => 'global360blocks_render_cta_block',
     ) );
 
-    register_block_type( __DIR__ . '/blocks/two-column/build', array(
+    register_block_type( __DIR__ . '/blocks/two-column', array(
         'render_callback' => 'global360blocks_render_two_column_block',
     ) );
     
@@ -1145,17 +1153,45 @@ function global360blocks_render_cta_block( $attributes, $content ) {
     return $output;
 }
 
+if ( ! function_exists( 'global360blocks_filter_two_column_body' ) ) {
+    function global360blocks_filter_two_column_body( $html, $heading = '' ) {
+        if ( empty( $html ) ) {
+            return $html;
+        }
+
+        $html = preg_replace( '/<img[^>]*>/i', '', $html );
+        $html = preg_replace( '/Replace\s*Image\s*Remove\s*Image/i', '', $html );
+        $html = preg_replace( '/Replace\s*Image/i', '', $html );
+        $html = preg_replace( '/Remove\s*Image/i', '', $html );
+        $html = preg_replace( '/<p[^>]*>\s*(Take\s+Risk\s+Assessment\s+Now)\s*<\/p>/i', '', $html );
+        $html = preg_replace( '/<p[^>]*>\s*(Body\s+content)\s*<\/p>/i', '', $html );
+        $html = preg_replace( '/<p[^>]*>\s*(?:&nbsp;|\xc2\xa0|\s)*<\/p>/i', '', $html );
+
+        if ( ! empty( $heading ) ) {
+            $quoted_heading = preg_quote( wp_strip_all_tags( $heading ), '/' );
+            $heading_pattern = '/<h[1-6][^>]*>\s*' . $quoted_heading . '\s*<\/h[1-6]>/i';
+            $html = preg_replace( $heading_pattern, '', $html );
+        }
+
+        return $html;
+    }
+}
+
 // Render callback for Two Column block
-function global360blocks_render_two_column_block( $attributes, $content ) {
+function global360blocks_render_two_column_block( $attributes, $content, $block = null ) {
     // Get Assessment ID from theme settings (360_global_settings array)
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
     
     $image_url = !empty($attributes['imageUrl']) ? esc_url($attributes['imageUrl']) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
-    $body_text = !empty($attributes['bodyText']) ? wp_kses_post($attributes['bodyText']) : '';
+    $legacy_body_text = !empty($attributes['bodyText']) ? wp_kses_post($attributes['bodyText']) : '';
     
-    $output = '<div class="two-column-block">';
+    // Use block wrapper attributes so declared supports (e.g., align) are applied
+    $wrapper_attributes = function_exists('get_block_wrapper_attributes')
+        ? get_block_wrapper_attributes( array( 'class' => 'two-column-block' ) )
+        : 'class="two-column-block"';
+    $output = '<div ' . $wrapper_attributes . '>';
     $output .= '<div class="two-column-container">';
     
     // Left column - Image
@@ -1170,8 +1206,22 @@ function global360blocks_render_two_column_block( $attributes, $content ) {
     if ($heading) {
         $output .= '<h2 class="two-column-heading">' . $heading . '</h2>';
     }
-    if ($body_text) {
-        $output .= '<div class="two-column-body">' . $body_text . '</div>';
+    $body_html = '';
+    if (is_string($content) && trim($content) !== '') {
+        $body_html = trim($content);
+    } elseif (is_object($block) && property_exists($block, 'inner_blocks') && !empty($block->inner_blocks)) {
+        foreach ($block->inner_blocks as $inner_block) {
+            if (is_object($inner_block) && method_exists($inner_block, 'render')) {
+                $body_html .= $inner_block->render();
+            }
+        }
+    } elseif (!empty($legacy_body_text)) {
+        $body_html = wpautop($legacy_body_text);
+    }
+
+    if ($body_html) {
+        $body_html = global360blocks_filter_two_column_body( $body_html, $heading );
+        $output .= '<div class="two-column-body">' . $body_html . '</div>';
     }
     $output .= '<div class="two-column-button">';
     $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';

@@ -37,7 +37,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: 0 0 0 80px;
+	padding: 60px 0 60px 80px;
 	background-color: #fff;
 	max-width: 100%;
 	margin: 0 auto;
@@ -53,10 +53,34 @@
 }
 
 .two-column-body {
+	display: block;
 	font-size: 1.1rem;
 	line-height: 1.6;
 	margin: 0 0 40px 0;
 	color: #666;
+}
+
+.two-column-body p {
+	margin: 0 0 1.25rem 0;
+}
+
+.two-column-body ul,
+.two-column-body ol {
+	margin: 0 0 1.5rem 1.25rem;
+	padding-left: 1.25rem;
+}
+
+.two-column-body li {
+	margin-bottom: 0.65rem;
+}
+
+.two-column-body a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.two-column-body a:hover {
+	color: var(--cpt360-primary, #007cba);
 }
 
 .two-column-button {

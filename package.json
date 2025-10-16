@@ -1,6 +1,6 @@
 {
 	"name": "360-global-blocks",
-	"version": "1.2.16",
+	"version": "1.2.17",
 	"description": "Custom blocks for 360 Global",
 	"main": "index.js",
 	"scripts": {
