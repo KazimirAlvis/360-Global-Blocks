@@ -1,14 +1,15 @@
 {
 	"name": "360-global-blocks",
-	"version": "1.2.18",
+	"version": "1.2.19",
 	"description": "Custom blocks for 360 Global",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm run build:simple-hero && npm run build:full-hero && npm run build:cta && npm run build:two-column && npm run build:video-two-column && npm run build:find-doctor && npm run build:latest-articles && npm run build:popular-practices && npm run build:two-column-slider && npm run build:info-cards && npm run build:symptoms-ai && npm run build:page-title-hero && npm run copy-block-json",
+		"build": "npm run build:simple-hero && npm run build:full-hero && npm run build:cta && npm run build:two-column && npm run build:two-column-text && npm run build:video-two-column && npm run build:find-doctor && npm run build:latest-articles && npm run build:popular-practices && npm run build:two-column-slider && npm run build:info-cards && npm run build:symptoms-ai && npm run build:page-title-hero && npm run copy-block-json",
 		"build:simple-hero": "wp-scripts build blocks/simple-hero/src/index.js --output-path=blocks/simple-hero/build",
 		"build:full-hero": "wp-scripts build blocks/full-hero/src/index.js --output-path=blocks/full-hero/build",
 		"build:cta": "wp-scripts build blocks/cta/src/index.js --output-path=blocks/cta/build",
 		"build:two-column": "wp-scripts build blocks/two-column/src/index.js --output-path=blocks/two-column/build",
+		"build:two-column-text": "wp-scripts build blocks/two-column-text/src/index.js --output-path=blocks/two-column-text/build",
 		"build:video-two-column": "wp-scripts build blocks/video-two-column/src/index.js --output-path=blocks/video-two-column/build",
 		"build:find-doctor": "wp-scripts build blocks/find-doctor/src/index.js --output-path=blocks/find-doctor/build",
 		"build:latest-articles": "wp-scripts build blocks/latest-articles/src/index.js --output-path=blocks/latest-articles/build",
@@ -17,7 +18,7 @@
 		"build:info-cards": "wp-scripts build blocks/info-cards/src/index.js --output-path=blocks/info-cards/build",
 		"build:symptoms-ai": "wp-scripts build blocks/symptoms-ai/src/index.js --output-path=blocks/symptoms-ai/build",
 		"build:page-title-hero": "wp-scripts build blocks/page-title-hero/src/index.js --output-path=blocks/page-title-hero/build",
-		"copy-block-json": "cp blocks/simple-hero/block.json blocks/simple-hero/build/ && cp blocks/full-hero/block.json blocks/full-hero/build/ && cp blocks/cta/block.json blocks/cta/build/ && cp blocks/two-column/block.json blocks/two-column/build/ && cp blocks/video-two-column/block.json blocks/video-two-column/build/ && cp blocks/find-doctor/block.json blocks/find-doctor/build/ && cp blocks/latest-articles/block.json blocks/latest-articles/build/ && cp blocks/popular-practices/block.json blocks/popular-practices/build/ && cp blocks/two-column-slider/block.json blocks/two-column-slider/build/ && cp blocks/info-cards/block.json blocks/info-cards/build/ && cp blocks/symptoms-ai/block.json blocks/symptoms-ai/build/ && cp blocks/page-title-hero/block.json blocks/page-title-hero/build/ && npm run copy-render-files",
+		"copy-block-json": "cp blocks/simple-hero/block.json blocks/simple-hero/build/ && cp blocks/full-hero/block.json blocks/full-hero/build/ && cp blocks/cta/block.json blocks/cta/build/ && cp blocks/two-column/block.json blocks/two-column/build/ && cp blocks/two-column-text/block.json blocks/two-column-text/build/ && cp blocks/video-two-column/block.json blocks/video-two-column/build/ && cp blocks/find-doctor/block.json blocks/find-doctor/build/ && cp blocks/latest-articles/block.json blocks/latest-articles/build/ && cp blocks/popular-practices/block.json blocks/popular-practices/build/ && cp blocks/two-column-slider/block.json blocks/two-column-slider/build/ && cp blocks/info-cards/block.json blocks/info-cards/build/ && cp blocks/symptoms-ai/block.json blocks/symptoms-ai/build/ && cp blocks/page-title-hero/block.json blocks/page-title-hero/build/ && npm run copy-render-files",
 		"copy-render-files": "cp blocks/info-cards/render.php blocks/info-cards/build/ 2>/dev/null || true && cp blocks/page-title-hero/render.php blocks/page-title-hero/build/ 2>/dev/null || true && cp blocks/symptoms-ai/render.php blocks/symptoms-ai/build/ 2>/dev/null || true",
 		"start": "wp-scripts start",
 		"dev": "wp-scripts start"

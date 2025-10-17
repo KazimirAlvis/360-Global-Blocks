@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.16
+ * Version: 1.3.18
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.16' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.18' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -35,7 +35,7 @@ add_action( 'plugins_loaded', 'sb_global_blocks_bootstrap_updater', 5 );
 function sb_global_blocks_rename_github_package( $source, $remote_source, $upgrader, $hook_extra ) {
     $source_path  = untrailingslashit( $source );
     $source_dir   = basename( $source_path );
-    $expected_dir = '360-Global-Blocks';
+    $expected_dir = '360-global-blocks';
 
     $is_target = false;
 
@@ -93,7 +93,7 @@ function sb_global_blocks_rename_github_package( $source, $remote_source, $upgra
 add_filter( 'upgrader_source_selection', 'sb_global_blocks_rename_github_package', 10, 4 );
 
 function sb_global_blocks_ensure_install_location( $response, $hook_extra, $result ) {
-    $expected_dir = '360-Global-Blocks';
+    $expected_dir = '360-global-blocks';
     $is_target    = false;
 
     if ( isset( $hook_extra['plugin'] ) && strcasecmp( $hook_extra['plugin'], '360-Global-Blocks/360-global-blocks.php' ) === 0 ) {
@@ -1184,6 +1184,8 @@ function global360blocks_register_blocks() {
     register_block_type( __DIR__ . '/blocks/two-column', array(
         'render_callback' => 'global360blocks_render_two_column_block',
     ) );
+
+    register_block_type( __DIR__ . '/blocks/two-column-text' );
     
     register_block_type( __DIR__ . '/blocks/video-two-column/build', array(
         'render_callback' => 'global360blocks_render_video_two_column_block',

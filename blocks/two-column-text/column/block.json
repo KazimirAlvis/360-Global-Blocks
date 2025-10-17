@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "global360blocks/two-column-text-column",
+	"title": "Two Column Text Column",
+	"parent": ["global360blocks/two-column-text"],
+	"category": "layout",
+	"description": "Column container for Two Column Text block.",
+	"icon": "editor-table",
+	"attributes": {
+		"columnKey": {
+			"type": "string",
+			"default": ""
+		},
+		"backgroundColor": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "file:../build/index.css",
+	"style": "file:../build/style-index.css"
+}

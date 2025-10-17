@@ -64,6 +64,13 @@ Streamlined editorial experience powered by native Gutenberg features:
 -   Sanitizes leftover placeholder HTML (duplicate images, headings, CTA text) to keep both editor and front end clean
 -   Server-side render callback ensures the InnerBlocks markup displays on the front end while preserving legacy fallbacks
 
+### 🪄 Two Column Text Block
+
+-   Purpose-built for copy-only layouts with two independent text columns
+-   Each column is powered by core blocks (headings, paragraphs, lists, quotes, buttons, etc.)
+-   Dedicated color picker/text field per column for quick branded background accents
+-   Responsive layout that stacks gracefully on smaller breaks
+
 ## Medical Focus
 
 Built specifically for healthcare websites with features like:
@@ -152,6 +159,19 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
+
+### 1.3.18
+
+- Smoothed the Two Column Text editor experience so columns sit side by side in Gutenberg while still stacking responsibly on smaller breakpoints
+- Trimmed grid styling from the wrapper classes that WordPress injects so front-end layouts stay intact without affecting the admin canvas
+- Resolved the editor preview error by bundling the block-editor data hooks directly with the block script after the latest enhancements
+
+### 1.3.17
+
+- Introduced the **Two Column Text** block featuring two rich-text columns and per-column background color controls backed by native InnerBlocks
+- Registered build tooling and assets for the new block so it ships with npm builds and GitHub updates
+- Ensured plugin registration loads the static block automatically without additional render callbacks
+- Refined the editor locking so column structure stays fixed while paragraph → list transforms and other core conversions remain available
 
 ### 1.3.16
 
