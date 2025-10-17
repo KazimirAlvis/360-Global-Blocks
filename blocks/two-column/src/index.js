@@ -9,7 +9,7 @@ import {
 } from '@wordpress/block-editor';
 import '@wordpress/format-library';
 import { Button } from '@wordpress/components';
-import { registerBlockType, rawHandler, createBlock, cloneBlock } from '@wordpress/blocks';
+import { registerBlockType, rawHandler, createBlock } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
 import './style.css';
 import './editor.css';
@@ -58,76 +58,7 @@ const Edit = ({ attributes, setAttributes, clientId }) => {
 		}
 	}, [hasInnerBlocks, bodyText, replaceInnerBlocks, clientId, setAttributes]);
 
-	useEffect(() => {
-		if (!innerBlocks.length) {
-			return;
-		}
 
-		let hasChanges = false;
-		const sanitizedBlocks = [];
-		const trimmedHeading = (heading || '').trim();
-
-		innerBlocks.forEach((block) => {
-			if (!BODY_ALLOWED_BLOCKS.includes(block.name)) {
-				hasChanges = true;
-				return;
-			}
-
-			if (block.name === 'core/paragraph') {
-				const originalContent = block.attributes?.content || '';
-				let cleanedContent = originalContent.replace(/<img[^>]*>/gi, '');
-				cleanedContent = cleanedContent.replace(/Replace\s*Image\s*Remove\s*Image/gi, '');
-				cleanedContent = cleanedContent.replace(/Replace\s*Image/gi, '');
-				cleanedContent = cleanedContent.replace(/Remove\s*Image/gi, '');
-				const normalizedContent = cleanedContent
-					.replace(/&nbsp;/gi, ' ')
-					.replace(/<br\s*\/?>/gi, '\n')
-					.replace(/\s+/g, ' ')
-					.trim();
-
-				if (normalizedContent.toLowerCase() === 'take risk assessment now') {
-					hasChanges = true;
-					return;
-				}
-
-				if (normalizedContent.toLowerCase() === 'body content') {
-					hasChanges = true;
-					return;
-				}
-
-				cleanedContent = cleanedContent.trim();
-
-				if (!cleanedContent) {
-					hasChanges = true;
-					return;
-				}
-
-				if (cleanedContent !== originalContent) {
-					sanitizedBlocks.push(cloneBlock(block, { ...block.attributes, content: cleanedContent }));
-					hasChanges = true;
-				} else {
-					sanitizedBlocks.push(block);
-				}
-				return;
-			}
-
-			if (block.name === 'core/heading') {
-				const blockHeading = (block.attributes?.content || '').trim();
-				if (trimmedHeading && blockHeading === trimmedHeading) {
-					hasChanges = true;
-					return;
-				}
-				sanitizedBlocks.push(block);
-				return;
-			}
-
-			sanitizedBlocks.push(block);
-		});
-
-		if (hasChanges) {
-			replaceInnerBlocks(clientId, sanitizedBlocks, false);
-		}
-	}, [innerBlocks, replaceInnerBlocks, clientId, heading]);
 
 	const onSelectImage = (media) => {
 		setAttributes({
@@ -232,7 +163,7 @@ const Edit = ({ attributes, setAttributes, clientId }) => {
 	);
 };
 
-const Save = () => null;
+const Save = () => <InnerBlocks.Content />;
 
 registerBlockType('global360blocks/two-column', {
 	edit: Edit,

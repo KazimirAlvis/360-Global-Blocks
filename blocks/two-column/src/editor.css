@@ -1,4 +1,8 @@
 /* Two Column Block Editor Styles */
+html :where(.wp-block) {
+	max-width: 100%;
+}
+
 .wp-block-global360blocks-two-column {
 	margin: 20px 0;
 }
@@ -61,6 +65,7 @@
 	justify-content: center;
 	padding: 60px 0 60px 80px;
 	background-color: #fff;
+	width: calc(100% - 80px);
 }
 
 .wp-block-global360blocks-two-column .two-column-heading {

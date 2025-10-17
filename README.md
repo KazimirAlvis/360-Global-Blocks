@@ -76,7 +76,7 @@ Built specifically for healthcare websites with features like:
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/360-global-blocks/`
+1. Upload the plugin files to `/wp-content/plugins/360-Global-Blocks/`
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Navigate to any page/post editor to find the blocks under "360 Blocks" category
 
@@ -152,6 +152,11 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
+
+### 1.3.16
+
+- Fixed the two-column block to persist InnerBlocks markup on save so migrated body content renders on the front end without manual HTML tweaks
+- Updated the GitHub updater safeguards to retain the mixed-case `360-Global-Blocks` directory name after installs and updates
 
 ### 1.3.15
 
