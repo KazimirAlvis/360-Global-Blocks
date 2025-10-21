@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { useBlockProps, InspectorControls, RichText, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl, RangeControl, Button, Card, CardBody, IconButton } from '@wordpress/components';
+import { useBlockProps, InspectorControls, RichText, MediaUpload, MediaUploadCheck, PanelColorSettings } from '@wordpress/block-editor';
+import { PanelBody, ToggleControl, RangeControl, Button, Card, CardBody } from '@wordpress/components';
 import { Fragment, useState } from '@wordpress/element';
 import './editor.scss';
 import './style.scss';
@@ -29,6 +29,7 @@ registerBlockType('global360blocks/two-column-slider', {
 					text: 'Add your content here.',
 					imageId: null,
 					imageUrl: '',
+					contentBackground: '',
 				},
 			];
 			setAttributes({ slides: newSlides });
@@ -118,6 +119,18 @@ registerBlockType('global360blocks/two-column-slider', {
 										Edit Slide {index + 1}
 									</Button>
 
+									<PanelColorSettings
+										title="Content background"
+										initialOpen={false}
+										colorSettings={[
+											{
+												label: 'Background color',
+												value: slide.contentBackground || '',
+												onChange: (value) => updateSlide(index, 'contentBackground', value || ''),
+											},
+										]}
+									/>
+
 									{slides.length > 1 && (
 										<Button
 											isDestructive
@@ -171,7 +184,10 @@ registerBlockType('global360blocks/two-column-slider', {
 											key={index}
 											className={`slide ${index === currentSlide ? 'active' : ''} ${slide.imageUrl ? 'has-image' : 'no-image'}`}
 										>
-											<div className="slide-content">
+											<div
+												className="slide-content"
+												style={{ backgroundColor: slide.contentBackground || undefined }}
+											>
 												<span className="slide-index">{index + 1}</span>
 												<RichText
 													tagName="h2"

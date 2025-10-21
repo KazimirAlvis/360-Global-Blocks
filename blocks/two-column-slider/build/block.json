@@ -25,13 +25,15 @@
 					"heading": "Welcome to Our Practice",
 					"text": "We provide comprehensive healthcare services with a focus on patient care and modern medical technology.",
 					"imageId": null,
-					"imageUrl": ""
+					"imageUrl": "",
+					"contentBackground": ""
 				},
 				{
 					"heading": "Expert Medical Care",
 					"text": "Our team of experienced doctors and medical professionals are here to provide you with the best possible care.",
 					"imageId": null,
-					"imageUrl": ""
+					"imageUrl": "",
+					"contentBackground": ""
 				}
 			]
 		},
@@ -42,6 +44,10 @@
 		"autoplaySpeed": {
 			"type": "number",
 			"default": 5000
+		},
+		"contentBackground": {
+			"type": "string",
+			"default": ""
 		},
 		"showDots": {
 			"type": "boolean",

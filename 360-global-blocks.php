@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.18
+ * Version: 1.3.19
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.18' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.19' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -467,16 +467,18 @@ function global360blocks_render_two_column_slider_block($attributes) {
     $output .= '<div class="slide-track">';
 
     foreach ($slides as $index => $slide) {
-        $heading       = !empty($slide['heading']) ? wp_kses_post($slide['heading']) : '';
-        $text          = !empty($slide['text']) ? wp_kses_post($slide['text']) : '';
-        $image_url     = !empty($slide['imageUrl']) ? esc_url($slide['imageUrl']) : '';
+    $heading       = !empty($slide['heading']) ? wp_kses_post($slide['heading']) : '';
+    $text          = !empty($slide['text']) ? wp_kses_post($slide['text']) : '';
+    $image_url     = !empty($slide['imageUrl']) ? esc_url($slide['imageUrl']) : '';
+    $background    = !empty($slide['contentBackground']) ? sanitize_text_field($slide['contentBackground']) : '';
         $heading_attr  = !empty($slide['heading']) ? esc_attr( wp_strip_all_tags( $slide['heading'] ) ) : '';
 		
         $active_class      = $index === 0 ? 'active' : '';
         $image_state_class = $image_url ? 'has-image' : 'no-image';
+    $content_style     = $background ? ' style="background-color: ' . esc_attr( $background ) . ';"' : '';
 
-        $output .= '<div class="slide ' . $active_class . ' ' . $image_state_class . '" data-slide="' . $index . '">';
-        $output .= '<div class="slide-content">';
+    $output .= '<div class="slide ' . $active_class . ' ' . $image_state_class . '" data-slide="' . $index . '">';
+    $output .= '<div class="slide-content"' . $content_style . '>';
         $output .= '<span class="slide-index">' . ($index + 1) . '</span>';
         if ($heading) {
             $output .= '<h2 class="slide-heading">' . $heading . '</h2>';

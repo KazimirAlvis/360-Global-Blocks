@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.19
+
+- Added a per-slide background color picker to the Two Column Slider so each card can carry unique brand accents without custom CSS
+- Clamped slider imagery to a 700px max height (with mobile reset) to keep oversized assets from stretching the layout
+- Ensured the build pipeline ships the slider `block.json` metadata so existing pages keep rendering after updates
+
 ### 1.3.18
 
 - Smoothed the Two Column Text editor experience so columns sit side by side in Gutenberg while still stacking responsibly on smaller breakpoints
