@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.20
+
+- Prevent duplicate fallback clinics in the Popular Practices block by sampling unique posts and only rendering the slots you have content for
+- Auto-center two or three cards with responsive grid sizing and enlarge clinic logo pads to 150px for better brand presentation
+- Bundled slider/popular practices metadata in the build output to ensure WordPress recognizes both blocks after updates
+
 ### 1.3.19
 
 - Added a per-slide background color picker to the Two Column Slider so each card can carry unique brand accents without custom CSS

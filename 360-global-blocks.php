@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.19
+ * Version: 1.3.20
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.19' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.20' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -378,68 +378,123 @@ function global360blocks_render_popular_practices_block( $attributes, $content )
         ));
     }
     
-    $output = '<div class="wp-block-global360blocks-popular-practices popular-practices-block">';
-    $output .= '<div class="popular-practices-content">';
-    $output .= '<h2 class="popular-practices-title">' . $title . '</h2>';
-    $output .= '<div class="practices-grid">';
-    
+    $cards = array();
+    $random_pool = !empty($clinic_pages) ? array_values($clinic_pages) : array();
+
     foreach ($clinics as $index => $clinic) {
-        $clinic_id = !empty($clinic['clinicId']) ? intval($clinic['clinicId']) : '';
-        $custom_name = !empty($clinic['customName']) ? esc_html($clinic['customName']) : '';
-        $custom_logo = !empty($clinic['customLogo']) ? esc_url($clinic['customLogo']) : '';
-        $custom_url = !empty($clinic['customUrl']) ? esc_url($clinic['customUrl']) : '';
-        
-        // Determine clinic details
-        if ($clinic_id && $clinic_page = get_post($clinic_id)) {
-            $clinic_name = $custom_name ?: get_the_title($clinic_page);
-            $clinic_url = $custom_url ?: get_permalink($clinic_page);
-            
-            // Use custom logo or try the clinic meta logo system
-            if ($custom_logo) {
-                $clinic_logo_url = $custom_logo;
-            } elseif (function_exists('cpt360_get_clinic_logo_url')) {
-                $clinic_logo_url = cpt360_get_clinic_logo_url($clinic_page->ID);
-            } else {
-                $clinic_logo_url = get_the_post_thumbnail_url($clinic_page, 'medium');
-            }
-        } else {
-            // Use random clinic if available
-            if (!empty($clinic_pages)) {
-                $random_clinic = $clinic_pages[array_rand($clinic_pages)];
-                $clinic_name = $custom_name ?: get_the_title($random_clinic);
-                $clinic_url = $custom_url ?: get_permalink($random_clinic);
-                
-                // Use custom logo or try the clinic meta logo system for random clinic
+        $clinic_id   = !empty($clinic['clinicId']) ? intval($clinic['clinicId']) : 0;
+        $custom_name = !empty($clinic['customName']) ? sanitize_text_field($clinic['customName']) : '';
+        $custom_logo = !empty($clinic['customLogo']) ? esc_url_raw($clinic['customLogo']) : '';
+        $custom_url  = !empty($clinic['customUrl']) ? esc_url_raw($clinic['customUrl']) : '';
+
+        $card = null;
+
+        if ($clinic_id) {
+            $clinic_page = get_post($clinic_id);
+            if ($clinic_page instanceof WP_Post) {
+                $clinic_name = $custom_name ?: get_the_title($clinic_page);
+                $clinic_url  = $custom_url ?: get_permalink($clinic_page);
+
                 if ($custom_logo) {
                     $clinic_logo_url = $custom_logo;
                 } elseif (function_exists('cpt360_get_clinic_logo_url')) {
-                    $clinic_logo_url = cpt360_get_clinic_logo_url($random_clinic->ID);
+                    $clinic_logo_url = cpt360_get_clinic_logo_url($clinic_page->ID);
                 } else {
-                    $clinic_logo_url = get_the_post_thumbnail_url($random_clinic, 'medium');
+                    $clinic_logo_url = get_the_post_thumbnail_url($clinic_page, 'medium');
                 }
-            } else {
-                $clinic_name = $custom_name ?: 'Sample Clinic ' . ($index + 1);
-                $clinic_url = $custom_url ?: '#';
-                $clinic_logo_url = $custom_logo ?: '';
+
+                $card = array(
+                    'name' => $clinic_name,
+                    'url'  => $clinic_url,
+                    'logo' => $clinic_logo_url,
+                );
             }
+        } elseif ($custom_name || $custom_logo || $custom_url) {
+            $card = array(
+                'name' => $custom_name ?: 'Clinic',
+                'url'  => $custom_url ?: '#',
+                'logo' => $custom_logo,
+            );
+        } elseif (!empty($random_pool)) {
+            $random_key    = array_rand($random_pool);
+            $random_clinic = $random_pool[$random_key];
+
+            $clinic_name = $custom_name ?: get_the_title($random_clinic);
+            $clinic_url  = $custom_url ?: get_permalink($random_clinic);
+
+            if ($custom_logo) {
+                $clinic_logo_url = $custom_logo;
+            } elseif (function_exists('cpt360_get_clinic_logo_url')) {
+                $clinic_logo_url = cpt360_get_clinic_logo_url($random_clinic->ID);
+            } else {
+                $clinic_logo_url = get_the_post_thumbnail_url($random_clinic, 'medium');
+            }
+
+            $card = array(
+                'name' => $clinic_name,
+                'url'  => $clinic_url,
+                'logo' => $clinic_logo_url,
+            );
+
+            array_splice($random_pool, $random_key, 1);
+            $random_pool = array_values($random_pool);
+        } elseif (empty($clinic_pages)) {
+            $card = array(
+                'name' => $custom_name ?: 'Sample Clinic ' . ($index + 1),
+                'url'  => $custom_url ?: '#',
+                'logo' => $custom_logo ?: '',
+            );
         }
-        
-        $output .= '<a href="' . $clinic_url . '" class="practice-card">';
+
+        if ($card) {
+            $cards[] = $card;
+        }
+    }
+
+    if (empty($cards)) {
+        return '';
+    }
+
+    $card_count   = count($cards);
+    $grid_classes = 'practices-grid';
+    if ($card_count < 4) {
+        $grid_classes .= ' practices-grid--count-' . $card_count;
+    }
+
+    $grid_style = '';
+    if ($card_count > 0 && $card_count < 4) {
+        $grid_width = ($card_count * 280) + max(0, ($card_count - 1) * 20);
+        $grid_style = sprintf(' style="max-width:%spx"', esc_attr((string) $grid_width));
+    }
+
+    $output = '<div class="wp-block-global360blocks-popular-practices popular-practices-block">';
+    $output .= '<div class="popular-practices-content">';
+    $output .= '<h2 class="popular-practices-title">' . $title . '</h2>';
+    $output .= '<div class="' . esc_attr($grid_classes) . '"' . $grid_style . '>';
+
+    foreach ($cards as $card) {
+        $clinic_name     = !empty($card['name']) ? $card['name'] : '';
+        $clinic_url      = !empty($card['url']) ? $card['url'] : '#';
+        $clinic_logo_url = !empty($card['logo']) ? $card['logo'] : '';
+
+        $output .= '<a href="' . esc_url($clinic_url) . '" class="practice-card">';
         $output .= '<div class="practice-logo">';
-        if ($clinic_logo_url) {
-            $output .= '<img src="' . $clinic_logo_url . '" alt="' . esc_attr($clinic_name) . ' Logo" />';
+
+        if (!empty($clinic_logo_url)) {
+            $output .= '<img src="' . esc_url($clinic_logo_url) . '" alt="' . esc_attr($clinic_name) . ' Logo" />';
         } else {
             $output .= '<div class="logo-placeholder">Logo</div>';
         }
+
         $output .= '</div>';
-        $output .= '<h3 class="practice-name">' . $clinic_name . '</h3>';
+        $output .= '<h3 class="practice-name">' . esc_html($clinic_name) . '</h3>';
         $output .= '</a>';
     }
-    
+
     $output .= '</div>';
     $output .= '</div>';
     $output .= '</div>';
-    
+
     return $output;
 }
 
