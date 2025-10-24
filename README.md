@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.21
+
+- Flattened the Two Column Slider layout on phones with tighter padding, softer shadows, and responsive typography so cards feel more like lightweight callouts
+- Automatically hides the slide image below tablet breakpoints to prioritize copy and shrink the overall mobile height without editor tweaks
+- Mirrored the responsive rules inside the block editor so authors see the same single-column experience while adjusting content
+
 ### 1.3.20
 
 - Prevent duplicate fallback clinics in the Popular Practices block by sampling unique posts and only rendering the slots you have content for
