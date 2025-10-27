@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.22
+
+- Unified typography across every block so headings and buttons now respect the theme-provided `--heading-font`, `--body-font`, and matching weight variables (defaulting to 400).
+- Regenerated all block assets after the typography sweep to keep compiled CSS in sync with the updated font rules.
+- Ensured build scripts recopied block manifests/render files so WordPress continues to register each block after updates.
+
 ### 1.3.21
 
 - Flattened the Two Column Slider layout on phones with tighter padding, softer shadows, and responsive typography so cards feel more like lightweight callouts
