@@ -81,10 +81,17 @@
 
 .find-doctor-heading {
 	font-size: 2rem !important;
-	font-weight: bold !important;
+	font-weight: var(--heading-font-weight, 400) !important;
 	margin: 0 0 20px 0 !important;
 	line-height: 1.2 !important;
 	color: #333 !important;
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	) !important;
 }
 
 .find-doctor-body {
@@ -92,6 +99,10 @@
 	line-height: 1.6 !important;
 	margin: 0 0 30px 0 !important;
 	color: #666 !important;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	) !important;
 }
 
 .find-doctor-button {
@@ -105,6 +116,11 @@
 	min-height: auto !important;
 	height: auto !important;
 	max-width: 250px !important;
+	font-weight: var(--body-font-weight, 400) !important;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	) !important;
 }
 
 /* Responsive styles for editor */

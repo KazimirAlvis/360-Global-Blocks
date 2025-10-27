@@ -44,9 +44,16 @@
 			.hero-title {
 				margin: 0 0 0.5rem 0;
 				font-size: 2.5rem;
-				font-weight: 600;
+				font-weight: var(--heading-font-weight, 400);
 				line-height: 1.2;
 				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+				font-family: var(
+					--heading-font,
+					var(
+						--wp--preset--font-family--heading-font,
+						var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+					)
+				);
 			}
 			
 			.hero-subtitle {
@@ -55,6 +62,10 @@
 				font-weight: 400;
 				opacity: 0.95;
 				text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+				font-family: var(
+					--body-font,
+					var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+				);
 			}
 		}
 		

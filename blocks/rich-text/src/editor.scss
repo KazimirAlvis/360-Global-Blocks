@@ -27,7 +27,7 @@
 				font-size: 3em;
 				line-height: 0.8;
 				margin: 0.1em 0.1em 0 0;
-				font-weight: bold;
+				font-weight: var(--heading-font-weight, 700);
 			}
 		}
 	}
@@ -116,7 +116,7 @@
 
 	// Format buttons
 	strong, b {
-		font-weight: bold;
+		font-weight: var(--heading-font-weight, 700);
 	}
 
 	em, i {

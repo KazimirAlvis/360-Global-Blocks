@@ -49,17 +49,29 @@
 	font-size: 78px;
 	margin: 0;
 	line-height: 90px;
+	font-weight: var(--heading-font-weight, 400);
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	);
 }
 .full-hero-subheading {
 	color: #fff;
 	font-size: 1.5rem;
 	margin-bottom: 2rem;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	);
 }
 
 .btn {
 	font-size: 18px;
-	font-family: var(--body-font);
-	font-weight: 500;
+	font-family: var(--body-font, var(--wp--preset--font-family--body, var(--wp--preset--font-family--base, 'Helvetica Neue', Arial, sans-serif)));
+	font-weight: var(--body-font-weight, 400);
 	border-radius: 27px;
 	padding: 15px 30px;
 	cursor: pointer;
@@ -92,8 +104,8 @@
 /* PR360 Questionnaire Button Styling - Full Hero Block */
 .full-hero-block pr360-questionnaire::part(begin-button) {
     font-size: 18px !important;
-    font-family: var(--body-font, Arial, sans-serif) !important;
-    font-weight: 500 !important;
+	font-family: var(--body-font, var(--wp--preset--font-family--body, var(--wp--preset--font-family--base, 'Helvetica Neue', Arial, sans-serif))) !important;
+	font-weight: var(--body-font-weight, 400) !important;
     border-radius: 27px !important;
     padding: 15px 30px !important;
     cursor: pointer !important;

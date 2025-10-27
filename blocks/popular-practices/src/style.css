@@ -5,8 +5,15 @@
   text-align: center;
   margin-bottom: 30px;
   font-size: 2.5rem;
-  font-weight: 600;
+  font-weight: var(--heading-font-weight, 400);
   color: #000000;
+  font-family: var(
+    --heading-font,
+    var(
+      --wp--preset--font-family--heading-font,
+      var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+    )
+  );
 }
 .popular-practices-block .practices-grid {
   display: grid;
@@ -66,7 +73,6 @@
   line-height: 1.2;
 }
 .popular-practices-block .practice-card .practice-name {
-  font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 10px;
   color: var(--cpt360-primary, #0073aa);
@@ -74,4 +80,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(
+    --heading-font,
+    var(
+      --wp--preset--font-family--heading-font,
+      var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+    )
+  );
+  font-weight: var(--heading-font-weight, 400);
 }

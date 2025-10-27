@@ -6,6 +6,22 @@
 	width: 100%;
 }
 
+.two-column-text h1,
+.two-column-text h2,
+.two-column-text h3,
+.two-column-text h4,
+.two-column-text h5,
+.two-column-text h6 {
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	);
+	font-weight: var(--heading-font-weight, 400);
+}
+
 .two-column-text .two-column-text__column {
 	height: 100%;
 	padding: clamp(28px, 5vw, 56px);

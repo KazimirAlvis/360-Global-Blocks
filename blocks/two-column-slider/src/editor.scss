@@ -164,7 +164,7 @@
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				font-weight: 600;
+				font-weight: var(--heading-font-weight, 400);
 
 				@media (max-width: 480px) {
 					width: 44px;
@@ -177,6 +177,14 @@
 				font-size: 2.2rem;
 				margin: 0;
 				color: inherit;
+				font-family: var(
+					--heading-font,
+					var(
+						--wp--preset--font-family--heading-font,
+						var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+					)
+				);
+				font-weight: var(--heading-font-weight, 400);
 
 				&:empty::before {
 					content: 'Enter slide heading...';
@@ -198,6 +206,10 @@
 				line-height: 1.7;
 				color: rgba(255, 255, 255, 0.85);
 				margin: 0;
+				font-family: var(
+					--body-font,
+					var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+				);
 
 				&:empty::before {
 					content: 'Enter slide text...';

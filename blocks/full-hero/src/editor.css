@@ -46,8 +46,20 @@
 /* Editor-specific heading sizing */
 .full-hero-heading {
 	font-size: 2rem !important; /* Smaller in editor */
+	font-weight: var(--heading-font-weight, 400) !important;
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	) !important;
 }
 
 .full-hero-subheading {
 	font-size: 1.2rem !important; /* Smaller in editor */
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	) !important;
 }

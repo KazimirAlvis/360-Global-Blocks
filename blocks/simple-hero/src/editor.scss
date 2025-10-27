@@ -10,10 +10,22 @@
 	font-size: 2.5rem;
 	margin: 0 0 10px 0;
 	color: #343a40;
+	font-weight: var(--heading-font-weight, 400);
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	);
 }
 
 .simple-hero-content p {
 	color: #6c757d;
 	margin: 0;
 	font-style: italic;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	);
 }

@@ -11,7 +11,7 @@
 		text-align: center;
 		margin-bottom: 40px;
 		font-size: 2.5rem;
-		font-weight: 700;
+		font-weight: var(--heading-font-weight, 400);
 		color: #333;
 
 		&:focus {
@@ -52,7 +52,7 @@
 				align-items: center;
 				justify-content: center;
 				font-size: 12px;
-				font-weight: bold;
+				font-weight: var(--heading-font-weight, 400);
 				color: #0277bd;
 				border-radius: 8px;
 				transition: transform 0.2s ease;
@@ -70,7 +70,7 @@
 
 		.info-card-title {
 			font-size: 1.5rem;
-			font-weight: 600;
+			font-weight: var(--heading-font-weight, 400);
 			margin-bottom: 15px;
 			color: #333;
 
@@ -99,7 +99,7 @@
 		h4 {
 			margin-top: 0;
 			margin-bottom: 15px;
-			font-weight: 600;
+			font-weight: var(--heading-font-weight, 400);
 			color: #333;
 		}
 	}

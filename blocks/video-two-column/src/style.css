@@ -87,10 +87,17 @@
 
 .video-two-column-heading {
 	font-size: 2.5rem;
-	font-weight: bold;
+	font-weight: var(--heading-font-weight, 400);
 	margin: 0 0 30px 0;
 	line-height: 1.2;
 	color: #333;
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	);
 }
 
 .video-two-column-body {
@@ -98,6 +105,10 @@
 	line-height: 1.6;
 	margin: 0 0 40px 0;
 	color: #666;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
+	);
 }
 
 .video-two-column-button {
@@ -106,8 +117,8 @@
 
 .btn {
 	font-size: 18px;
-	font-family: var(--body-font);
-	font-weight: 500;
+	font-family: var(--body-font, var(--wp--preset--font-family--body, var(--wp--preset--font-family--base, 'Helvetica Neue', Arial, sans-serif)));
+	font-weight: var(--body-font-weight, 400);
 	border-radius: 27px;
 	padding: 15px 30px;
 	cursor: pointer;
@@ -183,7 +194,8 @@
 	}
 
 	.video-two-column-heading {
-		font-size: 2rem;
+		font-size: 2.5rem;
+		font-weight: var(--heading-font-weight, 400);
 	}
 
 	.video-two-column-body {
