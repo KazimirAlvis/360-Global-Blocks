@@ -20,6 +20,7 @@
 		)
 	);
 	font-weight: var(--heading-font-weight, 400);
+	letter-spacing: var(--heading-letter-spacing, normal);
 }
 
 .two-column-text .two-column-text__column {

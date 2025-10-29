@@ -17,6 +17,185 @@ define(
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/class-sb-global-blocks-updater.php';
 
+/**
+ * Resolve the font family currently assigned to heading typography.
+ *
+ * @return string Heading font family string if identifiable, otherwise empty string.
+ */
+function global360blocks_get_heading_font_family() {
+    static $resolved = null;
+
+    if ( null !== $resolved ) {
+        return $resolved;
+    }
+
+    $font_family = '';
+
+    if ( function_exists( 'wp_get_global_styles' ) ) {
+        $maybe_heading_font = wp_get_global_styles( array( 'elements', 'heading', 'typography', 'fontFamily' ) );
+        if ( is_string( $maybe_heading_font ) && '' !== $maybe_heading_font ) {
+            $font_family = $maybe_heading_font;
+        }
+    }
+
+    if ( ! $font_family && function_exists( 'wp_get_global_settings' ) ) {
+        $maybe_user_heading = wp_get_global_settings( array( 'typography', 'fontFamilies', 'user', 'heading', 'fontFamily' ) );
+        if ( is_string( $maybe_user_heading ) && '' !== $maybe_user_heading ) {
+            $font_family = $maybe_user_heading;
+        }
+    }
+
+    if ( ! $font_family && function_exists( 'wp_get_global_settings' ) ) {
+        $maybe_theme_heading = wp_get_global_settings( array( 'typography', 'fontFamilies', 'theme', 'heading', 'fontFamily' ) );
+        if ( is_string( $maybe_theme_heading ) && '' !== $maybe_theme_heading ) {
+            $font_family = $maybe_theme_heading;
+        }
+    }
+
+    if ( ! $font_family && function_exists( 'wp_get_global_settings' ) ) {
+        $maybe_root_font = wp_get_global_settings( array( 'typography', 'fontFamily' ) );
+        if ( is_string( $maybe_root_font ) && '' !== $maybe_root_font ) {
+            $font_family = $maybe_root_font;
+        }
+    }
+
+    if ( ! $font_family ) {
+        $maybe_theme_mod = get_theme_mod( 'typography_heading_font_family', '' );
+        if ( is_string( $maybe_theme_mod ) ) {
+            $font_family = $maybe_theme_mod;
+        }
+    }
+
+    if ( is_string( $font_family ) && preg_match( '/var\(([^)]+)\)/', $font_family, $matches ) ) {
+        $preset_identifier = trim( $matches[1] );
+
+        if ( '' !== $preset_identifier && function_exists( 'wp_get_global_settings' ) ) {
+            $preset_identifier = explode( ',', $preset_identifier )[0];
+            $preset_identifier = trim( $preset_identifier );
+
+            if ( 0 === strpos( $preset_identifier, '--wp--preset--font-family--' ) ) {
+                $slug = str_replace( '--wp--preset--font-family--', '', $preset_identifier );
+                $font_collections = wp_get_global_settings( array( 'typography', 'fontFamilies' ) );
+
+                if ( is_array( $font_collections ) ) {
+                    foreach ( $font_collections as $collection ) {
+                        if ( ! is_array( $collection ) ) {
+                            continue;
+                        }
+
+                        foreach ( $collection as $font_entry ) {
+                            if ( isset( $font_entry['slug'], $font_entry['fontFamily'] ) && $slug === $font_entry['slug'] ) {
+                                $font_family = $font_entry['fontFamily'];
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    $resolved = is_string( $font_family ) ? $font_family : '';
+
+    return $resolved;
+}
+
+/**
+ * Determine the letter-spacing value for the heading font.
+ *
+ * Defaults to normal spacing unless the heading font resolves to Anton, in which case
+ * the site uses the requested 0.5px spacing.
+ *
+ * @return string CSS letter-spacing value.
+ */
+function global360blocks_get_heading_letter_spacing_value() {
+    static $cached = null;
+
+    if ( null !== $cached ) {
+        return $cached;
+    }
+
+    $font_family = strtolower( global360blocks_get_heading_font_family() );
+    $is_anton = false;
+
+    if ( $font_family ) {
+    if ( false !== strpos( $font_family, 'anton' ) || false !== strpos( $font_family, 'wp--preset--font-family--anton' ) ) {
+            $is_anton = true;
+        }
+    }
+
+    $value = $is_anton ? '0.5px' : 'normal';
+
+    $cached = apply_filters( 'global360blocks_heading_letter_spacing_value', $value, $font_family );
+
+    return $cached;
+}
+
+/**
+ * Build shared CSS for heading letter-spacing support.
+ *
+ * @param string $context Either 'frontend' or 'editor'.
+ * @return string
+ */
+function global360blocks_get_heading_letter_spacing_css( $context = 'frontend' ) {
+    $letter_spacing = global360blocks_get_heading_letter_spacing_value();
+
+    if ( ! $letter_spacing ) {
+        return '';
+    }
+
+    $root_selector = ':root{--heading-letter-spacing:' . esc_attr( $letter_spacing ) . ';}';
+    $heading_selector = ':where(h1,h2,h3,h4,h5,h6){letter-spacing:var(--heading-letter-spacing,normal);}';
+
+    if ( 'editor' === $context ) {
+        $heading_selector = '.editor-styles-wrapper ' . $heading_selector;
+    }
+
+    return $root_selector . $heading_selector;
+}
+
+/**
+ * Enqueue heading letter-spacing support on the frontend.
+ */
+function global360blocks_enqueue_heading_letter_spacing_styles() {
+    $css = global360blocks_get_heading_letter_spacing_css( 'frontend' );
+
+    if ( '' === $css ) {
+        return;
+    }
+
+    $handle = 'global360blocks-heading-typography';
+
+    if ( ! wp_style_is( $handle, 'enqueued' ) ) {
+        wp_register_style( $handle, false, array(), SB_GLOBAL_BLOCKS_VERSION );
+        wp_enqueue_style( $handle );
+    }
+
+    wp_add_inline_style( $handle, $css );
+}
+add_action( 'wp_enqueue_scripts', 'global360blocks_enqueue_heading_letter_spacing_styles', 1 );
+
+/**
+ * Enqueue heading letter-spacing support for the block editor.
+ */
+function global360blocks_enqueue_heading_letter_spacing_editor_styles() {
+    $css = global360blocks_get_heading_letter_spacing_css( 'editor' );
+
+    if ( '' === $css ) {
+        return;
+    }
+
+    $handle = 'global360blocks-heading-typography-editor';
+
+    if ( ! wp_style_is( $handle, 'enqueued' ) ) {
+        wp_register_style( $handle, false, array(), SB_GLOBAL_BLOCKS_VERSION );
+        wp_enqueue_style( $handle );
+    }
+
+    wp_add_inline_style( $handle, $css );
+}
+add_action( 'enqueue_block_editor_assets', 'global360blocks_enqueue_heading_letter_spacing_editor_styles', 1 );
+
 function sb_global_blocks_bootstrap_updater() {
     if ( isset( $GLOBALS['sb_global_blocks_updater'] ) ) {
         return;

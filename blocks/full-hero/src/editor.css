@@ -47,6 +47,7 @@
 .full-hero-heading {
 	font-size: 2rem !important; /* Smaller in editor */
 	font-weight: var(--heading-font-weight, 400) !important;
+	letter-spacing: var(--heading-letter-spacing, normal) !important;
 	font-family: var(
 		--heading-font,
 		var(

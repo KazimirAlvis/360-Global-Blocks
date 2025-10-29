@@ -32,6 +32,7 @@
 		)
 	);
 	font-weight: var(--heading-font-weight, 400);
+	letter-spacing: var(--heading-letter-spacing, normal);
 }
 
 .wp-block-global360blocks-two-column-text .two-column-text__column-label {

@@ -2,7 +2,7 @@
 		--heading-font,var(
 			--wp--preset--font-family--heading-font,var(--body-font,var(--wp--preset--font-family--body-font,"Helvetica Neue",Arial,sans-serif))
 		)
-	)!important;font-size:2rem!important;font-weight:var(--heading-font-weight,400)!important;line-height:1.2!important;margin:0 0 20px!important}.find-doctor-body{color:#666!important;font-family:var(
+	)!important;font-size:2rem!important;font-weight:var(--heading-font-weight,400)!important;letter-spacing:var(--heading-letter-spacing,normal)!important;line-height:1.2!important;margin:0 0 20px!important}.find-doctor-body{color:#666!important;font-family:var(
 		--body-font,var(--wp--preset--font-family--body-font,"Helvetica Neue",Arial,sans-serif)
 	)!important;font-size:1rem!important;line-height:1.6!important;margin:0 0 30px!important}.find-doctor-button{align-self:flex-start}.find-doctor-button .btn{border-radius:27px!important;font-family:var(
 		--body-font,var(--wp--preset--font-family--body-font,"Helvetica Neue",Arial,sans-serif)

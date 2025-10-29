@@ -49,6 +49,7 @@
 	font-size: 78px;
 	margin: 0;
 	line-height: 90px;
+	letter-spacing: var(--heading-letter-spacing, normal);
 	font-weight: var(--heading-font-weight, 400);
 	font-family: var(
 		--heading-font,
