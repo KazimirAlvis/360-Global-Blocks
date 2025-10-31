@@ -1,5 +1,12 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { useBlockProps, InspectorControls, RichText, MediaUpload, MediaUploadCheck, PanelColorSettings } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	InspectorControls,
+	RichText,
+	MediaUpload,
+	MediaUploadCheck,
+	PanelColorSettings,
+} from '@wordpress/block-editor';
 import { PanelBody, ToggleControl, RangeControl, Button, Card, CardBody } from '@wordpress/components';
 import { Fragment, useState } from '@wordpress/element';
 import './editor.scss';
@@ -126,7 +133,8 @@ registerBlockType('global360blocks/two-column-slider', {
 											{
 												label: 'Background color',
 												value: slide.contentBackground || '',
-												onChange: (value) => updateSlide(index, 'contentBackground', value || ''),
+												onChange: (value) =>
+													updateSlide(index, 'contentBackground', value || ''),
 											},
 										]}
 									/>
@@ -157,8 +165,8 @@ registerBlockType('global360blocks/two-column-slider', {
 					</PanelBody>
 				</InspectorControls>
 
-					<div {...blockProps}>
-						<div className="two-column-slider-container">
+				<div {...blockProps}>
+					<div className="two-column-slider-container">
 						<div className="slider-wrapper">
 							{showArrows && (
 								<button
@@ -182,7 +190,9 @@ registerBlockType('global360blocks/two-column-slider', {
 									{slides.map((slide, index) => (
 										<div
 											key={index}
-											className={`slide ${index === currentSlide ? 'active' : ''} ${slide.imageUrl ? 'has-image' : 'no-image'}`}
+											className={`slide ${index === currentSlide ? 'active' : ''} ${
+												slide.imageUrl ? 'has-image' : 'no-image'
+											}`}
 										>
 											<div
 												className="slide-content"
@@ -244,9 +254,9 @@ registerBlockType('global360blocks/two-column-slider', {
 																		Add Image
 																	</Button>
 																)}
-														</div>
-													)}
-												/>
+															</div>
+														)}
+													/>
 												</MediaUploadCheck>
 											</div>
 										</div>

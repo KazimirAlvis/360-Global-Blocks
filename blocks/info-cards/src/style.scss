@@ -43,7 +43,8 @@
 			display: flex;
 			justify-content: center;
 
-			svg, .info-card-icon {
+			svg,
+			.info-card-icon {
 				width: 64px;
 				height: 64px;
 				fill: var(--cpt360-primary, #0073aa);
@@ -52,7 +53,8 @@
 			}
 		}
 
-		&:hover .info-card-icon, &:hover svg {
+		&:hover .info-card-icon,
+		&:hover svg {
 			transform: scale(1.1);
 		}
 

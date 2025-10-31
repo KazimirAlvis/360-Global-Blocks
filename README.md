@@ -162,61 +162,61 @@ For support and feature requests, please create an issue on GitHub.
 
 ### 1.3.22
 
-- Unified typography across every block so headings and buttons now respect the theme-provided `--heading-font`, `--body-font`, and matching weight variables (defaulting to 400).
-- Regenerated all block assets after the typography sweep to keep compiled CSS in sync with the updated font rules.
-- Ensured build scripts recopied block manifests/render files so WordPress continues to register each block after updates.
+-   Unified typography across every block so headings and buttons now respect the theme-provided `--heading-font`, `--body-font`, and matching weight variables (defaulting to 400).
+-   Regenerated all block assets after the typography sweep to keep compiled CSS in sync with the updated font rules.
+-   Ensured build scripts recopied block manifests/render files so WordPress continues to register each block after updates.
 
 ### 1.3.21
 
-- Flattened the Two Column Slider layout on phones with tighter padding, softer shadows, and responsive typography so cards feel more like lightweight callouts
-- Automatically hides the slide image below tablet breakpoints to prioritize copy and shrink the overall mobile height without editor tweaks
-- Mirrored the responsive rules inside the block editor so authors see the same single-column experience while adjusting content
+-   Flattened the Two Column Slider layout on phones with tighter padding, softer shadows, and responsive typography so cards feel more like lightweight callouts
+-   Automatically hides the slide image below tablet breakpoints to prioritize copy and shrink the overall mobile height without editor tweaks
+-   Mirrored the responsive rules inside the block editor so authors see the same single-column experience while adjusting content
 
 ### 1.3.20
 
-- Prevent duplicate fallback clinics in the Popular Practices block by sampling unique posts and only rendering the slots you have content for
-- Auto-center two or three cards with responsive grid sizing and enlarge clinic logo pads to 150px for better brand presentation
-- Bundled slider/popular practices metadata in the build output to ensure WordPress recognizes both blocks after updates
+-   Prevent duplicate fallback clinics in the Popular Practices block by sampling unique posts and only rendering the slots you have content for
+-   Auto-center two or three cards with responsive grid sizing and enlarge clinic logo pads to 150px for better brand presentation
+-   Bundled slider/popular practices metadata in the build output to ensure WordPress recognizes both blocks after updates
 
 ### 1.3.19
 
-- Added a per-slide background color picker to the Two Column Slider so each card can carry unique brand accents without custom CSS
-- Clamped slider imagery to a 700px max height (with mobile reset) to keep oversized assets from stretching the layout
-- Ensured the build pipeline ships the slider `block.json` metadata so existing pages keep rendering after updates
+-   Added a per-slide background color picker to the Two Column Slider so each card can carry unique brand accents without custom CSS
+-   Clamped slider imagery to a 700px max height (with mobile reset) to keep oversized assets from stretching the layout
+-   Ensured the build pipeline ships the slider `block.json` metadata so existing pages keep rendering after updates
 
 ### 1.3.18
 
-- Smoothed the Two Column Text editor experience so columns sit side by side in Gutenberg while still stacking responsibly on smaller breakpoints
-- Trimmed grid styling from the wrapper classes that WordPress injects so front-end layouts stay intact without affecting the admin canvas
-- Resolved the editor preview error by bundling the block-editor data hooks directly with the block script after the latest enhancements
+-   Smoothed the Two Column Text editor experience so columns sit side by side in Gutenberg while still stacking responsibly on smaller breakpoints
+-   Trimmed grid styling from the wrapper classes that WordPress injects so front-end layouts stay intact without affecting the admin canvas
+-   Resolved the editor preview error by bundling the block-editor data hooks directly with the block script after the latest enhancements
 
 ### 1.3.17
 
-- Introduced the **Two Column Text** block featuring two rich-text columns and per-column background color controls backed by native InnerBlocks
-- Registered build tooling and assets for the new block so it ships with npm builds and GitHub updates
-- Ensured plugin registration loads the static block automatically without additional render callbacks
-- Refined the editor locking so column structure stays fixed while paragraph → list transforms and other core conversions remain available
+-   Introduced the **Two Column Text** block featuring two rich-text columns and per-column background color controls backed by native InnerBlocks
+-   Registered build tooling and assets for the new block so it ships with npm builds and GitHub updates
+-   Ensured plugin registration loads the static block automatically without additional render callbacks
+-   Refined the editor locking so column structure stays fixed while paragraph → list transforms and other core conversions remain available
 
 ### 1.3.16
 
-- Fixed the two-column block to persist InnerBlocks markup on save so migrated body content renders on the front end without manual HTML tweaks
-- Updated the GitHub updater safeguards to retain the mixed-case `360-Global-Blocks` directory name after installs and updates
+-   Fixed the two-column block to persist InnerBlocks markup on save so migrated body content renders on the front end without manual HTML tweaks
+-   Updated the GitHub updater safeguards to retain the mixed-case `360-Global-Blocks` directory name after installs and updates
 
 ### 1.3.15
 
-- Hardened the GitHub updater so branch archives are always renamed to `360-global-blocks`, preventing block registration warnings after updates
-- Added a safe recursive cleanup helper that removes stray `-main` folders before moving files into place
+-   Hardened the GitHub updater so branch archives are always renamed to `360-global-blocks`, preventing block registration warnings after updates
+-   Added a safe recursive cleanup helper that removes stray `-main` folders before moving files into place
 
 ### 1.3.14
 
-- Adopted core InnerBlocks for the two-column block body, enabling rich text, lists, and other native blocks without custom fields
-- Added migration and sanitization logic that moves legacy `bodyText` content into InnerBlocks while stripping duplicate placeholders
-- Tightened server and client rendering so the editor preview matches the front end, including refreshed padding and typography
+-   Adopted core InnerBlocks for the two-column block body, enabling rich text, lists, and other native blocks without custom fields
+-   Added migration and sanitization logic that moves legacy `bodyText` content into InnerBlocks while stripping duplicate placeholders
+-   Tightened server and client rendering so the editor preview matches the front end, including refreshed padding and typography
 
 ### 1.3.4
 
-- Synced production FTP adjustments back into the repo
-- Bumped version to trigger GitHub-powered auto-update
+-   Synced production FTP adjustments back into the repo
+-   Bumped version to trigger GitHub-powered auto-update
 
 ### 1.0.0
 

@@ -25,8 +25,5 @@
 	color: #6c757d;
 	margin: 0;
 	font-style: italic;
-	font-family: var(
-		--body-font,
-		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
-	);
+	font-family: var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif));
 }

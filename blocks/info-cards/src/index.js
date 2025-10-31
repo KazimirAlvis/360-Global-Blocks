@@ -10,13 +10,13 @@ import './style.scss';
 registerBlockType('global360blocks/info-cards', {
 	edit: (props) => {
 		const { attributes, setAttributes } = props;
-		const { 
-			mainTitle = 'Why Choose Us', 
+		const {
+			mainTitle = 'Why Choose Us',
 			cards = [
 				{ icon: 'body/heart_organ', title: 'Expert Care', text: 'Professional healthcare services.' },
 				{ icon: 'people/doctor', title: 'Compassionate', text: 'We care about your wellbeing.' },
-				{ icon: 'devices/stethoscope', title: 'Professional', text: 'Experienced medical team.' }
-			] 
+				{ icon: 'devices/stethoscope', title: 'Professional', text: 'Experienced medical team.' },
+			],
 		} = attributes;
 
 		const blockProps = useBlockProps({ className: 'info-cards-block' });
@@ -32,23 +32,25 @@ registerBlockType('global360blocks/info-cards', {
 			if (window.HealthIcons && typeof window.HealthIcons.getAllIcons === 'function') {
 				return window.HealthIcons.getAllIcons();
 			}
-			
+
 			// Fallback if HealthIcons not loaded yet
-			return window.healthIconsData || {
-				'body/heart_organ': { name: 'Heart', category: 'Body & Anatomy' },
-				'devices/stethoscope': { name: 'Stethoscope', category: 'Medical Devices' },
-				'people/doctor': { name: 'Doctor', category: 'Healthcare People' },
-				'people/nurse': { name: 'Nurse', category: 'Healthcare People' },
-				'medications/medicines': { name: 'Medicine', category: 'Medications' },
-				'devices/thermometer_digital': { name: 'Thermometer', category: 'Medical Devices' }
-			};
+			return (
+				window.healthIconsData || {
+					'body/heart_organ': { name: 'Heart', category: 'Body & Anatomy' },
+					'devices/stethoscope': { name: 'Stethoscope', category: 'Medical Devices' },
+					'people/doctor': { name: 'Doctor', category: 'Healthcare People' },
+					'people/nurse': { name: 'Nurse', category: 'Healthcare People' },
+					'medications/medicines': { name: 'Medicine', category: 'Medications' },
+					'devices/thermometer_digital': { name: 'Thermometer', category: 'Medical Devices' },
+				}
+			);
 		};
 
 		const availableIcons = getAvailableIcons();
 
 		const iconOptions = Object.entries(availableIcons).map(([key, icon]) => ({
 			label: `${icon.name} (${icon.category})`,
-			value: key
+			value: key,
 		}));
 
 		const renderIconPreview = (iconKey) => {
@@ -63,7 +65,10 @@ registerBlockType('global360blocks/info-cards', {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title="Settings" initialOpen={true}>
+					<PanelBody
+						title="Settings"
+						initialOpen={true}
+					>
 						<TextControl
 							label="Main Title"
 							value={mainTitle}
@@ -72,7 +77,10 @@ registerBlockType('global360blocks/info-cards', {
 							__nextHasNoMarginBottom={true}
 						/>
 						{cards.map((card, index) => (
-							<div key={index} style={{ marginBottom: '16px', padding: '8px', border: '1px solid #ddd' }}>
+							<div
+								key={index}
+								style={{ marginBottom: '16px', padding: '8px', border: '1px solid #ddd' }}
+							>
 								<h4>Card {index + 1}</h4>
 								<SelectControl
 									label="Icon"
@@ -110,11 +118,12 @@ registerBlockType('global360blocks/info-cards', {
 						/>
 						<div className="info-cards-grid">
 							{cards.map((card, index) => (
-								<div key={index} className="info-card">
+								<div
+									key={index}
+									className="info-card"
+								>
 									<div className="info-card-icon-wrapper">
-										<div className="info-card-icon-preview">
-											{renderIconPreview(card.icon)}
-										</div>
+										<div className="info-card-icon-preview">{renderIconPreview(card.icon)}</div>
 									</div>
 									<RichText
 										tagName="h3"
@@ -138,5 +147,5 @@ registerBlockType('global360blocks/info-cards', {
 			</Fragment>
 		);
 	},
-	save: () => null
+	save: () => null,
 });

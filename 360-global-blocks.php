@@ -196,6 +196,36 @@ function global360blocks_enqueue_heading_letter_spacing_editor_styles() {
 }
 add_action( 'enqueue_block_editor_assets', 'global360blocks_enqueue_heading_letter_spacing_editor_styles', 1 );
 
+/**
+ * Wrap common trademark symbols in a superscript span for consistent sizing.
+ *
+ * @param string $text Heading or paragraph content.
+ * @return string
+ */
+function global360blocks_wrap_trademark_symbols( $text ) {
+    if ( '' === $text ) {
+        return $text;
+    }
+
+    if ( false === strpos( $text, '™' ) && false === strpos( $text, '®' ) && false === strpos( $text, '℠' ) ) {
+        return $text;
+    }
+
+    $result = preg_replace_callback(
+        '/(<sup\b[^>]*>.*?<\/sup>)|([™®℠])/us',
+        static function ( $matches ) {
+            if ( ! empty( $matches[1] ) ) {
+                return $matches[1];
+            }
+
+            return '<sup class="full-hero-trademark">' . $matches[2] . '</sup>';
+        },
+        $text
+    );
+
+    return null !== $result ? $result : $text;
+}
+
 function sb_global_blocks_bootstrap_updater() {
     if ( isset( $GLOBALS['sb_global_blocks_updater'] ) ) {
         return;
@@ -1579,6 +1609,9 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
     $image_url = !empty($attributes['bgImageUrl']) ? esc_url($attributes['bgImageUrl']) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
     $subheading = !empty($attributes['subheading']) ? wp_kses_post($attributes['subheading']) : '';
+
+    $heading = global360blocks_wrap_trademark_symbols( $heading );
+    $subheading = global360blocks_wrap_trademark_symbols( $subheading );
     $output = '<div class="full-hero-block" style="background-image: url(' . $image_url . ');">';
     $output .= '<div class="full-hero-content">';
     if ($heading) {

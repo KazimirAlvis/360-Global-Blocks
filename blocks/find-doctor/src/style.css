@@ -68,10 +68,7 @@
 	line-height: 1.6;
 	margin: 0 0 40px 0;
 	color: #666;
-	font-family: var(
-		--body-font,
-		var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif)
-	);
+	font-family: var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif));
 }
 
 .find-doctor-button {
@@ -91,9 +88,7 @@
 	min-height: auto;
 	text-align: center;
 	white-space: nowrap;
-	transition:
-		transform 0.2s ease,
-		background-color 0.2s ease;
+	transition: transform 0.2s ease, background-color 0.2s ease;
 	display: block;
 	margin: 0;
 	line-height: 22px;
