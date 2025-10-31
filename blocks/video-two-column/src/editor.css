@@ -15,9 +15,27 @@
 	position: relative;
 	background-color: #f5f5f5;
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
 	padding: 40px;
+	gap: 16px;
+}
+
+.wp-block-global360blocks-video-two-column .video-two-column-video-title {
+	margin: 0 0 16px;
+	color: #333;
+	font-size: 2.5rem;
+	line-height: 1.2;
+	letter-spacing: var(--heading-letter-spacing, normal);
+	font-weight: var(--heading-font-weight, 400);
+	font-family: var(
+		--heading-font,
+		var(
+			--wp--preset--font-family--heading-font,
+			var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif))
+		)
+	);
 }
 
 .wp-block-global360blocks-video-two-column .video-two-column-video .video-wrapper {
@@ -54,15 +72,12 @@
 }
 
 .wp-block-global360blocks-video-two-column .video-controls {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	left: 10px;
-	z-index: 3;
+	position: relative;
 	background-color: rgba(255, 255, 255, 0.95);
 	padding: 15px;
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	width: 100%;
 }
 
 .wp-block-global360blocks-video-two-column .video-controls .components-text-control__input {
@@ -151,6 +166,7 @@
 		min-height: auto;
 		order: 1;
 		padding: 30px 20px;
+		gap: 12px;
 	}
 
 	.wp-block-global360blocks-video-two-column .video-two-column-video .video-wrapper {
@@ -165,6 +181,7 @@
 	.wp-block-global360blocks-video-two-column .video-two-column-content {
 		padding: 30px;
 		order: 2;
+		gap: 12px;
 	}
 
 	.wp-block-global360blocks-video-two-column .video-two-column-heading {

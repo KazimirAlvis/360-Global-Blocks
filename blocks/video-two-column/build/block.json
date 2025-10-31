@@ -19,6 +19,10 @@
 		"bodyText": {
 			"type": "string",
 			"default": ""
+		},
+		"videoTitle": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"example": {},

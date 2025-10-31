@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.23
+ * Version: 1.3.24
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.23' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.24' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -940,12 +940,16 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     $video_url = !empty($attributes['videoUrl']) ? esc_url($attributes['videoUrl']) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
     $legacy_body_text = !empty($attributes['bodyText']) ? wp_kses_post($attributes['bodyText']) : '';
+    $video_title = !empty($attributes['videoTitle']) ? wp_kses_post($attributes['videoTitle']) : '';
     
     $output = '<div class="video-two-column-block">';
     $output .= '<div class="video-two-column-container">';
     
     // Left column - Video
     $output .= '<div class="video-two-column-video">';
+    if ($video_title) {
+        $output .= '<h2 class="video-two-column-video-title">' . $video_title . '</h2>';
+    }
     if ($video_url) {
         if (global360blocks_is_youtube_url($video_url)) {
             $embed_url = global360blocks_get_youtube_embed_url($video_url);

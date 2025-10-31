@@ -6,7 +6,7 @@ import './style.css';
 import './editor.css';
 
 const Edit = ({ attributes, setAttributes }) => {
-	const { videoUrl, heading, bodyText } = attributes;
+	const { videoUrl, heading, bodyText, videoTitle } = attributes;
 
 	const onChangeVideoUrl = (url) => {
 		setAttributes({
@@ -89,6 +89,14 @@ const Edit = ({ attributes, setAttributes }) => {
 		<div {...blockProps}>
 			<div className="video-two-column-container">
 				<div className="video-two-column-video">
+					<RichText
+						tagName="h2"
+						className="video-two-column-video-title"
+						value={videoTitle}
+						onChange={(value) => setAttributes({ videoTitle: value })}
+						placeholder={__('Add video title...', 'global360blocks')}
+						allowedFormats={['core/bold', 'core/italic', 'core/link']}
+					/>
 					{renderVideo()}
 					<div className="video-controls">
 						<TextControl
