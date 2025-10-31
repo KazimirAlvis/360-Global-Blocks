@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.25
+ * Version: 1.3.26
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.25' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.26' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -976,7 +976,7 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     $output .= '<div class="video-two-column-container">';
     
     // Left column - Video
-    $output .= '<div class="video-two-column-video">';
+    $output .= '<div class="video-two-column-video" style="display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px;">';
     if ($video_title) {
         $output .= '<h2 class="video-two-column-video-title">' . $video_title . '</h2>';
     }

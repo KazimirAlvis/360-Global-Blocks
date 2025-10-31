@@ -85,10 +85,26 @@ const Edit = ({ attributes, setAttributes }) => {
 		className: 'video-two-column-block',
 	});
 
+	const videoColumnStyles = {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'stretch',
+		justifyContent: 'flex-start',
+		gap: '16px',
+	};
+
+	const videoControlsStyles = {
+		width: '100%',
+		position: 'relative',
+	};
+
 	return (
 		<div {...blockProps}>
 			<div className="video-two-column-container">
-				<div className="video-two-column-video">
+				<div
+					className="video-two-column-video"
+					style={videoColumnStyles}
+				>
 					<RichText
 						tagName="h2"
 						className="video-two-column-video-title"
@@ -98,7 +114,10 @@ const Edit = ({ attributes, setAttributes }) => {
 						allowedFormats={['core/bold', 'core/italic', 'core/link']}
 					/>
 					{renderVideo()}
-					<div className="video-controls">
+					<div
+						className="video-controls"
+						style={videoControlsStyles}
+					>
 						<TextControl
 							label={__('Video URL', 'global360blocks')}
 							value={videoUrl}

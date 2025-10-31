@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+
+### 1.3.26
+
+-   Hardened the Video Two Column block layout with inline flex fallbacks so the video URL input no longer overlaps the new title field when cached admin CSS lingers.
+-   Rebuilt the block bundle and recopied manifests so the layout safeguard ships with the update.
+
 ### 1.3.22
 
 -   Unified typography across every block so headings and buttons now respect the theme-provided `--heading-font`, `--body-font`, and matching weight variables (defaulting to 400).
