@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.27
+
+-   Added a manifest-driven asset loader so frontend CSS/JS for each block only loads when that block renders, trimming unused styles on pages without 360 content.
+-   Ensured the Latest Articles bundle always loads on blog/archive templates and preloaded hero styles whenever those blocks sit above the fold to prevent flashes of unstyled content.
+-   Exposed filters so theme developers can extend the forced-asset list without patching the plugin directly.
+
 ### 1.3.26
 
 -   Hardened the Video Two Column block layout with inline flex fallbacks so the video URL input no longer overlaps the new title field when cached admin CSS lingers.
