@@ -20,6 +20,5 @@
 	"supports": {
 		"html": false
 	},
-	"editorStyle": "file:../build/index.css",
-	"style": "file:../build/style-index.css"
+	"editorStyle": "file:../build/index.css"
 }

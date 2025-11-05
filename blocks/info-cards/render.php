@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+global360blocks_enqueue_block_assets_from_manifest('global360blocks/info-cards');
+
 // Debug: Check if we're in the render file
 error_log('Info Cards render.php: Starting render');
 

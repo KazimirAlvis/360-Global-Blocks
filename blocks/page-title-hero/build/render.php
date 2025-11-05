@@ -3,6 +3,8 @@
  * Render callback for Page Title Hero block
  */
 function global360blocks_render_page_title_hero_block($attributes) {
+    global360blocks_enqueue_block_assets_from_manifest('global360blocks/page-title-hero');
+
     $title = isset($attributes['title']) ? esc_html($attributes['title']) : '';
     $subtitle = isset($attributes['subtitle']) ? esc_html($attributes['subtitle']) : '';
     $background_image = isset($attributes['background_image']) ? esc_url($attributes['background_image']) : '';

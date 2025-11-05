@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.26
+ * Version: 1.3.27
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.26' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.27' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -566,6 +566,8 @@ if (!function_exists('global360blocks_get_youtube_embed_url')) {
 }
 
 function global360blocks_render_popular_practices_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/popular-practices' );
+
     $title = !empty($attributes['title']) ? esc_html($attributes['title']) : 'Popular Practices';
     $clinics = !empty($attributes['clinics']) ? $attributes['clinics'] : [];
     
@@ -709,13 +711,14 @@ function global360blocks_render_popular_practices_block( $attributes, $content )
 
 // Render callback for Two Column Slider block
 function global360blocks_render_two_column_slider_block($attributes) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/two-column-slider' );
+
     $slides = !empty($attributes['slides']) ? $attributes['slides'] : [];
     $autoplay = !empty($attributes['autoplay']) ? $attributes['autoplay'] : true;
     $autoplay_speed = !empty($attributes['autoplaySpeed']) ? intval($attributes['autoplaySpeed']) : 5000;
     $show_dots = !empty($attributes['showDots']) ? $attributes['showDots'] : true;
     $show_arrows = !empty($attributes['showArrows']) ? $attributes['showArrows'] : true;
-    
-    if (empty($slides)) {
+        if (empty($slides)) {
         return '';
     }
     
@@ -897,6 +900,8 @@ if (!function_exists('global360blocks_is_youtube_url')) {
 
 // Render callback for Latest Articles block
 function global360blocks_render_latest_articles_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/latest-articles' );
+
     $number_of_posts = isset($attributes['numberOfPosts']) ? (int) $attributes['numberOfPosts'] : 3;
     $show_excerpt = isset($attributes['showExcerpt']) ? $attributes['showExcerpt'] : true;
     $excerpt_length = isset($attributes['excerptLength']) ? (int) $attributes['excerptLength'] : 20;
@@ -963,6 +968,8 @@ function global360blocks_render_latest_articles_block( $attributes, $content ) {
 
 // Render callback for Video Two Column block
 function global360blocks_render_video_two_column_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/video-two-column' );
+
     // Get Assessment ID from theme settings (360_global_settings array)
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
@@ -1030,6 +1037,8 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
 
 // Render callback for Find Doctor block
 function global360blocks_render_find_doctor_block($attributes) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/find-doctor' );
+
     $image_url = isset($attributes['imageUrl']) ? $attributes['imageUrl'] : '';
     $image_id = isset($attributes['imageId']) ? $attributes['imageId'] : 0;
     $heading = isset($attributes['heading']) ? $attributes['heading'] : '';
@@ -1455,7 +1464,9 @@ function global360blocks_register_blocks() {
         'render_callback' => 'global360blocks_render_two_column_block',
     ) );
 
-    register_block_type( __DIR__ . '/blocks/two-column-text' );
+    register_block_type( __DIR__ . '/blocks/two-column-text', array(
+        'render_callback' => 'global360blocks_render_two_column_text_block',
+    ) );
     
     register_block_type( __DIR__ . '/blocks/video-two-column/build', array(
         'render_callback' => 'global360blocks_render_video_two_column_block',
@@ -1501,6 +1512,8 @@ function global360blocks_register_blocks() {
 
 // Render callback for CTA block
 function global360blocks_render_cta_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/cta' );
+
     // Get Assessment ID from theme settings (360_global_settings array)
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
@@ -1547,6 +1560,8 @@ if ( ! function_exists( 'global360blocks_filter_two_column_body' ) ) {
 
 // Render callback for Two Column block
 function global360blocks_render_two_column_block( $attributes, $content, $block = null ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/two-column' );
+
     // Get Assessment ID from theme settings (360_global_settings array)
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
@@ -1600,8 +1615,16 @@ function global360blocks_render_two_column_block( $attributes, $content, $block 
     return $output;
 }
 
+function global360blocks_render_two_column_text_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/two-column-text' );
+
+    return $content;
+}
+
 // Render callback for Full Page Hero block
 function global360blocks_render_full_hero_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/full-hero' );
+
     // Get Assessment ID from theme settings (360_global_settings array)
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
@@ -1627,6 +1650,8 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
 
 // Render callback for Simple Hero block
 function global360blocks_render_simple_hero_block( $attributes, $content ) {
+    global360blocks_enqueue_block_assets_from_manifest( 'global360blocks/test-hero' );
+
     $page_title = get_the_title();
     
     $output = '<div class="wp-block-global360blocks-simple-hero">';
@@ -1640,139 +1665,299 @@ function global360blocks_render_simple_hero_block( $attributes, $content ) {
 
 add_action( 'init', 'global360blocks_register_blocks' );
 
-// Enqueue block CSS for frontend
-add_action('wp_enqueue_scripts', function() {
-    // Simple Hero block CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/simple-hero/build/style-index.css' )) {
-        wp_enqueue_style(
-            'global360blocks-simple-hero-style-frontend',
-            plugins_url('blocks/simple-hero/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/simple-hero/build/style-index.css')
-        );
+/**
+ * Define the frontend asset manifest for block-level loading.
+ *
+ * @return array<string, array<string, array<string, string>>>
+ */
+function global360blocks_get_frontend_asset_manifest() {
+    static $manifest = null;
+
+    if ( null !== $manifest ) {
+        return $manifest;
     }
-    
-    // Full Hero block CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/full-hero/build/style-index.css' )) {
-        wp_enqueue_style(
-            'global360blocks-full-hero-style-frontend',
-            plugins_url('blocks/full-hero/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/full-hero/build/style-index.css')
-        );
+
+    $manifest = array(
+        'global360blocks/test-hero'         => array(
+            'style' => array(
+                'handle' => 'global360blocks-simple-hero-style-frontend',
+                'file'   => 'blocks/simple-hero/build/style-index.css',
+            ),
+        ),
+        'global360blocks/full-hero'         => array(
+            'style' => array(
+                'handle' => 'global360blocks-full-hero-style-frontend',
+                'file'   => 'blocks/full-hero/build/style-index.css',
+            ),
+        ),
+        'global360blocks/cta'               => array(
+            'style' => array(
+                'handle' => 'global360blocks-cta-style-frontend',
+                'file'   => 'blocks/cta/build/style-index.css',
+            ),
+        ),
+        'global360blocks/two-column'        => array(
+            'style' => array(
+                'handle' => 'global360blocks-two-column-style-frontend',
+                'file'   => 'blocks/two-column/build/style-index.css',
+            ),
+        ),
+        'global360blocks/two-column-text'   => array(
+            'style' => array(
+                'handle' => 'global360blocks-two-column-text-style-frontend',
+                'file'   => 'blocks/two-column-text/build/style-index.css',
+            ),
+        ),
+        'global360blocks/video-two-column'  => array(
+            'style' => array(
+                'handle' => 'global360blocks-video-two-column-style-frontend',
+                'file'   => 'blocks/video-two-column/build/style-index.css',
+            ),
+        ),
+        'global360blocks/rich-text'         => array(
+            'style' => array(
+                'handle' => 'global360blocks-rich-text-style-frontend',
+                'file'   => 'blocks/rich-text/build/style-index.css',
+            ),
+        ),
+        'global360blocks/find-doctor'       => array(
+            'style' => array(
+                'handle' => 'find-doctor-block-css',
+                'file'   => 'blocks/find-doctor/build/style-index.css',
+            ),
+        ),
+        'global360blocks/latest-articles'   => array(
+            'style' => array(
+                'handle' => 'latest-articles-block-css',
+                'file'   => 'blocks/latest-articles/build/style-index.css',
+            ),
+        ),
+        'global360blocks/info-cards'        => array(
+            'style' => array(
+                'handle' => 'info-cards-block-css',
+                'file'   => 'blocks/info-cards/build/style-index.css',
+            ),
+            'script' => array(
+                'handle' => 'info-cards-block-frontend',
+                'file'   => 'blocks/info-cards/build/index.js',
+                'asset'  => 'blocks/info-cards/build/index.asset.php',
+            ),
+        ),
+        'global360blocks/popular-practices' => array(
+            'style' => array(
+                'handle' => 'popular-practices-block-css',
+                'file'   => 'blocks/popular-practices/build/style-index.css',
+            ),
+        ),
+        'global360blocks/two-column-slider' => array(
+            'style' => array(
+                'handle' => 'two-column-slider-block-css',
+                'file'   => 'blocks/two-column-slider/build/style-index.css',
+            ),
+            'script' => array(
+                'handle' => 'two-column-slider-block-frontend',
+                'file'   => 'blocks/two-column-slider/build/index.js',
+                'asset'  => 'blocks/two-column-slider/build/index.asset.php',
+            ),
+        ),
+        'global360blocks/symptoms-ai'       => array(
+            'style' => array(
+                'handle' => 'global360blocks-symptoms-ai-style-frontend',
+                'file'   => 'blocks/symptoms-ai/build/style-index.css',
+            ),
+        ),
+        'global360blocks/page-title-hero'   => array(
+            'style' => array(
+                'handle' => 'global360blocks-page-title-hero-style-frontend',
+                'file'   => 'blocks/page-title-hero/build/style-index.css',
+            ),
+        ),
+    );
+
+    return $manifest;
+}
+
+/**
+ * Register and enqueue a stylesheet from the plugin directory.
+ *
+ * @param string $handle Asset handle.
+ * @param string $relative_file Relative path within the plugin.
+ * @param array  $deps Optional dependencies.
+ */
+function global360blocks_enqueue_style_asset( $handle, $relative_file, $deps = array() ) {
+    static $registered_styles = array();
+
+    if ( isset( $registered_styles[ $handle ] ) ) {
+        if ( true === $registered_styles[ $handle ] ) {
+            wp_enqueue_style( $handle );
+        }
+        return;
     }
-    
-    // CTA block CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/cta/build/style-index.css' )) {
-        wp_enqueue_style(
-            'global360blocks-cta-style-frontend',
-            plugins_url('blocks/cta/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/cta/build/style-index.css')
-        );
+
+    $absolute_path = plugin_dir_path( __FILE__ ) . $relative_file;
+
+    if ( ! file_exists( $absolute_path ) ) {
+        $registered_styles[ $handle ] = false;
+        return;
     }
-    
-    // Two Column block CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column/build/style-index.css' )) {
-        wp_enqueue_style(
-            'global360blocks-two-column-style-frontend',
-            plugins_url('blocks/two-column/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column/build/style-index.css')
-        );
+
+    wp_register_style(
+        $handle,
+        plugins_url( $relative_file, __FILE__ ),
+        $deps,
+        filemtime( $absolute_path )
+    );
+
+    wp_enqueue_style( $handle );
+    $registered_styles[ $handle ] = true;
+}
+
+/**
+ * Register and enqueue a script from the plugin directory.
+ *
+ * @param string      $handle      Script handle.
+ * @param string      $relative_file Relative path to the script file.
+ * @param string|null $asset_file  Optional path to the generated asset metadata.
+ */
+function global360blocks_enqueue_script_asset( $handle, $relative_file, $asset_file = null ) {
+    static $registered_scripts = array();
+
+    if ( isset( $registered_scripts[ $handle ] ) ) {
+        if ( true === $registered_scripts[ $handle ] ) {
+            wp_enqueue_script( $handle );
+        }
+        return;
     }
-    
-    // Video Two Column block CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/video-two-column/build/style-index.css' )) {
-        wp_enqueue_style(
-            'global360blocks-video-two-column-style-frontend',
-            plugins_url('blocks/video-two-column/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/video-two-column/build/style-index.css')
-        );
+
+    $absolute_path = plugin_dir_path( __FILE__ ) . $relative_file;
+
+    if ( ! file_exists( $absolute_path ) ) {
+        $registered_scripts[ $handle ] = false;
+        return;
     }
-    
-    // Find Doctor block frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/find-doctor/build/style-index.css' )) {
-        wp_enqueue_style(
-            'find-doctor-block-css',
-            plugins_url('blocks/find-doctor/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/find-doctor/build/style-index.css')
-        );
+
+    $deps    = array();
+    $version = filemtime( $absolute_path );
+
+    if ( $asset_file ) {
+        $asset_absolute = plugin_dir_path( __FILE__ ) . $asset_file;
+        if ( file_exists( $asset_absolute ) ) {
+            $asset_data = include $asset_absolute;
+            if ( is_array( $asset_data ) ) {
+                $deps    = isset( $asset_data['dependencies'] ) ? $asset_data['dependencies'] : $deps;
+                $version = isset( $asset_data['version'] ) ? $asset_data['version'] : $version;
+            }
+        }
     }
-    
-    // Latest Articles block frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/latest-articles/build/style-index.css' )) {
-        wp_enqueue_style(
-            'latest-articles-block-css',
-            plugins_url('blocks/latest-articles/build/style-index.css', __FILE__),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/latest-articles/build/style-index.css')
-        );
+
+    wp_register_script(
+        $handle,
+        plugins_url( $relative_file, __FILE__ ),
+        $deps,
+        $version,
+        true
+    );
+
+    wp_enqueue_script( $handle );
+    $registered_scripts[ $handle ] = true;
+}
+
+/**
+ * Enqueue both style and script assets for a given block when it renders.
+ *
+ * @param string $block_name Block name from the manifest.
+ */
+function global360blocks_enqueue_block_assets_from_manifest( $block_name ) {
+    $manifest = global360blocks_get_frontend_asset_manifest();
+
+    if ( ! isset( $manifest[ $block_name ] ) ) {
+        return;
     }
-    
-    // Medical Icons block frontend CSS - commented out until built
-    // if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/medical-icons/build/style-index.css' )) {
-    //     wp_enqueue_style(
-    //         'medical-icons-block-css',
-    //         plugins_url( 'blocks/medical-icons/build/style-index.css', __FILE__ ),
-    //         array(),
-    //         filemtime(plugin_dir_path(__FILE__) . 'blocks/medical-icons/build/style-index.css')
-    //     );
-    // }
-    
-    // Info Cards block frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/info-cards/build/style-index.css' )) {
-        wp_enqueue_style(
-            'info-cards-block-css',
-            plugins_url( 'blocks/info-cards/build/style-index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/info-cards/build/style-index.css')
-        );
+
+    $definition = $manifest[ $block_name ];
+
+    if ( isset( $definition['style'] ) ) {
+        $style = $definition['style'];
+        $deps  = isset( $style['deps'] ) ? $style['deps'] : array();
+        global360blocks_enqueue_style_asset( $style['handle'], $style['file'], $deps );
     }
-    
-    // Popular Practices block frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/popular-practices/build/style-index.css' )) {
-        wp_enqueue_style(
-            'popular-practices-block-css',
-            plugins_url( 'blocks/popular-practices/build/style-index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/popular-practices/build/style-index.css')
-        );
+
+    if ( isset( $definition['script'] ) ) {
+        $script     = $definition['script'];
+        $asset_file = isset( $script['asset'] ) ? $script['asset'] : null;
+        global360blocks_enqueue_script_asset( $script['handle'], $script['file'], $asset_file );
     }
-    
-    // Two Column Slider block frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/style-index.css' )) {
-        wp_enqueue_style(
-            'two-column-slider-block-css',
-            plugins_url( 'blocks/two-column-slider/build/style-index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/style-index.css')
-        );
+}
+
+/**
+ * Force-load asset bundles for templates that rely on plugin CSS without blocks.
+ */
+function global360blocks_enqueue_forced_assets() {
+    if ( is_admin() ) {
+        return;
     }
-    
-    // Info Cards block frontend JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/info-cards/build/index.js' )) {
-        wp_enqueue_script(
-            'info-cards-block-frontend',
-            plugins_url( 'blocks/info-cards/build/index.js', __FILE__ ),
-            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components'),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/info-cards/build/index.js'),
-            true
-        );
+
+    $block_names = array();
+
+    $posts_page_id   = (int) get_option( 'page_for_posts' );
+    $is_posts_page   = $posts_page_id > 0 && is_page( $posts_page_id );
+    $is_blog_context = is_home() || is_post_type_archive( 'post' ) || $is_posts_page;
+
+    if ( ! $is_blog_context ) {
+        $queried = get_queried_object();
+        if ( $queried instanceof WP_Post && 'page' === $queried->post_type ) {
+            $slug = $queried->post_name;
+            if ( in_array( $slug, array( 'blog', 'news' ), true ) ) {
+                $is_blog_context = true;
+            }
+        }
     }
-    
-    // Two Column Slider block frontend JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/index.js' )) {
-        wp_enqueue_script(
-            'two-column-slider-block-frontend',
-            plugins_url( 'blocks/two-column-slider/build/index.js', __FILE__ ),
-            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components'),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/index.js'),
-            true
-        );
+
+    if ( $is_blog_context ) {
+        $block_names[] = 'global360blocks/latest-articles';
     }
-});
+
+    $block_names = apply_filters( 'global360blocks_forced_asset_blocks', $block_names );
+
+    if ( empty( $block_names ) ) {
+        return;
+    }
+
+    foreach ( array_unique( $block_names ) as $block_name ) {
+        global360blocks_enqueue_block_assets_from_manifest( $block_name );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'global360blocks_enqueue_forced_assets', 30 );
+
+/**
+ * Preload critical hero block assets before markup renders to avoid FOUC.
+ */
+function global360blocks_preload_above_fold_assets() {
+    if ( is_admin() ) {
+        return;
+    }
+
+    if ( ! function_exists( 'has_block' ) ) {
+        return;
+    }
+
+    $post_id = get_queried_object_id();
+
+    if ( ! $post_id ) {
+        return;
+    }
+
+    $critical_blocks = array(
+        'global360blocks/test-hero',
+        'global360blocks/full-hero',
+    );
+
+    foreach ( $critical_blocks as $block_name ) {
+        if ( has_block( $block_name, $post_id ) ) {
+            global360blocks_enqueue_block_assets_from_manifest( $block_name );
+        }
+    }
+}
+add_action( 'wp', 'global360blocks_preload_above_fold_assets', 5 );
 
 ?>

@@ -160,7 +160,6 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
-
 ### 1.3.26
 
 -   Hardened the Video Two Column block layout with inline flex fallbacks so the video URL input no longer overlaps the new title field when cached admin CSS lingers.

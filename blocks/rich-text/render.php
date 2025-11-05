@@ -7,6 +7,8 @@
  * @param WP_Block $block      Block instance.
  */
 
+global360blocks_enqueue_block_assets_from_manifest('global360blocks/rich-text');
+
 // Extract attributes
 $content = $attributes['content'] ?? '';
 $text_align = $attributes['textAlign'] ?? 'left';
