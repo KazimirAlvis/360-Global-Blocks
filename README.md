@@ -160,6 +160,11 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.28
+
+-   Converted the Video Two Column block to a lite YouTube embed so the heavy player only loads after visitors click play, cutting unused network requests on initial page load.
+-   Added a `global360blocks_video_two_column_use_lite_embed` filter so theme developers can fall back to the classic iframe renderer without touching plugin code.
+
 ### 1.3.27
 
 -   Added a manifest-driven asset loader so frontend CSS/JS for each block only loads when that block renders, trimming unused styles on pages without 360 content.

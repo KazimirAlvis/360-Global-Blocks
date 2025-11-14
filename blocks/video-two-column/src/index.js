@@ -35,7 +35,17 @@ const Edit = ({ attributes, setAttributes }) => {
 			return url; // Already an embed URL
 		}
 
-		return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+		if (!videoId) {
+			return url;
+		}
+
+		const params = new URLSearchParams({
+			rel: '0',
+			modestbranding: '1',
+			playsinline: '1',
+		});
+
+		return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 	};
 
 	// Check if URL is a YouTube URL

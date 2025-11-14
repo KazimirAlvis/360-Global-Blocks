@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.27
+ * Version: 1.3.28
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.27' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.28' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -544,24 +544,98 @@ function handle_get_health_icon_ajax() {
     }
 }
 
-// Helper function to get YouTube embed URL
-if (!function_exists('global360blocks_get_youtube_embed_url')) {
-    function global360blocks_get_youtube_embed_url($url) {
-        if (empty($url)) return '';
-        
-        $video_id = '';
-        
-        if (strpos($url, 'youtube.com/watch?v=') !== false) {
-            $video_id = explode('v=', $url)[1];
-            $video_id = explode('&', $video_id)[0];
-        } elseif (strpos($url, 'youtu.be/') !== false) {
-            $video_id = explode('youtu.be/', $url)[1];
-            $video_id = explode('?', $video_id)[0];
-        } elseif (strpos($url, 'youtube.com/embed/') !== false) {
-            return $url; // Already an embed URL
+// Extract a YouTube video ID from a URL.
+if ( ! function_exists( 'global360blocks_get_youtube_video_id' ) ) {
+    function global360blocks_get_youtube_video_id( $url ) {
+        if ( empty( $url ) ) {
+            return '';
         }
-        
-        return !empty($video_id) ? 'https://www.youtube.com/embed/' . $video_id : $url;
+
+        $parsed = wp_parse_url( $url );
+        if ( empty( $parsed['host'] ) ) {
+            return '';
+        }
+
+        $host = strtolower( $parsed['host'] );
+        $candidate = '';
+
+        if ( false !== strpos( $host, 'youtube.com' ) ) {
+            if ( ! empty( $parsed['query'] ) ) {
+                parse_str( $parsed['query'], $query_vars );
+                if ( ! empty( $query_vars['v'] ) ) {
+                    $candidate = $query_vars['v'];
+                }
+            }
+
+            if ( ! $candidate && ! empty( $parsed['path'] ) ) {
+                $path_segments = array_values( array_filter( explode( '/', $parsed['path'] ) ) );
+                if ( ! empty( $path_segments ) ) {
+                    $patterns = array( 'embed', 'shorts', 'live' );
+                    if ( in_array( $path_segments[0], $patterns, true ) && isset( $path_segments[1] ) ) {
+                        $candidate = $path_segments[1];
+                    } else {
+                        $candidate = end( $path_segments );
+                    }
+                }
+            }
+        } elseif ( false !== strpos( $host, 'youtu.be' ) ) {
+            if ( ! empty( $parsed['path'] ) ) {
+                $candidate = trim( $parsed['path'], '/' );
+            }
+        }
+
+        if ( ! $candidate ) {
+            return '';
+        }
+
+        if ( preg_match( '/([A-Za-z0-9_-]{11})/', $candidate, $matches ) ) {
+            return $matches[1];
+        }
+
+        return '';
+    }
+}
+
+// Helper function to get YouTube embed URL
+if ( ! function_exists( 'global360blocks_get_youtube_embed_url' ) ) {
+    function global360blocks_get_youtube_embed_url( $url ) {
+        if ( empty( $url ) ) {
+            return '';
+        }
+
+        $video_id = global360blocks_get_youtube_video_id( $url );
+
+        if ( ! $video_id ) {
+            if ( false !== strpos( $url, 'youtube.com/embed/' ) ) {
+                return $url;
+            }
+
+            return $url;
+        }
+
+        $base = 'https://www.youtube.com/embed/' . $video_id;
+        $args = array(
+            'rel'            => 0,
+            'modestbranding' => 1,
+            'playsinline'    => 1,
+        );
+
+        return add_query_arg( $args, $base );
+    }
+}
+
+// Helper function to derive a YouTube thumbnail URL.
+if ( ! function_exists( 'global360blocks_get_youtube_thumbnail_url' ) ) {
+    function global360blocks_get_youtube_thumbnail_url( $video_id, $quality = 'hqdefault' ) {
+        if ( empty( $video_id ) ) {
+            return '';
+        }
+
+        $quality = in_array( $quality, array( 'maxresdefault', 'hqdefault', 'mqdefault', 'sddefault' ), true )
+            ? $quality
+            : 'hqdefault';
+
+        return sprintf( 'https://i.ytimg.com/vi/%1$s/%2$s.jpg', rawurlencode( $video_id ), $quality );
     }
 }
 
@@ -987,12 +1061,34 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     if ($video_title) {
         $output .= '<h2 class="video-two-column-video-title">' . $video_title . '</h2>';
     }
-    if ($video_url) {
-        if (global360blocks_is_youtube_url($video_url)) {
-            $embed_url = global360blocks_get_youtube_embed_url($video_url);
-            $output .= '<div class="video-wrapper">';
-            $output .= '<iframe src="' . esc_url($embed_url) . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtube-video"></iframe>';
+    if ( $video_url ) {
+        $is_youtube          = global360blocks_is_youtube_url( $video_url );
+        $youtube_id          = $is_youtube ? global360blocks_get_youtube_video_id( $video_url ) : '';
+        $use_lite_embed      = apply_filters( 'global360blocks_video_two_column_use_lite_embed', true, $attributes );
+        $can_use_lite_embed  = $use_lite_embed && $youtube_id;
+
+        if ( $can_use_lite_embed ) {
+            $embed_url     = global360blocks_get_youtube_embed_url( $video_url );
+            $thumbnail_url = global360blocks_get_youtube_thumbnail_url( $youtube_id );
+            $play_label    = $video_title ? sprintf( __( 'Play video: %s', 'global360blocks' ), wp_strip_all_tags( $video_title ) ) : __( 'Play video', 'global360blocks' );
+            $iframe_title  = $video_title ? wp_strip_all_tags( $video_title ) : __( 'Embedded video', 'global360blocks' );
+
+            $output .= '<div class="video-wrapper lite-yt" data-embed-url="' . esc_url( $embed_url ) . '" data-video-id="' . esc_attr( $youtube_id ) . '" data-title="' . esc_attr( $iframe_title ) . '">';
+            if ( $thumbnail_url ) {
+                $output .= '<img class="lite-yt-thumb" src="' . esc_url( $thumbnail_url ) . '" alt="" loading="lazy" decoding="async" />';
+            }
+            $output .= '<button type="button" class="lite-yt-play" aria-label="' . esc_attr( $play_label ) . '">';
+            $output .= '<span class="lite-yt-play-icon" aria-hidden="true"></span>';
+            $output .= '</button>';
             $output .= '</div>';
+            $output .= '<noscript>';
+            $output .= '<iframe src="' . esc_url( $embed_url ) . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtube-video"></iframe>';
+            $output .= '</noscript>';
+        } elseif ( $is_youtube ) {
+            $embed_url = global360blocks_get_youtube_embed_url( $video_url );
+            $output   .= '<div class="video-wrapper">';
+            $output   .= '<iframe src="' . esc_url( $embed_url ) . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtube-video"></iframe>';
+            $output   .= '</div>';
         } else {
             $output .= '<div class="video-wrapper">';
             $output .= '<video controls class="column-video">';
@@ -1712,6 +1808,10 @@ function global360blocks_get_frontend_asset_manifest() {
             'style' => array(
                 'handle' => 'global360blocks-video-two-column-style-frontend',
                 'file'   => 'blocks/video-two-column/build/style-index.css',
+            ),
+            'script' => array(
+                'handle' => 'global360blocks-video-two-column-lite',
+                'file'   => 'blocks/video-two-column/frontend.js',
             ),
         ),
         'global360blocks/rich-text'         => array(
