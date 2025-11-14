@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.28
+ * Version: 1.3.29
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.28' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.29' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -195,6 +195,44 @@ function global360blocks_enqueue_heading_letter_spacing_editor_styles() {
     wp_add_inline_style( $handle, $css );
 }
 add_action( 'enqueue_block_editor_assets', 'global360blocks_enqueue_heading_letter_spacing_editor_styles', 1 );
+
+/**
+ * Register shared frontend styles used across multiple blocks.
+ */
+function global360blocks_register_global_shared_styles() {
+    static $registered = false;
+
+    if ( $registered ) {
+        return;
+    }
+
+    $handle        = 'global360blocks-global-shared-style';
+    $relative_file = 'assets/css/global-shared.min.css';
+    $absolute_path = plugin_dir_path( __FILE__ ) . $relative_file;
+
+    if ( file_exists( $absolute_path ) ) {
+        wp_register_style(
+            $handle,
+            plugins_url( $relative_file, __FILE__ ),
+            array(),
+            filemtime( $absolute_path )
+        );
+    }
+
+    $registered = true;
+}
+add_action( 'wp_enqueue_scripts', 'global360blocks_register_global_shared_styles', 1 );
+
+/**
+ * Ensure shared frontend styles are queued when needed.
+ */
+function global360blocks_enqueue_global_shared_style() {
+    global360blocks_register_global_shared_styles();
+
+    if ( wp_style_is( 'global360blocks-global-shared-style', 'registered' ) ) {
+        wp_enqueue_style( 'global360blocks-global-shared-style' );
+    }
+}
 
 /**
  * Wrap common trademark symbols in a superscript span for consistent sizing.
@@ -1119,8 +1157,10 @@ function global360blocks_render_video_two_column_block( $attributes, $content ) 
     
     // Assessment button
     if (!empty($assess_id)) {
-    $output .= '<div class="video-two-column-button">';
-    $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
+        global360blocks_enqueue_global_shared_style();
+
+        $output .= '<div class="video-two-column-button">';
+        $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
         $output .= '</div>';
     }
     
@@ -1616,6 +1656,8 @@ function global360blocks_render_cta_block( $attributes, $content ) {
     
     $image_url = !empty($attributes['imageUrl']) ? esc_url($attributes['imageUrl']) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
+
+    global360blocks_enqueue_global_shared_style();
     
     $output = '<div class="cta-block">';
     $output .= '<div class="cta-container" style="background-image: url(' . $image_url . ');">';
@@ -1702,6 +1744,7 @@ function global360blocks_render_two_column_block( $attributes, $content, $block 
         $body_html = global360blocks_filter_two_column_body( $body_html, $heading );
         $output .= '<div class="two-column-body">' . $body_html . '</div>';
     }
+    global360blocks_enqueue_global_shared_style();
     $output .= '<div class="two-column-button">';
     $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
     $output .= '</div>';
@@ -1739,6 +1782,7 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
     if ($subheading) {
         $output .= '<p class="full-hero-subheading">' . $subheading . '</p>';
     }
+    global360blocks_enqueue_global_shared_style();
     $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
     $output .= '</div></div>';
     return $output;

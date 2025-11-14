@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.29
+
+-   Introduced a shared `global-shared.min.css` bundle that auto-enqueues whenever a PatientReach360 questionnaire button renders, keeping About and interior pages styled even without the CTA block present.
+-   Rebuilt frontend assets so block-specific styles no longer duplicate the questionnaire button rules, trimming CSS size across CTA, Full Hero, Two Column, and Video Two Column blocks.
+-   Removed the unused legacy `global360blocks/hero` scaffold to avoid “unsupported block” warnings in Gutenberg.
+
 ### 1.3.28
 
 -   Converted the Video Two Column block to a lite YouTube embed so the heavy player only loads after visitors click play, cutting unused network requests on initial page load.

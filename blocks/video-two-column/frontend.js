@@ -15,7 +15,10 @@
 		var finalSrc = embedUrl + autoplayParam;
 		var iframe = document.createElement('iframe');
 		iframe.setAttribute('src', finalSrc);
-		iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+		iframe.setAttribute(
+			'allow',
+			'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+		);
 		iframe.setAttribute('allowfullscreen', '');
 		iframe.setAttribute('loading', 'lazy');
 		iframe.setAttribute('frameborder', '0');
