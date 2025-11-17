@@ -83,9 +83,54 @@
 }
 .full-hero-subheading {
 	color: #fff;
-	font-size: 1.5rem;
+	font-size: 24px;
 	margin-bottom: 2rem;
 	font-family: var(--body-font, var(--wp--preset--font-family--body-font, 'Helvetica Neue', Arial, sans-serif));
+	line-height: normal;
+}
+
+@media (max-width: 1440px) {
+	.full-hero-heading {
+		font-size: 64px;
+		line-height: 76px;
+	}
+
+	.full-hero-subheading {
+		font-size: 22px;
+	}
+}
+
+@media (max-width: 1024px) {
+	.full-hero-heading {
+		font-size: 48px;
+		line-height: 58px;
+	}
+
+	.full-hero-subheading {
+		font-size: 20px;
+	}
+}
+
+@media (max-width: 768px) {
+	.full-hero-heading {
+		font-size: 49px;
+		line-height: 60px;
+	}
+
+	.full-hero-subheading {
+		font-size: 18px;
+	}
+}
+
+@media (max-width: 480px) {
+	.full-hero-heading {
+		font-size: 49px;
+		line-height: 60px;
+	}
+
+	.full-hero-subheading {
+		font-size: 18px;
+	}
 }
 
 .btn {

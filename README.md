@@ -160,6 +160,12 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.30
+
+-   Replaced the Full Hero CSS background with an eager `<img>` element so browsers can surface the hero art as the page’s Largest Contentful Paint, complete with width/height metadata and alt text.
+-   Dialed in responsive typography for the Full Hero heading and subheading, keeping desktop scale bold while ensuring tablet and mobile breaks remain legible.
+-   Regenerated the Full Hero build artifacts and block manifest to keep WordPress in sync after the markup and style changes.
+
 ### 1.3.29
 
 -   Introduced a shared `global-shared.min.css` bundle that auto-enqueues whenever a PatientReach360 questionnaire button renders, keeping About and interior pages styled even without the CTA block present.
