@@ -30,11 +30,19 @@ registerBlockType('global360blocks/full-hero', {
 		const { bgImageUrl, bgImageId, heading, subheading, assessmentId } = attributes;
 		const blockProps = useBlockProps({
 			className: 'full-hero-block',
-			style: { backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined },
 		});
 
 		return (
 			<div {...blockProps}>
+				{bgImageUrl && (
+					<div className="full-hero-media">
+						<img
+							src={bgImageUrl}
+							alt=""
+							decoding="async"
+						/>
+					</div>
+				)}
 				<InspectorControls>
 					<PanelBody title={__('Hero Image', 'global360blocks')}>
 						<MediaUploadCheck>

@@ -1768,13 +1768,66 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
     $global_settings = get_option('360_global_settings', []);
     $assess_id = isset($global_settings['assessment_id']) ? $global_settings['assessment_id'] : '';
     
-    $image_url = !empty($attributes['bgImageUrl']) ? esc_url($attributes['bgImageUrl']) : '';
+    $image_id    = isset( $attributes['bgImageId'] ) ? absint( $attributes['bgImageId'] ) : 0;
+    $raw_image   = '';
+    $image_width = 0;
+    $image_height = 0;
+    $image_alt   = '';
+
+    if ( $image_id ) {
+        $image_details = wp_get_attachment_image_src( $image_id, 'full' );
+
+        if ( is_array( $image_details ) && ! empty( $image_details[0] ) ) {
+            $raw_image   = $image_details[0];
+            $image_width = isset( $image_details[1] ) ? (int) $image_details[1] : 0;
+            $image_height = isset( $image_details[2] ) ? (int) $image_details[2] : 0;
+        }
+
+        $maybe_alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+        if ( is_string( $maybe_alt ) ) {
+            $image_alt = wp_strip_all_tags( $maybe_alt );
+        }
+    }
+
+    if ( ! $raw_image && ! empty( $attributes['bgImageUrl'] ) ) {
+        $raw_image = $attributes['bgImageUrl'];
+    }
+
+    $image_url = $raw_image ? esc_url( $raw_image ) : '';
     $heading = !empty($attributes['heading']) ? wp_kses_post($attributes['heading']) : '';
     $subheading = !empty($attributes['subheading']) ? wp_kses_post($attributes['subheading']) : '';
 
     $heading = global360blocks_wrap_trademark_symbols( $heading );
     $subheading = global360blocks_wrap_trademark_symbols( $subheading );
-    $output = '<div class="full-hero-block" style="background-image: url(' . $image_url . ');">';
+    $output = '<div class="full-hero-block">';
+    if ( $image_url ) {
+        $output .= '<div class="full-hero-media">';
+
+        $img_attributes = array(
+            'class'         => 'full-hero-image',
+            'src'           => $image_url,
+            'alt'           => $image_alt ? $image_alt : '',
+            'decoding'      => 'async',
+            'fetchpriority' => 'high',
+            'loading'       => 'eager',
+        );
+
+        if ( $image_width > 0 ) {
+            $img_attributes['width'] = (string) $image_width;
+        }
+
+        if ( $image_height > 0 ) {
+            $img_attributes['height'] = (string) $image_height;
+        }
+
+        $attribute_pairs = array();
+        foreach ( $img_attributes as $attr_key => $attr_value ) {
+            $attribute_pairs[] = sprintf( '%s="%s"', esc_attr( $attr_key ), esc_attr( $attr_value ) );
+        }
+
+        $output .= '<img ' . implode( ' ', $attribute_pairs ) . ' />';
+        $output .= '</div>';
+    }
     $output .= '<div class="full-hero-content">';
     if ($heading) {
         $output .= '<h1 class="full-hero-heading">' . $heading . '</h1>';
