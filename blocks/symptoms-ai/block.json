@@ -9,8 +9,10 @@
 	"description": "Generate comprehensive symptom information using AI. Just enter a symptom and get detailed medical information.",
 	"keywords": ["symptoms", "medical", "ai", "health", "information"],
 	"textdomain": "360-global-blocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+	"viewScript": "file:./build/view.js",
 	"supports": {
 		"html": false,
 		"align": true,

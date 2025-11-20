@@ -31,6 +31,7 @@
 		"align": ["full"]
 	},
 	"textdomain": "global360blocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css"
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"viewScript": "file:./build/view.js"
 }

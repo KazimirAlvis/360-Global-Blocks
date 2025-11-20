@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.30
+ * Version: 1.3.31
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.30' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.31' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -895,90 +895,6 @@ function global360blocks_render_two_column_slider_block($attributes) {
     
     $output .= '</div>';
     
-    // Add slider JavaScript
-    $output .= '<script>
-        function updateTwoColumnSlider(container, targetIndex) {
-            if (!container) {
-                return;
-            }
-            const track = container.querySelector(".slide-track");
-            if (!track) {
-                return;
-            }
-            const slides = Array.from(track.children);
-            const dots = container.querySelectorAll(".dot");
-            const total = slides.length;
-            if (!total) {
-                return;
-            }
-            let newIndex = typeof targetIndex === "number" ? targetIndex : parseInt(container.dataset.currentSlide || "0", 10);
-            if (isNaN(newIndex)) {
-                newIndex = 0;
-            }
-            newIndex = (newIndex % total + total) % total;
-            container.dataset.currentSlide = newIndex;
-            track.style.transform = "translateX(-" + (newIndex * 100) + "%)";
-            slides.forEach(function(slide, idx) {
-                slide.classList.toggle("active", idx === newIndex);
-            });
-            dots.forEach(function(dot, idx) {
-                dot.classList.toggle("active", idx === newIndex);
-            });
-        }
-
-        function nextSlide(button) {
-            const container = button.closest(".two-column-slider-container");
-            if (!container) {
-                return;
-            }
-            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
-            updateTwoColumnSlider(container, current + 1);
-        }
-
-        function previousSlide(button) {
-            const container = button.closest(".two-column-slider-container");
-            if (!container) {
-                return;
-            }
-            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
-            updateTwoColumnSlider(container, current - 1);
-        }
-
-        function goToSlide(button, index) {
-            const container = button.closest(".two-column-slider-container");
-            if (!container) {
-                return;
-            }
-            updateTwoColumnSlider(container, index);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const containers = document.querySelectorAll(".two-column-slider-container");
-            containers.forEach(function(container) {
-                updateTwoColumnSlider(container, parseInt(container.dataset.currentSlide || "0", 10) || 0);
-            ' . ($autoplay ? '
-                if (container.dataset.autoplayInitialized === "true") {
-                    return;
-                }
-                container.dataset.autoplayInitialized = "true";
-                if (container.dataset.autoplay === "true" && container.querySelectorAll(".slide").length > 1) {
-                    setInterval(function() {
-                        const nextButton = container.querySelector(".slider-nav.next");
-                        if (nextButton) {
-                            nextSlide(nextButton);
-                        } else {
-                            const current = parseInt(container.dataset.currentSlide || "0", 10) || 0;
-                            updateTwoColumnSlider(container, current + 1);
-                        }
-                    }, ' . $autoplay_speed . ');
-                }
-            ' : '') . '
-            });
-        });
-    </script>';
-    
-    $output .= '</div>';
-    
     return $output;
 }
 
@@ -1216,298 +1132,6 @@ function global360blocks_render_find_doctor_block($attributes) {
 
 // Info Cards block now uses render.php file - old hardcoded function removed
 
-// Enqueue block editor assets
-function global360blocks_enqueue_block_editor_assets() {
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/hero.js' )) {
-        wp_enqueue_script(
-            'global360blocks-hero',
-            plugins_url( 'build/hero.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/hero.js' )
-        );
-    }
-    
-    // Full Hero block assets
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/full-hero.js' )) {
-        wp_enqueue_script(
-            'global360blocks-full-hero',
-            plugins_url( 'build/full-hero.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/full-hero.js' )
-        );
-    }
-    
-    // CTA block assets
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/cta.js' )) {
-        wp_enqueue_script(
-            'global360blocks-cta',
-            plugins_url( 'build/cta.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/cta.js' )
-        );
-    }
-    
-    // Two Column block assets
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/two-column.js' )) {
-        wp_enqueue_script(
-            'global360blocks-two-column',
-            plugins_url( 'build/two-column.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/two-column.js' )
-        );
-    }
-    
-    // Video Two Column block assets
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/video-two-column.js' )) {
-        wp_enqueue_script(
-            'global360blocks-video-two-column',
-            plugins_url( 'build/video-two-column.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/video-two-column.js' )
-        );
-    }
-    
-    // Latest Articles block assets
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/latest-articles.js' )) {
-        wp_enqueue_script(
-            'global360blocks-latest-articles',
-            plugins_url( 'build/latest-articles.js', __FILE__ ),
-            array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n', 'wp-data' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/latest-articles.js' )
-        );
-    }
-    
-    // Find Doctor block JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/find-doctor.js' )) {
-        wp_enqueue_script(
-            'find-doctor-block-editor',
-            plugin_dir_url(__FILE__) . 'build/find-doctor.js',
-            array('wp-blocks', 'wp-element', 'wp-editor'),
-            filemtime(plugin_dir_path(__FILE__) . 'build/find-doctor.js')
-        );
-    }
-    
-    // Enqueue editor styles
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/hero-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-hero-editor-style',
-            plugins_url( 'build/hero-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/hero-editor.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/full-hero-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-full-hero-editor-style',
-            plugins_url( 'build/full-hero-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/full-hero-editor.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/cta-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-cta-editor-style',
-            plugins_url( 'build/cta-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/cta-editor.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/two-column-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-two-column-editor-style',
-            plugins_url( 'build/two-column-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/two-column-editor.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/video-two-column-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-video-two-column-editor-style',
-            plugins_url( 'build/video-two-column-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/video-two-column-editor.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/latest-articles-editor.css' )) {
-        wp_enqueue_style(
-            'global360blocks-latest-articles-editor-style',
-            plugins_url( 'build/latest-articles-editor.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/latest-articles-editor.css' )
-        );
-    }
-    
-    // Find Doctor block editor CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/find-doctor-editor.css' )) {
-        wp_enqueue_style(
-            'find-doctor-block-editor-css',
-            plugin_dir_url(__FILE__) . 'build/find-doctor-editor.css',
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'build/find-doctor-editor.css')
-        );
-    }
-    
-
-    
-    // Health Icons JavaScript utility
-    wp_enqueue_script(
-        'health-icons-js',
-        plugins_url( 'assets/js/health-icons.js', __FILE__ ),
-        array(),
-        filemtime(plugin_dir_path(__FILE__) . 'assets/js/health-icons.js')
-    );
-    
-    // Localize Health Icons data - Temporarily disabled
-    /*
-    $loader = HealthIconsLoader::getInstance();
-    $all_icons = $loader->getAllIcons();
-    
-    wp_localize_script('health-icons-js', 'healthIconsAjax', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('health_icons_nonce'),
-        'all_icons' => $all_icons
-    ));
-    */
-    
-    // Info Cards block JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/info-cards/build/index.js' )) {
-        // Load asset file for dependencies
-        $asset_file = include( plugin_dir_path( __FILE__ ) . 'blocks/info-cards/build/index.asset.php');
-        
-        $dependencies = array_merge($asset_file['dependencies'], array('health-icons-js'));
-        
-        wp_enqueue_script(
-            'info-cards-block-editor',
-            plugins_url( 'blocks/info-cards/build/index.js', __FILE__ ),
-            $dependencies,
-            $asset_file['version']
-        );
-        
-        // Localize Health Icons data for info-cards block
-        $health_icons_loader = HealthIconsLoader::getInstance();
-        $all_icons = $health_icons_loader->getAllIcons();
-        
-        wp_localize_script('info-cards-block-editor', 'healthIconsData', $all_icons);
-        
-        wp_localize_script('info-cards-block-editor', 'healthIconsAjax', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('health_icons_nonce')
-        ));
-    }
-    
-    // Info Cards block editor CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/info-cards/build/index.css' )) {
-        wp_enqueue_style(
-            'info-cards-block-editor-css',
-            plugins_url( 'blocks/info-cards/build/index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/info-cards/build/index.css')
-        );
-    }
-    
-    // Popular Practices block JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/popular-practices/build/index.js' )) {
-        wp_enqueue_script(
-            'popular-practices-block-editor',
-            plugins_url( 'blocks/popular-practices/build/index.js', __FILE__ ),
-            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data'),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/popular-practices/build/index.js')
-        );
-    }
-    
-    // Two Column Slider block JavaScript
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/index.js' )) {
-        wp_enqueue_script(
-            'two-column-slider-block-editor',
-            plugins_url( 'blocks/two-column-slider/build/index.js', __FILE__ ),
-            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components'),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/index.js')
-        );
-    }
-    
-    // Two Column Slider block editor CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/two-column-slider/build/index.css' )) {
-        wp_enqueue_style(
-            'two-column-slider-block-editor-css',
-            plugins_url( 'blocks/two-column-slider/build/index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/two-column-slider/build/index.css')
-        );
-    }
-    
-    // Popular Practices block editor CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'blocks/popular-practices/build/index.css' )) {
-        wp_enqueue_style(
-            'popular-practices-block-editor-css',
-            plugins_url( 'blocks/popular-practices/build/index.css', __FILE__ ),
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'blocks/popular-practices/build/index.css')
-        );
-    }
-    
-    // Enqueue combined styles
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/hero.css' )) {
-        wp_enqueue_style(
-            'global360blocks-hero-style',
-            plugins_url( 'build/hero.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/hero.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/full-hero.css' )) {
-        wp_enqueue_style(
-            'global360blocks-full-hero-style',
-            plugins_url( 'build/full-hero.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/full-hero.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/cta.css' )) {
-        wp_enqueue_style(
-            'global360blocks-cta-style',
-            plugins_url( 'build/cta.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/cta.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/two-column.css' )) {
-        wp_enqueue_style(
-            'global360blocks-two-column-style',
-            plugins_url( 'build/two-column.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/two-column.css' )
-        );
-    }
-    
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/latest-articles.css' )) {
-        wp_enqueue_style(
-            'global360blocks-latest-articles-style',
-            plugins_url( 'build/latest-articles.css', __FILE__ ),
-            array( 'wp-edit-blocks' ),
-            filemtime( plugin_dir_path( __FILE__ ) . 'build/latest-articles.css' )
-        );
-    }
-    
-    // Find Doctor frontend CSS
-    if (file_exists( plugin_dir_path( __FILE__ ) . 'build/find-doctor.css' )) {
-        wp_enqueue_style(
-            'find-doctor-block-css',
-            plugin_dir_url(__FILE__) . 'build/find-doctor.css',
-            array(),
-            filemtime(plugin_dir_path(__FILE__) . 'build/find-doctor.css')
-        );
-    }
-}
-add_action( 'enqueue_block_editor_assets', 'global360blocks_enqueue_block_editor_assets' );
-
 // Register custom block category for 360 Blocks (before blocks)
 add_filter('block_categories_all', function($categories, $post) {
     return array_merge(
@@ -1521,60 +1145,8 @@ add_filter('block_categories_all', function($categories, $post) {
     );
 }, 10, 2);
 
-// REST API endpoint for Symptoms AI content generation
-add_action('rest_api_init', function() {
-    register_rest_route('360blocks/v1', '/generate-symptoms', array(
-        'methods' => 'POST',
-        'callback' => 'global360blocks_generate_symptoms_api',
-        'permission_callback' => function() {
-            return current_user_can('edit_posts');
-        }
-    ));
-    
-    // Alternative route for symptoms AI block
-    register_rest_route('global360blocks/v1', '/generate-symptoms-content', array(
-        'methods' => 'POST',
-        'callback' => 'global360blocks_generate_symptoms_api',
-        'permission_callback' => function() {
-            return current_user_can('edit_posts');
-        }
-    ));
-});
-
-function global360blocks_generate_symptoms_api($request) {
-    $symptom = sanitize_text_field($request->get_param('symptom'));
-    
-    if (empty($symptom)) {
-        return new WP_Error('missing_symptom', 'Symptom parameter is required', array('status' => 400));
-    }
-    
-    // Check cache first
-    $cache_key = 'symptoms_ai_final_clean_' . md5($symptom);
-    $cached_content = get_transient($cache_key);
-    
-    if ($cached_content !== false) {
-        return array(
-            'success' => true,
-            'content' => $cached_content,
-            'source' => 'cache'
-        );
-    }
-    
-    // Generate content using template system
-    $content = global360blocks_generate_symptoms_content($symptom);
-    
-    // Cache for 7 days
-    set_transient($cache_key, $content, 7 * DAY_IN_SECONDS);
-    
-    return array(
-        'success' => true,
-        'content' => $content,
-        'source' => 'generated'
-    );
-}
-
 // Include symptoms AI render functions
-require_once plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/render.php';
+// require_once plugin_dir_path(__FILE__) . 'blocks/symptoms-ai/render.php';
 
 // Include page title hero render functions
 require_once plugin_dir_path(__FILE__) . 'blocks/page-title-hero/render.php';
@@ -1583,67 +1155,104 @@ require_once plugin_dir_path(__FILE__) . 'blocks/page-title-hero/render.php';
 
 // Register block
 function global360blocks_register_blocks() {
-    // Register Simple Hero block
-    register_block_type( __DIR__ . '/blocks/simple-hero/build', array(
-        'render_callback' => 'global360blocks_render_simple_hero_block',
-    ));
-    
-    register_block_type( __DIR__ . '/blocks/full-hero/build', array(
-        'render_callback' => 'global360blocks_render_full_hero_block',
-    ) );
+    register_block_type(
+        __DIR__ . '/blocks/simple-hero',
+        array(
+            'render_callback' => 'global360blocks_render_simple_hero_block',
+        )
+    );
 
-    register_block_type( __DIR__ . '/blocks/cta/build', array(
-        'render_callback' => 'global360blocks_render_cta_block',
-    ) );
+    register_block_type(
+        __DIR__ . '/blocks/full-hero',
+        array(
+            'render_callback' => 'global360blocks_render_full_hero_block',
+        )
+    );
 
-    register_block_type( __DIR__ . '/blocks/two-column', array(
-        'render_callback' => 'global360blocks_render_two_column_block',
-    ) );
+    register_block_type(
+        __DIR__ . '/blocks/cta',
+        array(
+            'render_callback' => 'global360blocks_render_cta_block',
+        )
+    );
 
-    register_block_type( __DIR__ . '/blocks/two-column-text', array(
-        'render_callback' => 'global360blocks_render_two_column_text_block',
-    ) );
-    
-    register_block_type( __DIR__ . '/blocks/video-two-column/build', array(
-        'render_callback' => 'global360blocks_render_video_two_column_block',
-    ) );
-    
-    register_block_type( __DIR__ . '/blocks/latest-articles/build', array(
-        'render_callback' => 'global360blocks_render_latest_articles_block',
-    ) );
+    register_block_type(
+        __DIR__ . '/blocks/two-column',
+        array(
+            'render_callback' => 'global360blocks_render_two_column_block',
+        )
+    );
 
-    // Register Find Doctor block
-    register_block_type( __DIR__ . '/blocks/find-doctor/build', array(
-        'render_callback' => 'global360blocks_render_find_doctor_block',
-    ));
+    register_block_type(
+        __DIR__ . '/blocks/two-column-text',
+        array(
+            'render_callback' => 'global360blocks_render_two_column_text_block',
+        )
+    );
 
-    // Register Info Cards block - explicit render callback
-    register_block_type( __DIR__ . '/blocks/info-cards/build', array(
-        'render_callback' => function($attributes) {
-            ob_start();
-            include __DIR__ . '/blocks/info-cards/build/render.php';
-            return ob_get_clean();
-        }
-    ));
-    
-    register_block_type( __DIR__ . '/blocks/popular-practices/build', array(
-        'render_callback' => 'global360blocks_render_popular_practices_block',
-    ));
-    
-    // Register Two Column Slider block
-    register_block_type( __DIR__ . '/blocks/two-column-slider/build', array(
-        'render_callback' => 'global360blocks_render_two_column_slider_block',
-    ));
-    
-    // Register Symptoms AI block
-    register_block_type( __DIR__ . '/blocks/symptoms-ai/build', array(
-        'render_callback' => 'global360blocks_render_symptoms_ai_block'
-    ));
-    
-    // Register Page Title Hero block
-    register_block_type( __DIR__ . '/blocks/page-title-hero/build', array(
-        'render_callback' => 'global360blocks_render_page_title_hero_block'
-    ));
+    register_block_type(
+        __DIR__ . '/blocks/video-two-column',
+        array(
+            'render_callback' => 'global360blocks_render_video_two_column_block',
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/latest-articles',
+        array(
+            'render_callback' => 'global360blocks_render_latest_articles_block',
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/find-doctor',
+        array(
+            'render_callback' => 'global360blocks_render_find_doctor_block',
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/info-cards',
+        array(
+            'render_callback' => function( $attributes, $content, $block ) {
+                ob_start();
+                include __DIR__ . '/blocks/info-cards/render.php';
+                return ob_get_clean();
+            },
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/rich-text',
+        array(
+            'render_callback' => function( $attributes, $content, $block ) {
+                ob_start();
+                include __DIR__ . '/blocks/rich-text/render.php';
+                return ob_get_clean();
+            },
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/popular-practices',
+        array(
+            'render_callback' => 'global360blocks_render_popular_practices_block',
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/two-column-slider',
+        array(
+            'render_callback' => 'global360blocks_render_two_column_slider_block',
+        )
+    );
+
+    register_block_type(
+        __DIR__ . '/blocks/page-title-hero',
+        array(
+            'render_callback' => 'global360blocks_render_page_title_hero_block',
+        )
+    );
 }
 
 // Render callback for CTA block
@@ -1803,29 +1412,24 @@ function global360blocks_render_full_hero_block( $attributes, $content ) {
     if ( $image_url ) {
         $output .= '<div class="full-hero-media">';
 
-        $img_attributes = array(
-            'class'         => 'full-hero-image',
-            'src'           => $image_url,
-            'alt'           => $image_alt ? $image_alt : '',
-            'decoding'      => 'async',
-            'fetchpriority' => 'high',
-            'loading'       => 'eager',
+        $image_html = wp_get_attachment_image(
+            $image_id,
+            'full',
+            false,
+            array(
+                'class'         => 'full-hero-image',
+                'fetchpriority' => 'high',
+                'loading'       => 'eager',
+                'decoding'      => 'async',
+            )
         );
 
-        if ( $image_width > 0 ) {
-            $img_attributes['width'] = (string) $image_width;
+        if ( $image_html ) {
+            $output .= $image_html;
+        } else {
+            // Fallback for when wp_get_attachment_image fails but we have a URL
+            $output .= sprintf( '<img src="%s" alt="%s" class="full-hero-image" fetchpriority="high" loading="eager" decoding="async" />', esc_url( $image_url ), esc_attr( $image_alt ) );
         }
-
-        if ( $image_height > 0 ) {
-            $img_attributes['height'] = (string) $image_height;
-        }
-
-        $attribute_pairs = array();
-        foreach ( $img_attributes as $attr_key => $attr_value ) {
-            $attribute_pairs[] = sprintf( '%s="%s"', esc_attr( $attr_key ), esc_attr( $attr_value ) );
-        }
-
-        $output .= '<img ' . implode( ' ', $attribute_pairs ) . ' />';
         $output .= '</div>';
     }
     $output .= '<div class="full-hero-content">';
@@ -1936,8 +1540,8 @@ function global360blocks_get_frontend_asset_manifest() {
             ),
             'script' => array(
                 'handle' => 'info-cards-block-frontend',
-                'file'   => 'blocks/info-cards/build/index.js',
-                'asset'  => 'blocks/info-cards/build/index.asset.php',
+                'file'   => 'blocks/info-cards/build/view.js',
+                'asset'  => 'blocks/info-cards/build/view.asset.php',
             ),
         ),
         'global360blocks/popular-practices' => array(
@@ -1946,27 +1550,21 @@ function global360blocks_get_frontend_asset_manifest() {
                 'file'   => 'blocks/popular-practices/build/style-index.css',
             ),
         ),
-        'global360blocks/two-column-slider' => array(
-            'style' => array(
-                'handle' => 'two-column-slider-block-css',
-                'file'   => 'blocks/two-column-slider/build/style-index.css',
-            ),
-            'script' => array(
-                'handle' => 'two-column-slider-block-frontend',
-                'file'   => 'blocks/two-column-slider/build/index.js',
-                'asset'  => 'blocks/two-column-slider/build/index.asset.php',
-            ),
-        ),
-        'global360blocks/symptoms-ai'       => array(
-            'style' => array(
-                'handle' => 'global360blocks-symptoms-ai-style-frontend',
-                'file'   => 'blocks/symptoms-ai/build/style-index.css',
-            ),
-        ),
         'global360blocks/page-title-hero'   => array(
             'style' => array(
                 'handle' => 'global360blocks-page-title-hero-style-frontend',
                 'file'   => 'blocks/page-title-hero/build/style-index.css',
+            ),
+        ),
+        'global360blocks/two-column-slider'   => array(
+            'style' => array(
+                'handle' => 'global360blocks-two-column-slider-style-frontend',
+                'file'   => 'blocks/two-column-slider/build/style-index.css',
+            ),
+            'script' => array(
+                'handle' => 'global360blocks-two-column-slider-view',
+                'file'   => 'blocks/two-column-slider/build/view.js',
+                'asset'  => 'blocks/two-column-slider/build/view.asset.php',
             ),
         ),
     );

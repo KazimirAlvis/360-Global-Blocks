@@ -1,1 +1,38 @@
-.cta-block pr360-questionnaire::part(begin-button),.full-hero-block pr360-questionnaire::part(begin-button),.two-column-block pr360-questionnaire::part(begin-button),.video-two-column-block pr360-questionnaire::part(begin-button){background-color:var(--cpt360-primary,#007cba)!important;border:1px solid var(--cpt360-primary,#007cba)!important;border-radius:27px!important;box-sizing:border-box!important;color:#fff!important;cursor:pointer!important;display:inline-block!important;font-family:var(--body-font,var(--wp--preset--font-family--body,var(--wp--preset--font-family--base,"Helvetica Neue",Arial,sans-serif)))!important;font-size:18px!important;font-weight:var(--body-font-weight,400)!important;height:54px!important;line-height:22px!important;margin:0!important;max-width:312px!important;min-height:auto!important;padding:15px 30px!important;text-align:center!important;text-decoration:none!important;transition:transform .2s ease,background-color .2s ease!important;white-space:nowrap!important;width:100%!important}.cta-block pr360-questionnaire::part(begin-button):hover,.full-hero-block pr360-questionnaire::part(begin-button):hover,.two-column-block pr360-questionnaire::part(begin-button):hover,.video-two-column-block pr360-questionnaire::part(begin-button):hover{background-color:#fff!important;border:1px solid #000!important;color:#000!important;transform:translateY(-2px)!important}
+.cta-block pr360-questionnaire::part(begin-button),
+.full-hero-block pr360-questionnaire::part(begin-button),
+.two-column-block pr360-questionnaire::part(begin-button),
+.video-two-column-block pr360-questionnaire::part(begin-button) {
+	background-color: var(--cpt360-primary, #007cba) !important;
+	border: 1px solid var(--cpt360-primary, #007cba) !important;
+	border-radius: 27px !important;
+	box-sizing: border-box !important;
+	color: #fff !important;
+	cursor: pointer !important;
+	display: inline-block !important;
+	font-family: var(
+		--body-font,
+		var(--wp--preset--font-family--body, var(--wp--preset--font-family--base, 'Helvetica Neue', Arial, sans-serif))
+	) !important;
+	font-size: 18px !important;
+	font-weight: var(--body-font-weight, 400) !important;
+	height: 54px !important;
+	line-height: 22px !important;
+	margin: 0 !important;
+	max-width: 312px !important;
+	min-height: auto !important;
+	padding: 15px 30px !important;
+	text-align: center !important;
+	text-decoration: none !important;
+	transition: transform 0.2s ease, background-color 0.2s ease !important;
+	white-space: nowrap !important;
+	width: 100% !important;
+}
+.cta-block pr360-questionnaire::part(begin-button):hover,
+.full-hero-block pr360-questionnaire::part(begin-button):hover,
+.two-column-block pr360-questionnaire::part(begin-button):hover,
+.video-two-column-block pr360-questionnaire::part(begin-button):hover {
+	background-color: #fff !important;
+	border: 1px solid #000 !important;
+	color: #000 !important;
+	transform: translateY(-2px) !important;
+}

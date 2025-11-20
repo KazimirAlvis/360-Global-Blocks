@@ -9,8 +9,9 @@
 	"description": "A comprehensive rich text editor with headings, lists, formatting, and styling options.",
 	"keywords": ["text", "editor", "rich", "wysiwyg", "content"],
 	"textdomain": "360-global-blocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
 	"supports": {
 		"html": false,
 		"align": true,

@@ -6,7 +6,7 @@ yarn-error.log*
 
 # Build files (we want to include these since they're needed for the plugin)
 # Uncomment the next line if you don't want to include build files
-# */build/
+*/build/
 
 # OS files
 .DS_Store

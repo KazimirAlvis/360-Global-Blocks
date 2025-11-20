@@ -160,6 +160,17 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.31
+
+-   Split every block into dedicated `edit.js` and streamlined `view.js` bundles so frontend pages stay free of editor-only dependencies.
+-   Rewired the manifest-driven loader so PHP enqueues the new view builds only when matching blocks render.
+-   Removed the complex health icon loader and refreshed shared assets to reduce plugin overhead.
+
+### 1.3.31
+
+-   Bumped package version to `1.3.31` and refreshed manifests for main branch deployment.
+-   Minor build housekeeping and metadata sync (plugin header and manifest timestamps).
+
 ### 1.3.30
 
 -   Replaced the Full Hero CSS background with an eager `<img>` element so browsers can surface the hero art as the page’s Largest Contentful Paint, complete with width/height metadata and alt text.

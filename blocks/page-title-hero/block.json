@@ -9,8 +9,10 @@
 	"description": "A small hero section that automatically uses the page title, with optional custom title and background image support.",
 	"keywords": ["hero", "title", "header", "banner"],
 	"textdomain": "global360blocks",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css",
+	"viewScript": "file:./build/view.js",
 	"supports": {
 		"html": false,
 		"align": true,
