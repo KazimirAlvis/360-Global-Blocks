@@ -160,16 +160,17 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.32
+
+-   Bundled the Health Icons catalog into the Info Cards editor build so the full picker loads without separate script enqueues.
+-   Converted the CTA heading to a RichText field, letting authors update the hero copy inline while the frontend stays sanitized.
+-   Rebuilt affected block assets and refreshed release metadata for the GitHub updater.
+
 ### 1.3.31
 
 -   Split every block into dedicated `edit.js` and streamlined `view.js` bundles so frontend pages stay free of editor-only dependencies.
 -   Rewired the manifest-driven loader so PHP enqueues the new view builds only when matching blocks render.
 -   Removed the complex health icon loader and refreshed shared assets to reduce plugin overhead.
-
-### 1.3.31
-
--   Bumped package version to `1.3.31` and refreshed manifests for main branch deployment.
--   Minor build housekeeping and metadata sync (plugin header and manifest timestamps).
 
 ### 1.3.30
 

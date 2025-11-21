@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	InspectorControls,
+	MediaUpload,
+	MediaUploadCheck,
+	RichText,
+} from '@wordpress/block-editor';
 import { PanelBody, Button } from '@wordpress/components';
 
 export default function Edit({ attributes, setAttributes }) {
@@ -35,7 +41,13 @@ export default function Edit({ attributes, setAttributes }) {
 					style={{ backgroundImage: `url(${imageUrl})` }}
 				>
 					<div className="cta-content">
-						<h2 className="cta-heading">{heading || __('Add heading...', 'global360blocks')}</h2>
+						<RichText
+							tagName="h2"
+							className="cta-heading"
+							value={heading}
+							onChange={(value) => setAttributes({ heading: value })}
+							placeholder={__('Add heading...', 'global360blocks')}
+						/>
 						<div className="cta-button">
 							<Button
 								isPrimary

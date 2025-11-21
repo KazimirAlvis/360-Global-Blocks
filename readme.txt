@@ -3,7 +3,7 @@ Contributors: kazalvis
 Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 1.3.31
+Stable tag: 1.3.32
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,11 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.32 =
+* Bundled the Health Icons catalog directly into the Info Cards editor build so the icon picker stays populated without extra scripts.
+* Swapped the CTA heading to a RichText field so authors can edit the call-to-action copy inline while the frontend output remains sanitized.
+* Rebuilt block assets and refreshed release metadata for the GitHub auto-updater.
 
 = 1.3.31 =
 * Split every block into dedicated `edit.js` and lightweight `view.js` bundles so editor dependencies no longer load on the frontend.

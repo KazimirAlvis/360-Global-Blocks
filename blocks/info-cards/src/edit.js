@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
+import iconCatalog from './health-icons.json';
 import './editor.scss';
 
 export default function Edit(props) {
@@ -23,26 +24,7 @@ export default function Edit(props) {
 		setAttributes({ cards: newCards });
 	};
 
-	// Get Health Icons using the HealthIcons utility
-	const getAvailableIcons = () => {
-		if (window.HealthIcons && typeof window.HealthIcons.getAllIcons === 'function') {
-			return window.HealthIcons.getAllIcons();
-		}
-
-		// Fallback if HealthIcons not loaded yet
-		return (
-			window.healthIconsData || {
-				'body/heart_organ': { name: 'Heart', category: 'Body & Anatomy' },
-				'devices/stethoscope': { name: 'Stethoscope', category: 'Medical Devices' },
-				'people/doctor': { name: 'Doctor', category: 'Healthcare People' },
-				'people/nurse': { name: 'Nurse', category: 'Healthcare People' },
-				'medications/medicines': { name: 'Medicine', category: 'Medications' },
-				'devices/thermometer_digital': { name: 'Thermometer', category: 'Medical Devices' },
-			}
-		);
-	};
-
-	const availableIcons = getAvailableIcons();
+	const availableIcons = iconCatalog || {};
 
 	const iconOptions = Object.entries(availableIcons).map(([key, icon]) => ({
 		label: `${icon.name} (${icon.category})`,
