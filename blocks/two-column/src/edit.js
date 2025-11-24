@@ -120,29 +120,31 @@ const Edit = ({ attributes, setAttributes, clientId }) => {
 				</div>
 
 				<div className="two-column-content">
-					<RichText
-						identifier="heading"
-						tagName="h2"
-						className="two-column-heading"
-						value={heading}
-						onChange={(value) => setAttributes({ heading: value })}
-						placeholder={__('Enter heading...', 'global360blocks')}
-						allowedFormats={['core/bold', 'core/italic']}
-					/>
+					<div className="two-column-content-inner">
+						<RichText
+							identifier="heading"
+							tagName="h2"
+							className="two-column-heading"
+							value={heading}
+							onChange={(value) => setAttributes({ heading: value })}
+							placeholder={__('Enter heading...', 'global360blocks')}
+							allowedFormats={['core/bold', 'core/italic']}
+						/>
 
-					<div className="two-column-body-field">
-						<span className="two-column-field-label">{__('Body content', 'global360blocks')}</span>
-						<div className="two-column-body">
-							<InnerBlocks
-								allowedBlocks={BODY_ALLOWED_BLOCKS}
-								template={BODY_TEMPLATE}
-								templateLock={false}
-							/>
+						<div className="two-column-body-field">
+							<span className="two-column-field-label">{__('Body content', 'global360blocks')}</span>
+							<div className="two-column-body">
+								<InnerBlocks
+									allowedBlocks={BODY_ALLOWED_BLOCKS}
+									template={BODY_TEMPLATE}
+									templateLock={false}
+								/>
+							</div>
 						</div>
-					</div>
 
-					<div className="two-column-button-preview">
-						<span className="btn btn_global">{__('Take Risk Assessment Now', 'global360blocks')}</span>
+						<div className="two-column-button-preview">
+							<span className="btn btn_global">{__('Take Risk Assessment Now', 'global360blocks')}</span>
+						</div>
 					</div>
 				</div>
 			</div>

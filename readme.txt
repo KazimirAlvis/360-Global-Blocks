@@ -3,7 +3,7 @@ Contributors: kazalvis
 Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 1.3.33
+Stable tag: 1.3.34
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,10 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.34 =
+* Removed the leftover grid gap in the Two Column block so the media column can sit flush with the viewport edge on desktop.
+* Set the desktop padding to 40px 30px 40px 80px and rebuilt the block so its text column now lines up with the Video Two Column layout by default.
 
 = 1.3.33 =
 * Removed the lingering padding applied by legacy `main-*-con` wrappers so two-column body copy now aligns flush with its heading in both editor and front-end renders.

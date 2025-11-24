@@ -160,7 +160,13 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
--### 1.3.33
+### 1.3.34
+
+-   Removed the grid gap inside the Two Column block so the image column can stretch flush to the viewport edge on wide screens.
+-   Locked the desktop padding to `40px 30px 40px 80px` to align the text column with the Video Two Column block and rebuilt the block assets.
+
+### 1.3.33
+
 -   Eliminated residual padding on legacy `main-*-con` wrappers inside the two-column body so text now aligns cleanly with its heading on both the front end and in the editor preview.
 -   Recompiled the two-column block assets to ensure every install picks up the refined spacing defaults.
 

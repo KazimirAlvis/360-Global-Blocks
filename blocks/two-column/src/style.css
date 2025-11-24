@@ -8,7 +8,7 @@
 .two-column-container {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	column-gap: clamp(32px, 5vw, 96px);
+	column-gap: 0;
 	min-height: 500px;
 	width: 100%;
 	max-width: 1400px;
@@ -39,8 +39,7 @@
 	flex-direction: column;
 	justify-content: center;
 	gap: clamp(20px, 3vw, 32px);
-	padding: clamp(32px, 5vw, 72px) clamp(28px, 5vw, 64px) clamp(32px, 5vw, 72px)
-		clamp(56px, 7vw, 120px);
+	padding: 40px 30px 40px 80px;
 	background-color: #fff;
 	max-width: 100%;
 	margin: 0 auto;
@@ -154,7 +153,7 @@
 @media (max-width: 1024px) {
 	.two-column-container {
 		max-width: 100%;
-		column-gap: clamp(20px, 4vw, 48px);
+		column-gap: 0;
 	}
 
 	.two-column-heading {

@@ -10,7 +10,7 @@ html :where(.wp-block) {
 .wp-block-global360blocks-two-column .two-column-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	column-gap: clamp(32px, 5vw, 96px);
+	column-gap: 0;
 	min-height: 500px;
 	border: 2px dashed #ccc;
 	overflow: hidden;
@@ -64,16 +64,41 @@ html :where(.wp-block) {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: clamp(20px, 3vw, 32px);
-	padding: clamp(32px, 5vw, 72px) clamp(28px, 5vw, 64px) clamp(32px, 5vw, 72px)
-		clamp(56px, 7vw, 120px);
+	align-items: stretch;
+	padding: clamp(28px, 5vw, 56px);
 	background-color: #fff;
 }
 
-.wp-block-global360blocks-two-column .two-column-content > * {
+.wp-block-global360blocks-two-column .two-column-content-inner {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	width: 100%;
+	max-width: 645px;
+	margin: 0 auto 0 0;
+}
+
+.wp-block-global360blocks-two-column .two-column-content-inner > * {
 	margin: 0;
 	width: 100%;
-	max-width: 640px;
+}
+
+.two-column-block .two-column-container > .two-column-content {
+	padding: clamp(28px, 5vw, 56px) !important;
+}
+
+.two-column-block .two-column-container > .two-column-content .two-column-content-inner {
+	margin: 0 auto 0 0 !important;
+	max-width: 645px !important;
+}
+
+.two-column-block .two-column-container .two-column-content {
+	padding: clamp(28px, 5vw, 56px) !important;
+}
+
+.two-column-block .two-column-container .two-column-content > * {
+	margin-left: 0 !important;
+	margin-right: auto !important;
 }
 
 .wp-block-global360blocks-two-column .two-column-heading {
@@ -207,7 +232,25 @@ html :where(.wp-block) {
 		order: 2;
 	}
 
+	.wp-block-global360blocks-two-column .two-column-content-inner {
+		max-width: 600px;
+	}
+
+	.two-column-block .two-column-container > .two-column-content {
+		padding: clamp(28px, 6vw, 48px) !important;
+	}
+
 	.wp-block-global360blocks-two-column .two-column-heading {
 		font-size: 2rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.wp-block-global360blocks-two-column .two-column-content {
+		padding: clamp(24px, 7vw, 36px);
+	}
+
+	.two-column-block .two-column-container > .two-column-content {
+		padding: clamp(24px, 7vw, 36px) !important;
 	}
 }

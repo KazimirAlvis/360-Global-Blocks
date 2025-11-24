@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.33
+ * Version: 1.3.34
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.33' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.34' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -1333,6 +1333,7 @@ function global360blocks_render_two_column_block( $attributes, $content, $block 
     
     // Right column - Content
     $output .= '<div class="two-column-content">';
+    $output .= '<div class="two-column-content-inner">';
     if ($heading) {
         $output .= '<h2 class="two-column-heading">' . $heading . '</h2>';
     }
@@ -1356,6 +1357,7 @@ function global360blocks_render_two_column_block( $attributes, $content, $block 
     global360blocks_enqueue_global_shared_style();
     $output .= '<div class="two-column-button">';
     $output .= '<pr360-questionnaire url="wss://app.patientreach360.com/socket" site-id="' . esc_attr($assess_id) . '">Take Risk Assessment Now</pr360-questionnaire>';
+    $output .= '</div>';
     $output .= '</div>';
     $output .= '</div>';
     
