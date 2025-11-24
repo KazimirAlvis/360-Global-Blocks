@@ -10,6 +10,7 @@ html :where(.wp-block) {
 .wp-block-global360blocks-two-column .two-column-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	column-gap: clamp(32px, 5vw, 96px);
 	min-height: 500px;
 	border: 2px dashed #ccc;
 	overflow: hidden;
@@ -63,15 +64,22 @@ html :where(.wp-block) {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: 60px 0 60px 80px;
+	gap: clamp(20px, 3vw, 32px);
+	padding: clamp(32px, 5vw, 72px) clamp(28px, 5vw, 64px) clamp(32px, 5vw, 72px)
+		clamp(56px, 7vw, 120px);
 	background-color: #fff;
-	width: calc(100% - 80px);
+}
+
+.wp-block-global360blocks-two-column .two-column-content > * {
+	margin: 0;
+	width: 100%;
+	max-width: 640px;
 }
 
 .wp-block-global360blocks-two-column .two-column-heading {
 	font-size: 2.5rem;
 	font-weight: var(--heading-font-weight, 400);
-	margin: 0 0 30px 0;
+	margin: 0;
 	line-height: 1.2;
 	letter-spacing: var(--heading-letter-spacing, normal);
 	color: #333;
@@ -96,7 +104,7 @@ html :where(.wp-block) {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	margin: 0 0 40px 0;
+	margin: 0;
 }
 
 .wp-block-global360blocks-two-column .two-column-field-label {
@@ -118,6 +126,14 @@ html :where(.wp-block) {
 	background: rgba(15, 23, 42, 0.02);
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	margin: 0;
+}
+
+.wp-block-global360blocks-two-column .two-column-body [class^='main-'][class*='-con'],
+.wp-block-global360blocks-two-column .two-column-body [class*=' main-'][class*='-con'] {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
 }
 
 .wp-block-global360blocks-two-column .two-column-body p {
@@ -157,6 +173,7 @@ html :where(.wp-block) {
 
 .wp-block-global360blocks-two-column .two-column-button-preview {
 	align-self: flex-start;
+	margin-top: clamp(16px, 3vw, 32px);
 }
 
 .wp-block-global360blocks-two-column .two-column-button-preview .btn {
@@ -177,6 +194,7 @@ html :where(.wp-block) {
 	.wp-block-global360blocks-two-column .two-column-container {
 		grid-template-columns: 1fr;
 		min-height: auto;
+		column-gap: 0;
 	}
 
 	.wp-block-global360blocks-two-column .two-column-image {
@@ -185,7 +203,7 @@ html :where(.wp-block) {
 	}
 
 	.wp-block-global360blocks-two-column .two-column-content {
-		padding: 30px;
+		padding: clamp(28px, 6vw, 48px);
 		order: 2;
 	}
 

@@ -160,6 +160,10 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+-### 1.3.33
+-   Eliminated residual padding on legacy `main-*-con` wrappers inside the two-column body so text now aligns cleanly with its heading on both the front end and in the editor preview.
+-   Recompiled the two-column block assets to ensure every install picks up the refined spacing defaults.
+
 ### 1.3.32
 
 -   Bundled the Health Icons catalog into the Info Cards editor build so the full picker loads without separate script enqueues.
