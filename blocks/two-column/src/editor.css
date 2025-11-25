@@ -10,13 +10,23 @@ html :where(.wp-block) {
 .wp-block-global360blocks-two-column .two-column-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	grid-template-areas: 'image content';
 	column-gap: 0;
 	min-height: 500px;
 	border: 2px dashed #ccc;
 	overflow: hidden;
 }
 
+.wp-block-global360blocks-two-column .two-column-container.layout-image-right {
+	grid-template-areas: 'content image';
+}
+
+.wp-block-global360blocks-two-column .two-column-container.layout-image-right .two-column-content {
+	padding: 40px 80px 40px 30px;
+}
+
 .wp-block-global360blocks-two-column .two-column-image {
+	grid-area: image;
 	position: relative;
 	background-color: #f5f5f5;
 	display: flex;
@@ -61,6 +71,7 @@ html :where(.wp-block) {
 }
 
 .wp-block-global360blocks-two-column .two-column-content {
+	grid-area: content;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -105,6 +116,7 @@ html :where(.wp-block) {
 	font-size: 2.5rem;
 	font-weight: var(--heading-font-weight, 400);
 	margin: 0;
+	padding-bottom: 30px;
 	line-height: 1.2;
 	letter-spacing: var(--heading-letter-spacing, normal);
 	color: #333;
@@ -220,6 +232,7 @@ html :where(.wp-block) {
 		grid-template-columns: 1fr;
 		min-height: auto;
 		column-gap: 0;
+		grid-template-areas: 'image' 'content';
 	}
 
 	.wp-block-global360blocks-two-column .two-column-image {
@@ -230,6 +243,10 @@ html :where(.wp-block) {
 	.wp-block-global360blocks-two-column .two-column-content {
 		padding: clamp(28px, 6vw, 48px);
 		order: 2;
+	}
+
+	.wp-block-global360blocks-two-column .two-column-container.layout-image-right .two-column-content {
+		padding: clamp(28px, 6vw, 48px);
 	}
 
 	.wp-block-global360blocks-two-column .two-column-content-inner {

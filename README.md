@@ -160,6 +160,11 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.35
+
+-   Added an inspector layout toggle to the Two Column block so editors can swap the media column to either side without duplicate blocks.
+-   Updated both editor and frontend CSS to honor the new layout choice, including mirrored padding (40px 80px 40px 30px) when the image sits on the right.
+
 ### 1.3.34
 
 -   Removed the grid gap inside the Two Column block so the image column can stretch flush to the viewport edge on wide screens.

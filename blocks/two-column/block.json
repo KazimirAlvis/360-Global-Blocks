@@ -23,6 +23,11 @@
 		"bodyText": {
 			"type": "string",
 			"default": ""
+		},
+		"layout": {
+			"type": "string",
+			"enum": ["image-left", "image-right"],
+			"default": "image-left"
 		}
 	},
 	"example": {},
