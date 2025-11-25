@@ -3,7 +3,7 @@ Contributors: kazalvis
 Tags: gutenberg, blocks, healthcare, patientreach360
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 1.3.35
+Stable tag: 1.3.36
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,10 @@ Custom Gutenberg blocks tailored for the 360 network. Includes hero layouts, CTA
 No. The updater fetches a JSON manifest over HTTPS. Keep the repository public or host the manifest on an accessible URL. If you make it private, proxy the manifest and ZIP download through an authenticated endpoint.
 
 == Changelog ==
+
+= 1.3.36 =
+* Ensured the Two Column block stacks correctly on tablet and mobile when the image is set to the right column by letting CSS control the swap and resetting the responsive grid.
+* Always renders the media column first in markup so themes can’t override the mobile flow when layout toggles are enabled.
 
 = 1.3.35 =
 * Added a layout selector to the Two Column block so authors can flip the image to either the left or right column without rebuilding content.

@@ -160,6 +160,11 @@ For support and feature requests, please create an issue on GitHub.
 
 ## Changelog
 
+### 1.3.36
+
+-   Fixed the responsive flow for the Two Column layout toggle so right-aligned images stack above the copy on tablet/mobile viewports instead of fighting the desktop grid order.
+-   Simplified the markup to always render the media column first and let CSS handle the swap, preventing theme overrides from breaking the stacked layout.
+
 ### 1.3.35
 
 -   Added an inspector layout toggle to the Two Column block so editors can swap the media column to either side without duplicate blocks.

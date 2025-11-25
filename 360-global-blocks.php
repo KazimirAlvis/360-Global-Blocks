@@ -2,13 +2,13 @@
 /*
 Plugin Name: 360 Global Blocks
 Description: Custom Gutenberg blocks for the 360 network. 
- * Version: 1.3.35
+ * Version: 1.3.36
 Author: Kaz Alvis
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.35' );
+define( 'SB_GLOBAL_BLOCKS_VERSION', '1.3.36' );
 define( 'SB_GLOBAL_BLOCKS_PLUGIN_FILE', __FILE__ );
 define(
     'SB_GLOBAL_BLOCKS_MANIFEST_URL',
@@ -1361,11 +1361,7 @@ function global360blocks_render_two_column_block( $attributes, $content, $block 
     $content_column .= '</div>';
     $content_column .= '</div>';
 
-    if ( 'image-right' === $layout ) {
-        $output .= $content_column . $image_column;
-    } else {
-        $output .= $image_column . $content_column;
-    }
+    $output .= $image_column . $content_column;
 
     $output .= '</div></div>';
     return $output;

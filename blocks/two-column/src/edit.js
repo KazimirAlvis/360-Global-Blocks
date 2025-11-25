@@ -65,8 +65,6 @@ const Edit = ({ attributes, setAttributes, clientId }) => {
 		className: 'two-column-block',
 	});
 
-	const isImageRight = layout === 'image-right';
-
 	const renderImageColumn = () => (
 		<div className="two-column-image">
 			{imageUrl ? (
@@ -168,9 +166,8 @@ const Edit = ({ attributes, setAttributes, clientId }) => {
 			</InspectorControls>
 			<div {...blockProps}>
 				<div className={`two-column-container layout-${layout}`}>
-					{!isImageRight && renderImageColumn()}
+					{renderImageColumn()}
 					{renderContentColumn()}
-					{isImageRight && renderImageColumn()}
 				</div>
 			</div>
 		</>
